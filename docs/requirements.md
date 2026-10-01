@@ -121,7 +121,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-07 | Session inspector ("expire token now") behind a flag | Session inspector behind NEXT_PUBLIC_DEV_TOOLS (loaded only when on): token countdowns, refresh count, "Expire access token now", one or three calls, "Expire refresh token too"; tested; in a browser, three calls after expiring made one refresh (#25) | ☑ |
 | X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
 | X-09 | Query cache cleared on logout / refresh failure | The query cache (and toasts) are cleared whenever a session ends: logout, logout in another tab, or a rejected refresh token; tested (#23) | ☑ |
-| X-10 | CSP + security headers; `noindex` | T-094 | ☐ |
+| X-10 | CSP + security headers; `noindex` | Nonce-based CSP from the proxy (scripts need the nonce, connect only to self and the API, no framing) plus nosniff, Referrer-Policy, Permissions-Policy, HSTS, COOP; noindex meta, X-Robots-Tag and robots.txt (ADR-0010). Production build: injected handler and cross-origin fetch blocked, sign-in and theme script work with no violations (#49) | ☑ |
 | X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
 | X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 | ☐ |
 | X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | Dialogs trap focus and return it to the trigger on close; tested (#14). After a client-side navigation focus moves to the new page's h1 (`RouteFocus`), Next's route announcer reads the unique page title, and a skip link comes first in the tab order; tested and checked in a browser (#27) | ☑ |

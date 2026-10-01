@@ -1,0 +1,3 @@
+# A demo banking client: nothing here belongs in search results (spec note N-013).
+User-Agent: *
+Disallow: /
