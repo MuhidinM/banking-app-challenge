@@ -103,3 +103,26 @@ describe("session store", () => {
     expect(listener).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("adoptAccessToken (another tab's new token)", () => {
+  it("uses it when a refresh token is stored, without touching storage or the cookie", () => {
+    const { environment, values, cookie } = fakeEnvironment({ [REFRESH_TOKEN_KEY]: "refresh-2" });
+    const store = createSessionStore(environment);
+
+    store.adoptAccessToken("access-2");
+
+    expect(store.getAccessToken()).toBe("access-2");
+    expect(store.getSnapshot()).toEqual({ status: "authenticated", endedBecause: null });
+    expect(Object.fromEntries(values)).toEqual({ [REFRESH_TOKEN_KEY]: "refresh-2" });
+    expect(cookie).not.toHaveBeenCalled();
+  });
+
+  it("ignores it when no refresh token is stored", () => {
+    const store = createSessionStore(fakeEnvironment().environment);
+
+    store.adoptAccessToken("access-2");
+
+    expect(store.getAccessToken()).toBeNull();
+    expect(store.getSnapshot().status).toBe("anonymous");
+  });
+});

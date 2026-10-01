@@ -26,9 +26,15 @@ describe("session channel", () => {
 
     stranger.postMessage({ type: "something-else" });
     stranger.postMessage("signed-out");
-    createSessionChannel()!.post({ type: "signed-out" });
+    stranger.postMessage({ type: "tokens" });
+    stranger.postMessage({ type: "tokens", accessToken: "" });
+    const sender = createSessionChannel()!;
+    sender.post({ type: "tokens", accessToken: "access-2" });
+    sender.post({ type: "expired" });
 
-    await vi.waitFor(() => expect(listener).toHaveBeenCalledTimes(1));
+    await vi.waitFor(() => expect(listener).toHaveBeenCalledTimes(2));
+    expect(listener).toHaveBeenNthCalledWith(1, { type: "tokens", accessToken: "access-2" });
+    expect(listener).toHaveBeenNthCalledWith(2, { type: "expired" });
     stranger.close();
   });
 
