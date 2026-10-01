@@ -51,7 +51,18 @@ export interface SessionStore extends TokenStore {
    * token changes. Ignored when no refresh token is stored.
    */
   adoptAccessToken(accessToken: string): void;
+  /**
+   * Session inspector only (#25): swap the access token for one the API
+   * rejects, as if it had just expired. The next request gets a 401 and
+   * refreshes, which shows the refresh flow without waiting 10 minutes.
+   */
+  simulateExpiredAccessToken(): void;
+  /** Session inspector only: the same for the stored refresh token, so the next refresh is rejected. */
+  simulateExpiredRefreshToken(): void;
 }
+
+/** What the inspector puts in place of a token. The API answers 401 to it. */
+export const SIMULATED_EXPIRED_TOKEN = "expired-by-session-inspector";
 
 function browserEnvironment(): SessionEnvironment {
   let storage: SessionEnvironment["storage"] = null;
@@ -141,6 +152,20 @@ export function createSessionStore(
     signOut: () => end("signed-out"),
     trustStoredSession() {
       if (state.status === "unknown") setState({ status: "authenticated", endedBecause: null });
+    },
+    simulateExpiredAccessToken() {
+      if (accessToken) accessToken = SIMULATED_EXPIRED_TOKEN;
+    },
+    simulateExpiredRefreshToken() {
+      if (read()) {
+        try {
+          storage?.setItem(REFRESH_TOKEN_KEY, SIMULATED_EXPIRED_TOKEN);
+        } catch {
+          // Storage refused the write; the stored token stays as it was.
+        }
+      } else if (memoryRefreshToken) {
+        memoryRefreshToken = SIMULATED_EXPIRED_TOKEN;
+      }
     },
     adoptAccessToken(next) {
       if (!read()) return;

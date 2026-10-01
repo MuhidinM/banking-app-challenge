@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { fakeSessionEnvironment as fakeEnvironment } from "@/test/fake-session-environment";
 
-import { REFRESH_TOKEN_KEY, createSessionStore } from "./session-store";
+import { REFRESH_TOKEN_KEY, SIMULATED_EXPIRED_TOKEN, createSessionStore } from "./session-store";
 
 const pair = { accessToken: "access-1", refreshToken: "refresh-1" };
 
@@ -124,5 +124,38 @@ describe("adoptAccessToken (another tab's new token)", () => {
 
     expect(store.getAccessToken()).toBeNull();
     expect(store.getSnapshot().status).toBe("anonymous");
+  });
+});
+
+describe("simulated expiry (session inspector)", () => {
+  it("swaps the access token for one the API rejects", () => {
+    const store = createSessionStore(fakeEnvironment().environment);
+    store.setTokens(pair);
+
+    store.simulateExpiredAccessToken();
+
+    expect(store.getAccessToken()).toBe(SIMULATED_EXPIRED_TOKEN);
+    expect(store.getSnapshot().status).toBe("authenticated");
+  });
+
+  it("swaps the stored refresh token too, on request", () => {
+    const { environment, values } = fakeEnvironment();
+    const store = createSessionStore(environment);
+    store.setTokens(pair);
+
+    store.simulateExpiredRefreshToken();
+
+    expect(values.get(REFRESH_TOKEN_KEY)).toBe(SIMULATED_EXPIRED_TOKEN);
+  });
+
+  it("does nothing without a session", () => {
+    const { environment, values } = fakeEnvironment();
+    const store = createSessionStore(environment);
+
+    store.simulateExpiredAccessToken();
+    store.simulateExpiredRefreshToken();
+
+    expect(store.getAccessToken()).toBeNull();
+    expect(values.size).toBe(0);
   });
 });

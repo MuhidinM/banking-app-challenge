@@ -6,7 +6,7 @@
  * client components also render on the server, where there is no storage.
  */
 
-import { isNetworkError } from "@/shared/api/api-error";
+import { isApiError, isNetworkError } from "@/shared/api/api-error";
 import { type HttpClient, createHttpClient } from "@/shared/api/http-client";
 import { getQueryClient } from "@/shared/api/query-client";
 import { type TokenPair, createTokenRefresher } from "@/shared/api/token-refresh";
@@ -38,6 +38,35 @@ export interface AppSession {
    * expires. Through `onSessionEnded`, the cached data and toasts go too.
    */
   signOut(): void;
+  /** Every refresh call this tab made, for the session inspector (#25). */
+  refreshLog: RefreshLog;
+}
+
+export interface RefreshLogState {
+  /** Calls to POST /api/auth/refresh-token from this tab. */
+  count: number;
+  last: { at: Date; outcome: "refreshed" | "rejected" | "failed" } | null;
+}
+
+export interface RefreshLog {
+  getSnapshot(): RefreshLogState;
+  subscribe(listener: () => void): () => void;
+}
+
+function createRefreshLog() {
+  let state: RefreshLogState = { count: 0, last: null };
+  const listeners = new Set<() => void>();
+  return {
+    record(outcome: NonNullable<RefreshLogState["last"]>["outcome"]) {
+      state = { count: state.count + 1, last: { at: new Date(), outcome } };
+      listeners.forEach((listener) => listener());
+    },
+    getSnapshot: () => state,
+    subscribe(listener: () => void) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
 }
 
 export interface AppSessionOptions {
@@ -74,12 +103,20 @@ export function createAppSession(
   // the refresh request is sent without auth, so it can't trigger a refresh.
   // The two depend on each other, so the refresher reads the auth API through a holder.
   const late: { authApi?: ReturnType<typeof createAuthApi> } = {};
+  const refreshLog = createRefreshLog();
   const refresher = createTokenRefresher({
     tokens: { ...store, setTokens },
     runExclusive,
-    requestRefresh: (refreshToken) => {
+    requestRefresh: async (refreshToken) => {
       if (!late.authApi) throw new Error("Auth API used before the session was created.");
-      return late.authApi.refreshTokens(refreshToken);
+      try {
+        const pair = await late.authApi.refreshTokens(refreshToken);
+        refreshLog.record("refreshed");
+        return pair;
+      } catch (error) {
+        refreshLog.record(isApiError(error) && error.status < 500 ? "rejected" : "failed");
+        throw error;
+      }
     },
     // store.clear() (called by the refresher) already ended the session as
     // "expired". RequireSession sees that in the store and sends the user to
@@ -126,6 +163,7 @@ export function createAppSession(
     store,
     client,
     authApi: api,
+    refreshLog: { getSnapshot: refreshLog.getSnapshot, subscribe: refreshLog.subscribe },
 
     async signIn(credentials) {
       const response = await api.login(credentials);
