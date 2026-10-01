@@ -40,7 +40,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-024 | [#20](https://github.com/MuhidinM/banking-app-challenge/issues/20) | Login page (split layout web, mobile layout), password reveal, "session expired" banner from `?reason=expired`; component test | R-AUTH-01/02, R-CQ-08 | M | done |
 | T-025 | [#21](https://github.com/MuhidinM/banking-app-challenge/issues/21) | Route protection: `proxy.ts` optimistic redirect + client guard; logged-in users bounced from /login; `?next=` return path (validated, same-origin only) | R-AUTH-06/07 | M | done |
 | T-026 | [#22](https://github.com/MuhidinM/banking-app-challenge/issues/22) | Register page: zod schema mirroring API (username 3–50, password ≥6, phone pattern), confirm password, AUTH_003/004 on fields, auto-login after success | R-AUTH-03/04/05 | M | done |
-| T-027 | [#23](https://github.com/MuhidinM/banking-app-challenge/issues/23) | Logout: clear tokens, cookie, `queryClient.clear()`, broadcast to other tabs | R-AUTH-09, X-09 | S | todo |
+| T-027 | [#23](https://github.com/MuhidinM/banking-app-challenge/issues/23) | Logout: clear tokens, cookie, `queryClient.clear()`, broadcast to other tabs | R-AUTH-09, X-09 | S | done |
 | T-028 | [#24](https://github.com/MuhidinM/banking-app-challenge/issues/24) | Cross-tab: Web Locks around refresh, storage event to share new tokens and logout; test | X-03 | M | todo |
 | T-029 | [#25](https://github.com/MuhidinM/banking-app-challenge/issues/25) | Session inspector (flag): token expiry countdown, refresh count, "expire access token now" | X-07 | S | todo |
 
