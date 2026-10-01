@@ -38,7 +38,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 |  | ☐ |
 | R-AUTH-06 | Protected pages unreachable without a session | T-025 |  | ☐ |
 | R-AUTH-07 | Valid session skips the login page | T-025 |  | ☐ |
-| R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload with a fresh store over the same storage (#18). Browser check with the login page in #20 | ◐ |
+| R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload (#18); confirmed in Chrome with mock mode: sign in, reload, still signed in (#20, after #80 kept the mock across reloads) | ☑ |
 | R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 |  | ☐ |
 
 ## D. Main flow (Req 3)
