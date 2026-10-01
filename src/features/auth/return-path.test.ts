@@ -19,6 +19,9 @@ describe("safeReturnPath", () => {
     ["another origin", "https://evil.example/login"],
     ["protocol-relative", "//evil.example"],
     ["backslash trick", "/\\evil.example"],
+    // The URL parser drops tabs and newlines, which would turn these into "//evil.example".
+    ["tab trick", "/\t/evil.example"],
+    ["newline trick", "/\n/evil.example"],
     ["javascript URL", "javascript:alert(1)"],
     ["the login page", "/login?reason=expired"],
     ["the register page", "/register"],

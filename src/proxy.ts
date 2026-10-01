@@ -3,6 +3,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { safeReturnPath } from "@/features/auth/return-path";
 import { isAuthPath, isProtectedPath, loginPath } from "@/features/auth/routes";
 import { SESSION_COOKIE } from "@/features/auth/session-store";
+import { env } from "@/shared/config/env";
+import { NONCE_HEADER, contentSecurityPolicy, createNonce } from "@/shared/config/security-headers";
 
 /** The last path segment has an extension: /mockServiceWorker.js, /brand/logo.svg. */
 const FILE_PATH = /\.[a-z0-9]+$/i;
@@ -13,6 +15,10 @@ const FILE_PATH = /\.[a-z0-9]+$/i;
  * before rendering, which avoids a flash of the wrong page. It is not the
  * security check: the client guard (RequireSession) checks the stored session,
  * and the API checks every request.
+ *
+ * Pages it lets through get a Content-Security-Policy with a fresh nonce
+ * (ADR-0010). Next.js reads the nonce from the request header and puts it on
+ * its own scripts; the root layout puts it on the theme script.
  */
 export function proxy(request: NextRequest) {
   const { pathname, search, searchParams } = request.nextUrl;
@@ -31,7 +37,22 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(loginPath({ next: `${pathname}${search}` }), request.url));
   }
 
-  return NextResponse.next();
+  return withContentSecurityPolicy(request);
+}
+
+function withContentSecurityPolicy(request: NextRequest) {
+  const nonce = createNonce();
+  const policy = contentSecurityPolicy({
+    nonce,
+    apiBaseUrl: env.apiBaseUrl,
+    dev: process.env.NODE_ENV === "development",
+  });
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(NONCE_HEADER, nonce);
+  requestHeaders.set("Content-Security-Policy", policy);
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set("Content-Security-Policy", policy);
+  return response;
 }
 
 export const config = {

@@ -13,3 +13,4 @@ Format: Context → Decision → Consequences. One decision per file. Status: pr
 | [0007](0007-money-and-dates.md)                     | Money in integer cents; API timestamps parsed as UTC                       | accepted |
 | [0008](0008-receipt-resolution.md)                  | Resolve the receipt transaction after a transfer or bill payment           | accepted |
 | [0009](0009-mock-mode.md)                           | MSW mock mode shared by the app, unit tests and E2E                        | accepted |
+| [0010](0010-content-security-policy.md)             | Nonce-based Content-Security-Policy, pages rendered per request            | accepted |

@@ -18,6 +18,10 @@ Route protection is layered:
 
 Which paths are protected, and the login URL, live in `features/auth/routes.ts`; `next` is only followed when it stays on this site (`safeReturnPath`).
 
+### Security headers ([ADR-0010](decisions/0010-content-security-policy.md))
+
+The proxy also gives every page a Content-Security-Policy with a fresh nonce: only scripts carrying it run, and the page can connect only to its own origin and the API. Because the root layout reads the nonce from the request, pages render per request rather than being prerendered. `next.config.ts` adds the fixed headers (frame denial, `nosniff`, referrer and permissions policies, HSTS, `X-Robots-Tag: noindex`), and `robots.txt` disallows all crawling.
+
 ## API layer
 
 ```
@@ -64,7 +68,7 @@ Tab A request ──401──┘          │
 | Access (10 min) | Memory only    | Not persisted, not readable after reload      |
 | Refresh (24 h)  | `localStorage` | Must survive reload and be shared across tabs |
 
-Trade-off: a successful XSS could read the refresh token. Mitigations: strict CSP, no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations.
+Trade-off: a successful XSS could read the refresh token. Mitigations: a nonce-based CSP that also limits where the page can connect (ADR-0010), no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations.
 
 ### Session wiring
 
@@ -115,7 +119,7 @@ The transfer and bill-payment responses don't include a transaction id, date or 
 
 ## Theming
 
-`scripts/generate-tokens.mts` (`pnpm tokens`) turns [design/design-tokens.json](design/design-tokens.json) into `src/shared/theme/tokens.css`: CSS custom properties (light on `:root`; dark on `[data-theme="dark"]`, or by OS preference unless light is forced) and a Tailwind v4 `@theme` block, so components use token names (`bg-surface`, `text-ink-muted`, `rounded-card`, `h-control`, `type-heading`, `bg-balance`). Tailwind's default palette is removed, sizes and type are in rem, and CI fails if the generated file is stale (`pnpm tokens:check`). The user's choice (`system | light | dark`, `src/shared/theme/theme-preference.ts`) is stored per device. "System" means no `data-theme` attribute at all, so the CSS follows the OS, including live changes, without JavaScript. An inline script in `<head>` applies a stored light/dark choice before first paint, so a reload never flashes the wrong theme; the server HTML stays theme-neutral and statically prerendered. `useTheme()` exposes the choice and the theme actually showing, and a choice made in another tab is picked up through the `storage` event. ([ADR-0006](decisions/0006-design-tokens-pipeline.md))
+`scripts/generate-tokens.mts` (`pnpm tokens`) turns [design/design-tokens.json](design/design-tokens.json) into `src/shared/theme/tokens.css`: CSS custom properties (light on `:root`; dark on `[data-theme="dark"]`, or by OS preference unless light is forced) and a Tailwind v4 `@theme` block, so components use token names (`bg-surface`, `text-ink-muted`, `rounded-card`, `h-control`, `type-heading`, `bg-balance`). Tailwind's default palette is removed, sizes and type are in rem, and CI fails if the generated file is stale (`pnpm tokens:check`). The user's choice (`system | light | dark`, `src/shared/theme/theme-preference.ts`) is stored per device. "System" means no `data-theme` attribute at all, so the CSS follows the OS, including live changes, without JavaScript. An inline script in `<head>` applies a stored light/dark choice before first paint, so a reload never flashes the wrong theme; the server HTML stays theme-neutral. The script carries the response's CSP nonce. `useTheme()` exposes the choice and the theme actually showing, and a choice made in another tab is picked up through the `storage` event. ([ADR-0006](decisions/0006-design-tokens-pipeline.md))
 
 Fonts load through `next/font` (`src/shared/theme/fonts.ts`): Montserrat as `--font-text` and Raleway as `--font-display`, self-hosted with metrics-matched fallbacks, so there's no runtime request to Google and no layout shift. `src/shared/theme/base.css` applies the tokens globally: page background and body type, Raleway headings, the spec's focus styles (`:focus-visible` accent outline for buttons and links, `focus-control` ring for fields) and `amount` for tabular, non-wrapping figures.
 
