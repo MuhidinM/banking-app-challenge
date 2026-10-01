@@ -20,9 +20,9 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-03 | Single typed API client; components never call `fetch` (lint rule `no-restricted-globals` outside `shared/api`) | T-020, T-003 | One client in `src/shared/api/http-client.ts`; ESLint bans `fetch` everywhere else in src/ (#3, #16) | ☑ |
 | R-API-04 | Store access + refresh tokens | T-022 |  | ☐ |
 | R-API-05 | `Authorization: Bearer` on protected calls | T-020 | Bearer token attached on protected calls, read per request; `auth: false` for login/register/refresh; tested (#16) | ☑ |
-| R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 |  | ☐ |
-| R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 |  | ☐ |
-| R-API-08 | Refresh fails → clear session → login | T-021, T-025 |  | ☐ |
+| R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 | On 401 the client refreshes via POST /api/auth/refresh-token, stores both rotated tokens and retries once (`http-client.ts`, `token-refresh.ts`); integration tests against the mock API (#17) | ☑ |
+| R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 | Five concurrent 401s → exactly one refresh request, all five succeed (`token-refresh.integration.test.ts`); unit tests with a controllable refresh (#17) | ☑ |
+| R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and calls `onSessionExpired` once; tested (#17). Navigation to /login and clearing the query cache are wired in #21 / #23 | ◐ |
 | R-API-09 | Transfer `note` optional, max 140 chars, becomes description | T-060 |  | ☐ |
 | R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 |  | ☐ |
 | R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 |  | ☐ |
@@ -88,12 +88,12 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
 | R-CQ-01 | Feature/domain folders | T-002 | Feature-based layout documented in `src/README.md`; layer direction `app → features → shared` enforced by `import/no-restricted-paths` (#2). Complete once the first feature folders land (M1/M2) | ◐ |
-| R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` + `no-non-null-assertion` as errors (#3); API models generated from the OpenAPI snapshot with named types in `src/shared/api/types.ts` (#8); typed client pending (T-020) | ◐ |
+| R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` as an error (#3); API types generated from the OpenAPI snapshot (#8); the auth API calls the client with them and validates token responses (#17) | ☑ |
 | R-CQ-03 | Small components, custom hooks, composition over prop drilling | all | review | ☐ |
 | R-CQ-04 | Clear server-state vs UI-state split | ADR-0004 |  | ☐ |
 | R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass locally, in the pre-commit hook (#3) and in CI on every PR (`.github/workflows/ci.yml`, #6) | ☑ |
 | R-CQ-06 | Unit tests: API client | T-020 | `http-client.test.ts` (12) and `api-error.test.ts` (8): success, ErrorResponse → ApiError, network error, offline, timeout, abort, headers and bodies (#16) | ☑ |
-| R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 |  | ☐ |
+| R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 | `token-refresh.test.ts` (8) and `token-refresh.integration.test.ts` (7), including the many-concurrent-401s case; breaking single-flight fails 5 of them (#17) | ☑ |
 | R-CQ-08 | ≥1 component test (RTL) | T-024 |  | ☐ |
 | R-CQ-09 | E2E tests (plus) | T-093 |  | ☐ |
 | R-CQ-10 | `.env.example` committed | T-004 | `.env.example` documents every variable (#4) | ☑ |
