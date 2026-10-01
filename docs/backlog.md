@@ -25,7 +25,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-011 | [#10](https://github.com/MuhidinM/banking-app-challenge/issues/10) | Fonts via `next/font` (Montserrat text, Raleway headings), type scale utilities, focus ring utilities, tabular nums | R-UX-01/11 | S | done |
 | T-012 | [#11](https://github.com/MuhidinM/banking-app-challenge/issues/11) | Theme: system / light / dark, inline script before paint (no flash), toggle in sidebar + profile | R-UX-02, X-08 | M | done |
 | T-013 | [#12](https://github.com/MuhidinM/banking-app-challenge/issues/12) | UI primitives: Button (primary, soft, outline, ghost, danger, loading, compact), TextField (icon, error, hint, disabled), AmountField (ETB prefix, chips), Select, RadioCard | R-UX-05/09 | L | done |
-| T-014 | [#13](https://github.com/MuhidinM/banking-app-challenge/issues/13) | Card, ListRow, Skeleton, EmptyState, ErrorState with retry, Pill/filter tabs, Badge | R-UX-04/06 | M | todo |
+| T-014 | [#13](https://github.com/MuhidinM/banking-app-challenge/issues/13) | Card, ListRow, Skeleton, EmptyState, ErrorState with retry, Pill/filter tabs, Badge | R-UX-04/06 | M | done |
 | T-015 | [#14](https://github.com/MuhidinM/banking-app-challenge/issues/14) | Dialog (desktop) / Sheet (mobile) on Radix; Toast with `aria-live` | R-UX-13 | M | todo |
 | T-016 | [#15](https://github.com/MuhidinM/banking-app-challenge/issues/15) | `money.ts` (cents, parse, format, sign), `dates.ts` (UTC parse, local day groups, relative labels), `account-number.ts` (mask, group 4-4-2, validate 10 digits) + unit tests | X-02, X-05 | M | todo |
 
