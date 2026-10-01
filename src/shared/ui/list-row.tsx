@@ -62,6 +62,11 @@ interface ListRowProps {
   href?: string;
   /** Makes the row a button, e.g. to open transaction details. */
   onClick?: () => void;
+  /**
+   * What screen readers read instead of the visible pieces, as one sentence,
+   * e.g. "Refund from merchant, money in, ETB 1,665.00, refund, today at 15:18."
+   */
+  label?: string;
   className?: string;
 }
 
@@ -79,9 +84,10 @@ export function ListRow({
   valueClassName,
   href,
   onClick,
+  label,
   className,
 }: ListRowProps) {
-  const content = (
+  const visible = (
     <>
       <IconDisc icon={icon} tone={tone} />
       <span className="flex min-w-0 flex-1 flex-col">
@@ -104,6 +110,16 @@ export function ListRow({
         />
       )}
     </>
+  );
+  const content = label ? (
+    <>
+      <span className="sr-only">{label}</span>
+      <span aria-hidden="true" className="contents">
+        {visible}
+      </span>
+    </>
+  ) : (
+    visible
   );
 
   const rowClasses = cn(
