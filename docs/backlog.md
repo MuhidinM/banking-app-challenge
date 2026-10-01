@@ -100,7 +100,8 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-090 | [#45](https://github.com/MuhidinM/banking-app-challenge/issues/45) | Extras: hide balances, copy account number, share/print receipt, recent recipients, offline banner, CSV export | — | M | todo |
 | T-091 | [#46](https://github.com/MuhidinM/banking-app-challenge/issues/46) | Accessibility pass: keyboard walkthrough, NVDA, focus management, reduced motion, contrast | R-UX-10/11/12, X-13/14 | M | todo |
 | T-092 | [#47](https://github.com/MuhidinM/banking-app-challenge/issues/47) | Responsive pass at 360/390/768/1024/1440; long-value stress | R-UX-14, X-15 | M | todo |
-| T-093 | [#48](https://github.com/MuhidinM/banking-app-challenge/issues/48) | Playwright: auth + refresh, transfer happy + errors, bill, open account, filters; axe on every page; mocked in CI + live smoke locally | R-CQ-09 | L | todo |
+| T-093 | [#48](https://github.com/MuhidinM/banking-app-challenge/issues/48) | Playwright on a mock-mode build in CI: sign-in, register, route protection, session restore, logout, two tabs; CSP and request guard; axe on every page | R-CQ-09 | L | done |
+| T-104 | [#94](https://github.com/MuhidinM/banking-app-challenge/issues/94) | Playwright: token refresh, transfer happy + errors, bill, open account, history filters; axe on new pages; live smoke locally | R-CQ-09 | M | todo |
 | T-094 | [#49](https://github.com/MuhidinM/banking-app-challenge/issues/49) | Security headers + CSP in `next.config.ts`, `robots: noindex`, `?next=` validation review | X-10 | S | done |
 | T-095 | [#50](https://github.com/MuhidinM/banking-app-challenge/issues/50) | Fidelity report `docs/fidelity.md` (screenshots vs spec, both themes) | X-11 | M | todo |
 | T-096 | [#51](https://github.com/MuhidinM/banking-app-challenge/issues/51) | Lighthouse check, fix findings | X-12 | S | todo |

@@ -95,7 +95,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-CQ-06 | Unit tests: API client | T-020 | `http-client.test.ts` (12) and `api-error.test.ts` (8): success, ErrorResponse → ApiError, network error, offline, timeout, abort, headers and bodies (#16) | ☑ |
 | R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 | `token-refresh.test.ts` (8) and `token-refresh.integration.test.ts` (7), including the many-concurrent-401s case; breaking single-flight fails 5 of them (#17) | ☑ |
 | R-CQ-08 | ≥1 component test (RTL) | T-024 | RTL component tests for the UI kit and the login form (7 tests: sign-in, wrong credentials, disabled while signing in, missing fields, network failure, expired banner, show/hide password) (#20) | ☑ |
-| R-CQ-09 | E2E tests (plus) | T-093 |  | ☐ |
+| R-CQ-09 | E2E tests (plus) | T-093, T-104 | Playwright in CI (own job) on a mock-mode production build: sign-in, register, route protection with ?next=, reload, logout, two-tab logout, axe on every page; fails on any CSP violation or off-site request (#48). Money flows in #94 | ◐ |
 | R-CQ-10 | `.env.example` committed | T-004 | `.env.example` documents every variable (#4) | ☑ |
 
 ## G. Submission
