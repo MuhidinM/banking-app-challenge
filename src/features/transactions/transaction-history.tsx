@@ -12,8 +12,12 @@ import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
 import { flattenHistory, useTransactionHistory } from "./queries";
+import { TransactionDetails } from "./transaction-details";
 import { groupTransactionsByDay } from "./transaction-format";
 import { TransactionRow } from "./transaction-row";
+import { useTransactionParam } from "./use-transaction-param";
+
+import type { MouseEvent } from "react";
 
 /**
  * An account's history (UI spec, Transactions and WebAccountDetail): the
@@ -22,13 +26,34 @@ import { TransactionRow } from "./transaction-row";
  * it is, so the list never jumps and keyboard focus stays on the button.
  * After the last page the button goes away, and focus moves to the count.
  */
-export function TransactionHistory({
-  accountId,
-  dayHeading: DayHeading = "h2",
-}: {
+interface TransactionHistoryProps {
   accountId: number;
   /** Level of the day headings: h3 when the history sits under its own h2 (account details). */
   dayHeading?: "h2" | "h3";
+}
+
+/** The history list plus the details of the row in `?tx=`. */
+export function TransactionHistory(props: TransactionHistoryProps) {
+  const details = useTransactionParam();
+  return (
+    <>
+      <HistoryList {...props} onSelect={details.open} />
+      <TransactionDetails
+        accountId={props.accountId}
+        transactionId={details.transactionId}
+        onClose={details.close}
+        onCloseAutoFocus={details.onCloseAutoFocus}
+      />
+    </>
+  );
+}
+
+function HistoryList({
+  accountId,
+  dayHeading: DayHeading = "h2",
+  onSelect,
+}: TransactionHistoryProps & {
+  onSelect: (transactionId: number, event: MouseEvent<HTMLButtonElement>) => void;
 }) {
   const history = useTransactionHistory(accountId);
   const countRef = useRef<HTMLParagraphElement>(null);
@@ -101,7 +126,11 @@ export function TransactionHistory({
           <Card className="overflow-hidden">
             <RowList>
               {group.items.map((transaction) => (
-                <TransactionRow key={transaction.id} transaction={transaction} />
+                <TransactionRow
+                  key={transaction.id}
+                  transaction={transaction}
+                  onSelect={(event) => onSelect(transaction.id, event)}
+                />
               ))}
             </RowList>
           </Card>
