@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     template: "%s · Kifiya Banking",
   },
   description: "Reference banking web client for the Kifiya developer challenge.",
+  // A Kifiya-branded sign-in page must not show up in search results (spec note N-013).
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
