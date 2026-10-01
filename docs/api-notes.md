@@ -32,24 +32,31 @@ CORS allows `http://localhost:3000`, `http://localhost:5173`, `https://*.vercel.
 
 ## Error codes → user copy
 
-| Code      | HTTP | Meaning                                 | Copy (context)                                                         |
-| --------- | ---- | --------------------------------------- | ---------------------------------------------------------------------- |
-| AUTH_001  | 401  | Invalid credentials / not authenticated | Login: "Username or password is incorrect."                            |
-| AUTH_002  | 404  | User not found                          | "We couldn't find your profile. Please sign in again."                 |
-| AUTH_003  | 400  | Username exists                         | Field `username`: "This username is taken. Try another."               |
-| AUTH_004  | 400  | Email exists                            | Field `email`: "An account with this email already exists."            |
-| AUTH_005  | 401  | Invalid/expired token                   | Login banner: "Your session expired. Please sign in again."            |
-| ACC_001   | 404  | Account not found                       | Field `toAccountNumber`: "Account not found. Check the number."        |
-| ACC_002   | 400  | Insufficient funds                      | Field `amount`: "Insufficient funds. Available: ETB x."                |
-| ACC_003   | 400  | Same account                            | Field `toAccountNumber`: "Cannot transfer to the same account."        |
-| ACC_004   | 403  | Not your account                        | "This account isn't linked to your profile."                           |
-| TXN_001   | 400  | Invalid amount                          | Field `amount`: "Enter an amount greater than ETB 0.00."               |
-| TXN_003   | 400  | Wrong transaction type                  | "This receipt can't be shown here."                                    |
-| TXN_004   | 404  | Transaction not found                   | "We couldn't find this transaction."                                   |
-| VAL_001   | 400  | Validation                              | "Some details aren't valid. Check the highlighted fields."             |
-| GEN_001   | 500  | Server error                            | "Something went wrong on our side. Please try again."                  |
-| (network) | —    | Offline / DNS / CORS / timeout          | "Can't reach the bank right now. Check your connection and try again." |
-| (unknown) | any  | Anything else                           | "Something went wrong. Please try again."                              |
+Implemented in `src/shared/api/error-messages.ts` as `describeError(error, context)`, which returns the message, the form field it belongs to (if any) and whether a retry makes sense. The server's `message` is never shown; ESLint forbids reading `serverMessage` outside `src/shared/api`.
+
+| Code            | HTTP                    | Meaning                                 | Copy                                                                                                                                                            | Field (screen)                                             |
+| --------------- | ----------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| AUTH_001        | 401                     | Invalid credentials / not authenticated | Login: "Username or password is incorrect." · elsewhere: "Your session expired. Please sign in again."                                                          | —                                                          |
+| AUTH_002        | 404                     | User not found                          | "We couldn't find your profile. Please sign in again."                                                                                                          | —                                                          |
+| AUTH_003        | 400                     | Username exists                         | "This username is taken. Try another."                                                                                                                          | `username` (register)                                      |
+| AUTH_004        | 400                     | Email exists                            | "An account with this email already exists."                                                                                                                    | `email` (register)                                         |
+| AUTH_005        | 401                     | Invalid/expired token                   | "Your session expired. Please sign in again."                                                                                                                   | —                                                          |
+| ACC_001         | 404                     | Account not found                       | Transfer: "Account not found. Check the number." · elsewhere: "We couldn't find this account."                                                                  | `toAccountNumber` (transfer)                               |
+| ACC_002         | 400                     | Insufficient funds                      | "Insufficient funds. Available: ETB 8,640.00." (balance when known)                                                                                             | `amount` (transfer, bill)                                  |
+| ACC_003         | 400                     | Same account                            | "Cannot transfer to the same account."                                                                                                                          | `toAccountNumber` (transfer)                               |
+| ACC_004         | 403                     | Not your account                        | "This account isn't linked to your profile."                                                                                                                    | `fromAccountNumber` (transfer), `accountNumber` (bill)     |
+| TXN_001         | 400                     | Invalid amount                          | "Enter an amount greater than ETB 0.00." · open account: "Enter an amount of ETB 0.00 or more."                                                                 | `amount` (transfer, bill), `initialBalance` (open account) |
+| TXN_003         | 400                     | Wrong transaction type                  | "This receipt can't be shown here."                                                                                                                             | —                                                          |
+| TXN_004         | 404                     | Transaction not found                   | "We couldn't find this transaction."                                                                                                                            | —                                                          |
+| VAL_001         | 400                     | Validation                              | "Some details aren't valid. Check the highlighted fields."                                                                                                      | —                                                          |
+| GEN_001         | 500                     | Server error                            | "Something went wrong on our side. Please try again." (retryable)                                                                                               | —                                                          |
+| (no code)       | 5xx · 401 · 404 · other | Not an API ErrorResponse                | server error copy · session expired (or wrong credentials on login) · "We couldn't find what you were looking for." · "Something went wrong. Please try again." | —                                                          |
+| (offline)       | —                       | `navigator.onLine` is false             | "You're offline. Check your connection and try again." (retryable)                                                                                              | —                                                          |
+| (timeout)       | —                       | No answer within 15 s                   | "The bank is taking too long to respond. Please try again." (retryable)                                                                                         | —                                                          |
+| (unreachable)   | —                       | DNS, refused connection, CORS           | "Can't reach the bank right now. Check your connection and try again." (retryable)                                                                              | —                                                          |
+| (anything else) | —                       | A bug or a malformed response           | "Something went wrong. Please try again."                                                                                                                       | —                                                          |
+
+The brief's three required transfer messages ("Insufficient funds", "Cannot transfer to the same account", "Account not found") are used word for word.
 
 ## Integration notes
 

@@ -19,6 +19,13 @@ const noHexColours = {
   message: "Use a design-token colour (bg-surface, text-ink-muted...) instead of a hex value.",
 };
 
+// Raw backend text must never reach the screen (brief): only src/shared/api reads it,
+// and describeError() turns errors into user copy.
+const noServerMessage = {
+  selector: "MemberExpression[property.name='serverMessage']",
+  message: "Show describeError(error, context).message instead of the server's text.",
+};
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -117,10 +124,19 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Application code: no raw colours (rules don't merge, so the class rule is repeated).
+  // Application code: no raw colours and no server error text (rules don't merge,
+  // so the class rule is repeated in each block).
   {
     files: ["src/**/*.{ts,tsx}"],
-    ignores: ["**/*.test.{ts,tsx}", "src/mocks/**", "src/test/**"],
+    ignores: ["**/*.test.{ts,tsx}", "src/mocks/**", "src/test/**", "src/shared/api/**"],
+    rules: {
+      "no-restricted-syntax": ["error", noClassComponents, noHexColours, noServerMessage],
+    },
+  },
+  // The API layer may read the server message (to keep it for logs).
+  {
+    files: ["src/shared/api/**/*.{ts,tsx}"],
+    ignores: ["**/*.test.{ts,tsx}"],
     rules: { "no-restricted-syntax": ["error", noClassComponents, noHexColours] },
   },
 

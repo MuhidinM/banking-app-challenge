@@ -25,7 +25,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and calls `onSessionExpired` once; tested (#17). Navigation to /login and clearing the query cache are wired in #21 / #23 | ◐ |
 | R-API-09 | Transfer `note` optional, max 140 chars, becomes description | T-060 |  | ☐ |
 | R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 |  | ☐ |
-| R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 |  | ☐ |
+| R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 | `describeError()` maps every documented code to copy, per screen and per field (e.g. ACC_002 → amount, AUTH_003 → username); 31 tests (#19) | ☑ |
 
 ## C. Authentication and registration (Req 2)
 
@@ -74,7 +74,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-04 | Skeletons/spinners while loading | T-014 | Skeletons matching row geometry (identical heights measured) inside a `LoadingRegion` status, reduced-motion aware; route-level loading in T-032 (#13). Each screen uses them as it is built | ◐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
 | R-UX-06 | Empty states: no accounts, no transactions | T-014 | `EmptyState` with an action (#13); the no-accounts and no-transactions screens use it in T-041 / T-050 | ◐ |
-| R-UX-07 | Errors from API code + generic network message; **never raw backend text** | T-023 |  | ☐ |
+| R-UX-07 | Errors from API code + generic network message; **never raw backend text** | T-023 | Copy from the API code plus offline / timeout / unreachable messages; the server text is never used and ESLint forbids reading it outside src/shared/api (#19). Each screen shows it as it is built | ◐ |
 | R-UX-08 | Validation before send: positive amounts, 10-digit account numbers, required fields | T-060, T-070 |  | ☐ |
 | R-UX-09 | Labelled fields | T-013 | Every field component is labelled through FormField (label `for` the control) and described by its hint/error; tested by role and accessible name (#12). Applied in each form from T-024 on | ◐ |
 | R-UX-10 | Keyboard navigation | T-091 |  | ☐ |
