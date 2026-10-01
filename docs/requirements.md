@@ -24,7 +24,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 | Five concurrent 401s → exactly one refresh request, all five succeed (`token-refresh.integration.test.ts`); unit tests with a controllable refresh (#17) | ☑ |
 | R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and ends the session as expired (#17); `RequireSession` sends the user to `/login?reason=expired` with the way back (#21); the query cache is cleared (#23) | ☑ |
 | R-API-09 | Transfer `note` optional, max 140 chars, becomes description | T-060 |  | ☐ |
-| R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 |  | ☐ |
+| R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 | Details and the shared receipt show "Balance after" only when the API sends it; tested with a seed row without it (#35) | ☑ |
 | R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 | `describeError()` maps every documented code to copy, per screen and per field (e.g. ACC_002 → amount, AUTH_003 → username); 31 tests (#19) | ☑ |
 
 ## C. Authentication and registration (Req 2)
@@ -61,7 +61,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-14 | Row shows amount, type, direction, timestamp, description | T-051 | `TransactionRow`: type icon, description or a fallback from type and other account, "Type · time", signed amount; direction by sign, colour and the spoken "Money in/out" (#34) | ☑ |
 | R-FLOW-15 | Filter All / Money in (CREDIT) / Money out (DEBIT) | T-053 |  | ☐ |
 | R-FLOW-16 | Rows grouped by day: Today, Yesterday, date | T-051 | `groupTransactionsByDay` by local day (Today, Yesterday, "Monday, 28 Sep"); tested across local midnight in Africa/Addis_Ababa (#34) | ☑ |
-| R-FLOW-17 | Row → detail: type, direction, reference, counterparty, balanceAfter if present | T-052 |  | ☐ |
+| R-FLOW-17 | Row → detail: type, direction, reference, counterparty, balanceAfter if present | T-052 | `TransactionDetails` via `?tx=` (dialog on web, sheet on phones): type, direction, From/To account, reference `TX-000117`, balance after; reload reopens, Back closes (#35) | ☑ |
 | R-FLOW-18 | After transfer / bill / new account, balances and history refresh automatically | T-064 |  | ☐ |
 
 ## E. UX, accessibility, errors (Req 4)
