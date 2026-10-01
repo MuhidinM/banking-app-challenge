@@ -24,6 +24,10 @@ describe("DevTools", () => {
   it("shows the session inspector when it is on", async () => {
     flags.devTools = true;
     render(<DevTools />);
-    expect(await screen.findByRole("button", { name: "Session" })).toBeInTheDocument();
+    // The inspector is lazy-loaded; its first import can take over findBy's
+    // default second on a busy machine, which made this test flaky.
+    expect(
+      await screen.findByRole("button", { name: "Session" }, { timeout: 10_000 }),
+    ).toBeInTheDocument();
   });
 });
