@@ -72,15 +72,15 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser | ☑ |
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 |  | ☐ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 |  | ☐ |
-| R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 |  | ☐ |
+| R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
 | R-UX-06 | Empty states: no accounts, no transactions | T-014 |  | ☐ |
 | R-UX-07 | Errors from API code + generic network message; **never raw backend text** | T-023 |  | ☐ |
 | R-UX-08 | Validation before send: positive amounts, 10-digit account numbers, required fields | T-060, T-070 |  | ☐ |
-| R-UX-09 | Labelled fields | T-013 | axe | ☐ |
+| R-UX-09 | Labelled fields | T-013 | Every field component is labelled through FormField (label `for` the control) and described by its hint/error; tested by role and accessible name (#12). Applied in each form from T-024 on | ◐ |
 | R-UX-10 | Keyboard navigation | T-091 |  | ☐ |
 | R-UX-11 | Visible focus (spec: 3px accent-soft + accent border on controls; 2px accent offset 2 on buttons/links) | T-011 | Spec focus styles in `src/shared/theme/base.css`: 2px accent `:focus-visible` outline for buttons/links, `focus-control` accent border + 3px ring for fields; checked with keyboard Tab (#10). Applied to each component as it is built (T-013 on) | ◐ |
 | R-UX-12 | Sufficient contrast (WCAG AA, both themes) | T-010, T-091 | Contrast of every token colour pair measured in `scripts/design-contrast.test.ts` (#9). Ink and muted text pass in both themes; 9 pairs from the spec tokens fail and are kept by decision (N-016). Full axe check in T-091 | ◐ |
-| R-UX-13 | `aria-live` for toasts and inline errors | T-015 |  | ☐ |
+| R-UX-13 | `aria-live` for toasts and inline errors | T-015 | Field errors sit in a polite live region (FormField, RadioCards), tested (#12). Toasts in T-015 | ◐ |
 | R-UX-14 | Usable 360 → 1440 px | T-092 |  | ☐ |
 
 ## F. Code quality and testing (Req 5)
