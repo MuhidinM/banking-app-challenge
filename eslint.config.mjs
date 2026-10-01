@@ -78,6 +78,12 @@ const eslintConfig = defineConfig([
     rules: { "@typescript-eslint/no-non-null-assertion": "off" },
   },
 
+  // Command-line scripts report progress on the console.
+  {
+    files: ["scripts/**"],
+    rules: { "no-console": "off" },
+  },
+
   // Must stay last: turns off rules that conflict with Prettier.
   prettier,
 
