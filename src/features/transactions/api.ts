@@ -37,6 +37,10 @@ const pageSchema = z.object({
   empty: z.boolean(),
 }) satisfies z.ZodType<Page<Transaction>>;
 
+/** Rows per request while looking for one transaction, and how many pages to try. */
+const FIND_PAGE_SIZE = 50;
+const FIND_MAX_PAGES = 20;
+
 export interface HistoryPageRequest {
   /** 0-based page number. */
   page: number;
@@ -59,6 +63,27 @@ export function createTransactionsApi(client: HttpClient) {
         signal,
       });
       return pageSchema.parse(response);
+    },
+
+    /**
+     * One transaction of the account, or null when it isn't there. The API
+     * has no "get transaction by id" for every type (only transfers and bill
+     * payments), so this reads the history, newest first, until it finds it.
+     * Used when `?tx=` is opened from a link or a reload, before the list
+     * has loaded that row.
+     */
+    async find(
+      accountId: number,
+      transactionId: number,
+      signal?: AbortSignal,
+    ): Promise<Transaction | null> {
+      for (let page = 0; page < FIND_MAX_PAGES; page++) {
+        const result = await this.listPage(accountId, { page, size: FIND_PAGE_SIZE, signal });
+        const match = result.content.find((row) => row.id === transactionId);
+        if (match) return match;
+        if (result.last) return null;
+      }
+      return null;
     },
   };
 }

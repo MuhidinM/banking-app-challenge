@@ -5,6 +5,8 @@ import { transactionTypes } from "@/shared/api/types";
 
 import {
   groupTransactionsByDay,
+  receiptText,
+  transactionReference,
   signedAmount,
   transactionMeta,
   transactionSentence,
@@ -106,5 +108,39 @@ describe("groupTransactionsByDay", () => {
       ["Yesterday", [3, 2]],
       ["Monday, 28 Sep", [1]],
     ]);
+  });
+});
+
+describe("receipt", () => {
+  it('writes the reference as "TX-" and six digits', () => {
+    expect(transactionReference(tx({ id: 117 }))).toBe("TX-000117");
+  });
+
+  it("lists every detail, with the full date and the other account", () => {
+    const transfer = tx({
+      id: 117,
+      type: "FUND_TRANSFER",
+      direction: "DEBIT",
+      amount: 250,
+      description: null,
+      relatedAccount: "2899010846",
+      balanceAfter: 8390,
+    });
+    expect(receiptText(transfer, ADDIS)).toBe(
+      [
+        "Kifiya Bank transaction receipt",
+        "Transfer to 2899 0108 46",
+        "−ETB 250.00 (Money out)",
+        "Type: Transfer",
+        "Date: 1 Oct 2026, 15:18",
+        "To: 2899 0108 46",
+        "Reference: TX-000117",
+        "Balance after: ETB 8,390.00",
+      ].join("\n"),
+    );
+  });
+
+  it("leaves out the balance when the API doesn't send it", () => {
+    expect(receiptText(tx({ balanceAfter: null }), ADDIS)).not.toContain("Balance after");
   });
 });

@@ -36,6 +36,18 @@ describe("transactions API", () => {
     expect(page).toMatchObject({ number: 1, numberOfElements: 3, last: true });
   });
 
+  it("finds one transaction anywhere in the history", async () => {
+    expect(await api().find(JANE_CHECKING, 1)).toMatchObject({
+      id: 1,
+      description: "Cash deposit at Bole branch",
+    });
+  });
+
+  it("finds nothing for a transaction of another account", async () => {
+    // Id 16 is John's.
+    expect(await api().find(JANE_CHECKING, 16)).toBeNull();
+  });
+
   it("rejects another customer's account", async () => {
     const error: unknown = await api()
       .listPage(JOHN_CHECKING, { page: 0 })
