@@ -20,7 +20,7 @@ Open <http://localhost:3000>. Environment variables are described in [`.env.exam
 
 ### Run offline with the mock API
 
-Set `NEXT_PUBLIC_API_MOCKING=on` in `.env.local` and restart `pnpm dev`. Every API call is then answered by an in-browser mock ([MSW](https://mswjs.io)) with sample data, and nothing is sent to the shared API. Sign in with the demo users documented by the API: `demo.jane` (two accounts with history), `demo.john` (a transfer recipient) or `demo.empty` (no transactions), all with the password `Password123!`.
+Set `NEXT_PUBLIC_API_MOCKING=on` in `.env.local` and restart `pnpm dev`. Every API call is then answered by an in-browser mock ([MSW](https://mswjs.io)) with sample data, and nothing is sent to the shared API. Sign in with the demo users documented by the API: `demo.jane` (two accounts with history), `demo.john` (a transfer recipient) or `demo.empty` (no transactions), all with the password `Password123!`. The mock keeps its data in localStorage, so a reload keeps you signed in and keeps your transfers; clear the site's data to start again from the seed.
 
 ## Scripts
 
