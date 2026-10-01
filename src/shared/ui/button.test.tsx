@@ -61,4 +61,15 @@ describe("Button", () => {
     expect(button).toHaveClass("px-0", "w-full");
     expect(button).not.toHaveClass("px-5");
   });
+
+  it("keeps the icon when rendering a link (asChild)", () => {
+    render(
+      <Button asChild icon={ArrowLeftRight}>
+        <a href="/transfer">Transfer</a>
+      </Button>,
+    );
+    const link = screen.getByRole("link", { name: "Transfer" });
+    expect(link.querySelector("svg")).not.toBeNull();
+    expect(link).toHaveTextContent("Transfer");
+  });
 });

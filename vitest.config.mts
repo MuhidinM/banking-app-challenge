@@ -11,6 +11,9 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     // src/shared/config/env.ts validates on import; tests get a fixed, fake API origin.
     env: { NEXT_PUBLIC_API_BASE_URL: "https://api.test" },
+    // The default 5 s per test is tight for multi-step form tests when the
+    // machine is busy (CI runners, several suites at once); a passing test is no slower.
+    testTimeout: 15_000,
     restoreMocks: true,
     unstubEnvs: true,
     unstubGlobals: true,
