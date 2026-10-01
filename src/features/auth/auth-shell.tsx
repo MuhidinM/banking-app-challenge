@@ -1,3 +1,4 @@
+import { cn } from "@/shared/lib/cn";
 import { Logo } from "@/shared/ui/logo";
 
 import type { ReactNode } from "react";
@@ -7,8 +8,17 @@ interface AuthShellProps {
   headline: string;
   /** One or two sentences under the headline. */
   intro: string;
+  /** Form column width: 420 px for login, 480 px for register's two-column rows. */
+  width?: "narrow" | "wide";
+  /**
+   * Narrow screens show the logo above the form. Register shows a back button
+   * and its title instead (mobile Register screen).
+   */
+  mobileLogo?: boolean;
   children: ReactNode;
 }
+
+const widths = { narrow: "max-w-[26.25rem]", wide: "max-w-[30rem]" } as const;
 
 /**
  * The sign-in and register layout (UI spec, WebLogin and Login).
@@ -18,7 +28,13 @@ interface AuthShellProps {
  * above the form, no panel. The panel appears from 1024 px: at 768 px it would
  * leave the form under 280 px wide.
  */
-export function AuthShell({ headline, intro, children }: AuthShellProps) {
+export function AuthShell({
+  headline,
+  intro,
+  width = "narrow",
+  mobileLogo = true,
+  children,
+}: AuthShellProps) {
   return (
     <div className="grid min-h-dvh bg-surface lg:grid-cols-[53fr_47fr]">
       <aside className="hidden flex-col justify-between bg-auth-panel p-12 text-on-primary lg:flex">
@@ -33,8 +49,8 @@ export function AuthShell({ headline, intro, children }: AuthShellProps) {
       </aside>
 
       <main className="flex flex-col items-center px-page pt-14 pb-10 lg:justify-center lg:p-12">
-        <div className="flex w-full max-w-[26.25rem] flex-col gap-6 lg:gap-[1.375rem]">
-          <Logo className="mb-4 self-center text-primary lg:hidden" />
+        <div className={cn("flex w-full flex-col gap-6 lg:gap-[1.375rem]", widths[width])}>
+          {mobileLogo ? <Logo className="mb-4 self-center text-primary lg:hidden" /> : null}
           {children}
         </div>
       </main>
