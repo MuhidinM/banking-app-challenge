@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   dayLabel,
   formatDateTime,
+  formatFullDateTime,
   formatTime,
   groupByDay,
   localDayKey,
@@ -90,6 +91,12 @@ describe("formatTime and formatDateTime", () => {
   it("says Yesterday for yesterday", () => {
     expect(formatDateTime(parseApiDate("2026-09-30T17:18:00"), now, addis)).toBe(
       "Yesterday, 20:18",
+    );
+  });
+
+  it("writes the full date even for today when asked (shared receipts)", () => {
+    expect(formatFullDateTime(parseApiDate("2026-10-01T12:18:00"), addis)).toBe(
+      "1 Oct 2026, 15:18",
     );
   });
 });

@@ -19,6 +19,12 @@ interface DialogProps {
   onOpenChange?: (open: boolean) => void;
   /** Pinned under the content, e.g. "Confirm and send" and "Edit details". */
   footer?: ReactNode;
+  /**
+   * Where focus goes on close. By default it returns to `trigger`; a dialog
+   * opened another way (a list row, the URL) can call `event.preventDefault()`
+   * and focus the right element itself.
+   */
+  onCloseAutoFocus?: (event: Event) => void;
   children: ReactNode;
   className?: string;
 }
@@ -41,6 +47,7 @@ export function Dialog({
   open,
   onOpenChange,
   footer,
+  onCloseAutoFocus,
   children,
   className,
 }: DialogProps) {
@@ -58,6 +65,7 @@ export function Dialog({
         <DialogPrimitive.Content
           // Without a description Radix warns unless aria-describedby is explicitly undefined.
           {...(description ? {} : { "aria-describedby": undefined })}
+          {...(onCloseAutoFocus ? { onCloseAutoFocus } : {})}
           className={cn(
             "fixed z-50 flex flex-col gap-5 bg-surface text-ink shadow-float outline-none",
             // Mobile: bottom sheet.

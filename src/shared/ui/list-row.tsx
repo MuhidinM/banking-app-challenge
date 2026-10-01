@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { cn } from "@/shared/lib/cn";
 
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, MouseEvent, ReactNode } from "react";
 
 // Component sheet "Rows": tinted discs carry meaning. Accounts use the primary
 // tint, money in the green tint, money out stays neutral.
@@ -61,7 +61,7 @@ interface ListRowProps {
   /** Makes the row a link (with a chevron), e.g. to the account. */
   href?: string;
   /** Makes the row a button, e.g. to open transaction details. */
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   /**
    * What screen readers read instead of the visible pieces, as one sentence,
    * e.g. "Refund from merchant, money in, ETB 1,665.00, refund, today at 15:18."

@@ -67,7 +67,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 |---|---|---|---|---|---|
 | T-050 | [#33](https://github.com/MuhidinM/banking-app-challenge/issues/33) | `useTransactions(accountId)` infinite query, Load more + "Showing x of y" | R-FLOW-13 | M | done |
 | T-051 | [#34](https://github.com/MuhidinM/banking-app-challenge/issues/34) | TransactionRow (icon per type, title, meta "Type · time", signed amount colour + sign) and day grouping | R-FLOW-14/16 | M | done |
-| T-052 | [#35](https://github.com/MuhidinM/banking-app-challenge/issues/35) | Detail dialog (web) / sheet (mobile) via `?tx=`; balanceAfter only when present; share receipt | R-FLOW-17, R-API-10 | M | todo |
+| T-052 | [#35](https://github.com/MuhidinM/banking-app-challenge/issues/35) | Detail dialog (web) / sheet (mobile) via `?tx=`; balanceAfter only when present; share receipt | R-FLOW-17, R-API-10 | M | done |
 | T-053 | [#36](https://github.com/MuhidinM/banking-app-challenge/issues/36) | Direction filter in URL (`?direction=CREDIT`), account selector on Activity page | R-FLOW-15 | S | todo |
 
 ## M6 — Transfer
