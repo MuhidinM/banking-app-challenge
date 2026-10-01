@@ -6,12 +6,12 @@ How work moves from the backlog to `main`.
 
 - **Issues** — one per backlog task. The title says what changes in plain language; the body has context, scope, acceptance criteria and the requirement IDs it covers. The backlog ID (`T-021`) is in the body so [backlog.md](backlog.md) and GitHub stay linked.
 - **Milestones** — one per stage of the build (M0–M10), in the order they're built.
-- **Project board** — "Kifiya Banking Web Client": *Todo → In progress → Done*.
+- **Project board** — "Kifiya Banking Web Client": _Todo → In progress → Done_.
 - **Labels** — a type (`feature`, `chore`, `test`, `documentation`, `bug`, `accessibility`, `security`), an area (`area: auth`, `area: accounts`, …) and a size (`size: small` < 1 h, `size: medium` 1–3 h, `size: large` > 3 h).
 
 ## Flow per task
 
-1. Take the next open issue in milestone order; move it to *In progress*.
+1. Take the next open issue in milestone order; move it to _In progress_.
 2. Create a branch from `main` named `<type>/<issue-number>-<what-it-does>`, e.g. `feature/24-login-page`, `fix/31-refresh-loop-on-login`, `chore/3-lint-and-format-setup`.
 3. Build to the Definition of Done below, committing in small steps.
 4. Push and open a pull request using the template. The description links the issue with `Closes #<number>`.
@@ -22,7 +22,7 @@ How work moves from the backlog to `main`.
 
 ## Commits
 
-[Conventional Commits](https://www.conventionalcommits.org). One logical change per commit. The subject says *what* changed; the body says *why* and anything non-obvious. The footer references the issue.
+[Conventional Commits](https://www.conventionalcommits.org). One logical change per commit. The subject says _what_ changed; the body says _why_ and anything non-obvious. The footer references the issue.
 
 ```
 feat(auth): share one token refresh between concurrent requests

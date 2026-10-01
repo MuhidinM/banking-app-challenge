@@ -57,10 +57,10 @@ Tab A request ──401──┘          │
 
 ### Token storage ([ADR-0003](decisions/0003-token-storage.md))
 
-| Token | Where | Why |
-|---|---|---|
-| Access (10 min) | Memory only | Not persisted, not readable after reload |
-| Refresh (24 h) | `localStorage` | Must survive reload and be shared across tabs |
+| Token           | Where          | Why                                           |
+| --------------- | -------------- | --------------------------------------------- |
+| Access (10 min) | Memory only    | Not persisted, not readable after reload      |
+| Refresh (24 h)  | `localStorage` | Must survive reload and be shared across tabs |
 
 Trade-off: a successful XSS could read the refresh token. Mitigations: strict CSP, no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations.
 
@@ -68,22 +68,22 @@ Trade-off: a successful XSS could read the refresh token. Mitigations: strict CS
 
 ([ADR-0004](decisions/0004-state-management.md))
 
-| Kind | Where | Examples |
-|---|---|---|
-| Server state | TanStack Query | user, accounts, transactions, receipts |
-| URL state | search params | Activity `account` + `direction`, open transaction `?tx=`, preselected `from` account |
-| Session | small external store + context | tokens, status `unknown / authenticated / anonymous` |
-| Preferences | `localStorage` behind a hook | theme override, hide balances |
-| Forms | react-hook-form + zod | every form |
+| Kind         | Where                          | Examples                                                                              |
+| ------------ | ------------------------------ | ------------------------------------------------------------------------------------- |
+| Server state | TanStack Query                 | user, accounts, transactions, receipts                                                |
+| URL state    | search params                  | Activity `account` + `direction`, open transaction `?tx=`, preselected `from` account |
+| Session      | small external store + context | tokens, status `unknown / authenticated / anonymous`                                  |
+| Preferences  | `localStorage` behind a hook   | theme override, hide balances                                                         |
+| Forms        | react-hook-form + zod          | every form                                                                            |
 
 Cache updates after mutations:
 
-| Mutation | Invalidates |
-|---|---|
-| Open account | `accounts` |
-| Transfer | `accounts`, `transactions(from)`, `transactions(to)` when it's the user's own account |
-| Pay bill | `accounts`, `transactions(account)` |
-| Logout / failed refresh | everything (`queryClient.clear()`) so no data survives into the next session |
+| Mutation                | Invalidates                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| Open account            | `accounts`                                                                            |
+| Transfer                | `accounts`, `transactions(from)`, `transactions(to)` when it's the user's own account |
+| Pay bill                | `accounts`, `transactions(account)`                                                   |
+| Logout / failed refresh | everything (`queryClient.clear()`) so no data survives into the next session          |
 
 ## Money and dates
 
@@ -153,15 +153,15 @@ Unit and component tests sit next to their source as `*.test.ts(x)`. A folder on
 
 ## Tech stack
 
-| Concern | Choice | Runner-up |
-|---|---|---|
-| Framework | Next.js 16 App Router, React 19, TypeScript strict | Vite + React Router |
-| Styling | Tailwind v4, `@theme` fed by generated token CSS | CSS Modules |
-| Accessible primitives | Radix UI (Dialog, Select, RadioGroup, Toast), styled to the spec | shadcn/ui |
-| Server state | TanStack Query v5 | SWR |
-| Forms | react-hook-form + zod | — |
-| Icons | lucide-react (outline) | Heroicons |
-| Unit / component tests | Vitest, React Testing Library, MSW | Jest |
-| E2E + accessibility | Playwright + @axe-core/playwright | Cypress |
-| Lint / format | ESLint (Next config) + Prettier, `tsc --noEmit` | Biome |
-| CI / hosting | GitHub Actions, Vercel | Netlify |
+| Concern                | Choice                                                           | Runner-up           |
+| ---------------------- | ---------------------------------------------------------------- | ------------------- |
+| Framework              | Next.js 16 App Router, React 19, TypeScript strict               | Vite + React Router |
+| Styling                | Tailwind v4, `@theme` fed by generated token CSS                 | CSS Modules         |
+| Accessible primitives  | Radix UI (Dialog, Select, RadioGroup, Toast), styled to the spec | shadcn/ui           |
+| Server state           | TanStack Query v5                                                | SWR                 |
+| Forms                  | react-hook-form + zod                                            | —                   |
+| Icons                  | lucide-react (outline)                                           | Heroicons           |
+| Unit / component tests | Vitest, React Testing Library, MSW                               | Jest                |
+| E2E + accessibility    | Playwright + @axe-core/playwright                                | Cypress             |
+| Lint / format          | ESLint (Next config) + Prettier, `tsc --noEmit`                  | Biome               |
+| CI / hosting           | GitHub Actions, Vercel                                           | Netlify             |
