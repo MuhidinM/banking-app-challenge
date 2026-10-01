@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same branch or PR cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, type-check, test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Public, non-secret value (same as .env.example); the build validates it at startup.
+      NEXT_PUBLIC_API_BASE_URL: https://challenge-api.qena.dev
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      # Actions are pinned to full commit SHAs so a moved tag can't change what runs.
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pnpm (version from package.json "packageManager")
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Install Node.js (version from .nvmrc)
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Check generated API types are up to date
+        run: pnpm api:types:check
+
+      - name: Type-check
+        run: pnpm typecheck
+
+      - name: Run unit and component tests
+        run: pnpm test
+
+      - name: Restore the Next.js build cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          # New cache when dependencies or source change; fall back to the last one for the same dependencies.
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Build
+        run: pnpm build

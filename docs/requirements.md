@@ -91,7 +91,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` + `no-non-null-assertion` as errors (#3); API models generated from the OpenAPI snapshot with named types in `src/shared/api/types.ts` (#8); typed client pending (T-020) | ◐ |
 | R-CQ-03 | Small components, custom hooks, composition over prop drilling | all | review | ☐ |
 | R-CQ-04 | Clear server-state vs UI-state split | ADR-0004 |  | ☐ |
-| R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass; pre-commit hook (#3); CI pending (T-006) | ◐ |
+| R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass locally, in the pre-commit hook (#3) and in CI on every PR (`.github/workflows/ci.yml`, #6) | ☑ |
 | R-CQ-06 | Unit tests: API client | T-020 |  | ☐ |
 | R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 |  | ☐ |
 | R-CQ-08 | ≥1 component test (RTL) | T-024 |  | ☐ |
