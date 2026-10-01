@@ -80,7 +80,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-10 | Keyboard navigation | T-091 |  | ☐ |
 | R-UX-11 | Visible focus (spec: 3px accent-soft + accent border on controls; 2px accent offset 2 on buttons/links) | T-011 | Spec focus styles in `src/shared/theme/base.css`: 2px accent `:focus-visible` outline for buttons/links, `focus-control` accent border + 3px ring for fields; checked with keyboard Tab (#10). Applied to each component as it is built (T-013 on) | ◐ |
 | R-UX-12 | Sufficient contrast (WCAG AA, both themes) | T-010, T-091 | Contrast of every token colour pair measured in `scripts/design-contrast.test.ts` (#9). Ink and muted text pass in both themes; 9 pairs from the spec tokens fail and are kept by decision (N-016). Full axe check in T-091 | ◐ |
-| R-UX-13 | `aria-live` for toasts and inline errors | T-015 | Field errors sit in a polite live region (FormField, RadioCards), tested (#12). Toasts in T-015 | ◐ |
+| R-UX-13 | `aria-live` for toasts and inline errors | T-015 | Field errors in polite live regions (#12); toasts announced through Radix live regions, errors assertively, other toasts politely; tested (#14). Each flow uses them as it is built | ◐ |
 | R-UX-14 | Usable 360 → 1440 px | T-092 |  | ☐ |
 
 ## F. Code quality and testing (Req 5)
@@ -124,7 +124,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-10 | CSP + security headers; `noindex` | T-094 | ☐ |
 | X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
 | X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 | ☐ |
-| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | T-091 | ☐ |
+| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | Dialogs trap focus and return it to the trigger on close; tested (#14). Focus to the page heading on navigation comes in T-031 | ◐ |
 | X-14 | `prefers-reduced-motion` respected | T-091 | ☐ |
 | X-15 | Long values don't break layout (long biller, long note, ETB 1,000,000,000.00) | T-092 | ☐ |
 
