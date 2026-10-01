@@ -117,7 +117,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | ☐ |
 | X-04 | Total balance correct with >10 accounts | T-040 | ☐ |
 | X-05 | Money math in cents; no float drift | T-016 | ☐ |
-| X-06 | Mock mode runs the full app offline | T-005 | ☐ |
+| X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests (#5). Browser happy path not yet confirmed in a regular browser | ◐ |
 | X-07 | Session inspector ("expire token now") behind a flag | T-029 | ☐ |
 | X-08 | No theme flash on first paint | T-012 | ☐ |
 | X-09 | Query cache cleared on logout / refresh failure | T-027 | ☐ |
