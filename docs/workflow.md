@@ -16,10 +16,17 @@ How work moves from the backlog to `main`.
 3. Build to the Definition of Done below, committing in small steps.
 4. Push and open a pull request using the template. The description links the issue with `Closes #<number>`.
 5. On the branch, mark the task `done` in [backlog.md](backlog.md) and tick the [requirements.md](requirements.md) rows it covers, with evidence.
-6. Tick every item in the issue's _What to do_ and _Done when_ lists that was delivered. Anything not delivered stays unticked and is explained in the PR (or moved to a new issue).
+6. Tick every item in the issue's _What to do_ and _Done when_ lists that was delivered. A closed issue or merged PR never keeps an empty checkbox — see _Work that is not done_ below.
 7. CI must be green — GitHub enforces this (see _Protected `main`_ below). Review the diff as if someone else wrote it.
 8. Merge with a **merge commit** so every detailed commit stays visible on `main`. The branch is deleted automatically.
 9. Spec gaps or conflicts go into [spec-notes.md](spec-notes.md). Any choice someone could reasonably question gets an ADR in [decisions/](decisions/README.md).
+
+## Work that is not done
+
+An empty checkbox on something closed reads as forgotten work, so deferred items are rewritten instead:
+
+- **In an issue:** strike the item through and say which issue owns it now — `~~End-to-end job~~ **Moved to #48**`. If no issue owns it yet, open one first.
+- **In a pull request:** list it as a plain bullet — `**Not in this PR:** unit tests — added in #58` — not as an unticked box.
 
 ## Protected `main`
 

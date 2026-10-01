@@ -28,3 +28,6 @@ Closes #
 - [ ] Requirement rows in `docs/requirements.md` ticked with evidence
 - [ ] `docs/backlog.md` status updated
 - [ ] New decisions recorded in `docs/decisions/`, spec gaps in `docs/spec-notes.md`
+
+<!-- Before merging: tick what was done, delete what doesn't apply, and write anything deferred as
+     "- **Not in this PR:** … (moved to #N)" instead of leaving an empty box. -->
