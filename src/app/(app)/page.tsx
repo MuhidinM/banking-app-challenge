@@ -1,6 +1,6 @@
-import { PageHeader } from "@/shared/layout/page-header";
+import { Dashboard } from "@/features/dashboard/dashboard";
 
-// Placeholder until the dashboard is built (#29).
+/** Home: the dashboard (UI spec, WebDashboard and Main). */
 export default function HomePage() {
-  return <PageHeader title="Kifiya Banking" />;
+  return <Dashboard />;
 }
