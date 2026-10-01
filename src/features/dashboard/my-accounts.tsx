@@ -3,13 +3,11 @@
 import { Landmark, Plus } from "lucide-react";
 import Link from "next/link";
 
-import { ACCOUNT_TYPES } from "@/features/accounts/account-types";
+import { AccountRow } from "@/features/accounts/account-row";
 import { useAccounts } from "@/features/accounts/queries";
-import { maskAccountNumber } from "@/shared/lib/account-number";
-import { formatMoney, toCents } from "@/shared/lib/money";
 import { Button } from "@/shared/ui/button";
 import { Card, SectionHeader } from "@/shared/ui/card";
-import { ListRow, RowList } from "@/shared/ui/list-row";
+import { RowList } from "@/shared/ui/list-row";
 import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
@@ -53,21 +51,9 @@ function AccountsContent() {
   }
   return (
     <RowList>
-      {accounts.slice(0, DASHBOARD_ACCOUNTS).map((account) => {
-        const type = ACCOUNT_TYPES[account.accountType];
-        return (
-          <ListRow
-            key={account.id}
-            icon={type.icon}
-            tone="primary"
-            title={type.label}
-            meta={maskAccountNumber(account.accountNumber)}
-            value={formatMoney(toCents(account.balance))}
-            valueMeta="Available"
-            href={`/accounts/${account.id}`}
-          />
-        );
-      })}
+      {accounts.slice(0, DASHBOARD_ACCOUNTS).map((account) => (
+        <AccountRow key={account.id} account={account} />
+      ))}
     </RowList>
   );
 }
