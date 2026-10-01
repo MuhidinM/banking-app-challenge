@@ -14,7 +14,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-005 | [#5](https://github.com/MuhidinM/banking-app-challenge/issues/5) | MSW setup (browser + node), fixtures modelled on demo users, error scenarios | X-06 | M | todo |
 | T-006 | [#6](https://github.com/MuhidinM/banking-app-challenge/issues/6) | GitHub Actions CI: install, typecheck, lint, format, unit; later E2E | R-CQ-05 | M | todo |
 | T-007 | [#7](https://github.com/MuhidinM/banking-app-challenge/issues/7) | Pull request and issue templates (task, bug); issues, labels, milestones and project board created from this file | — | S | done |
-| T-008 | [#8](https://github.com/MuhidinM/banking-app-challenge/issues/8) | Generate API types from `docs/api/openapi.json` (`openapi-typescript`), script `api:types` | R-CQ-02 | S | todo |
+| T-008 | [#8](https://github.com/MuhidinM/banking-app-challenge/issues/8) | Generate API types from `docs/api/openapi.json` (`openapi-typescript`), script `api:types` | R-CQ-02 | S | done |
 | T-009 | [#58](https://github.com/MuhidinM/banking-app-challenge/issues/58) | Vitest + React Testing Library + jest-dom setup, `test` scripts, first tests for env parsing (added while working on #4: no task set up the test runner) | R-CQ-06/07/08 | S | done |
 
 ## M1 — Foundation
