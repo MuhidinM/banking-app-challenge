@@ -46,6 +46,29 @@ describe("proxy (optimistic redirects on the has_session cookie)", () => {
   });
 });
 
+describe("proxy Content-Security-Policy", () => {
+  function page(path: string) {
+    return proxy(new NextRequest(new URL(path, "https://bank.test")));
+  }
+
+  it("gives each page a policy with a fresh nonce and passes the nonce on to rendering", () => {
+    const first = page("/login");
+    const policy = first.headers.get("content-security-policy") ?? "";
+    const nonce = /'nonce-([^']+)'/.exec(policy)?.[1];
+    expect(nonce).toBeDefined();
+    expect(policy).toContain("connect-src 'self' https://api.test");
+    // NextResponse.next({ request }) forwards overridden request headers like this.
+    expect(first.headers.get("x-middleware-request-x-nonce")).toBe(nonce);
+    expect(first.headers.get("x-middleware-request-content-security-policy")).toBe(policy);
+
+    expect(page("/login").headers.get("content-security-policy")).not.toBe(policy);
+  });
+
+  it("adds no policy to a redirect", () => {
+    expect(page("/accounts").headers.get("content-security-policy")).toBeNull();
+  });
+});
+
 describe("proxy matcher", () => {
   // Next's matcher test helper needs the AsyncLocalStorage global that the
   // Next.js runtime provides. It must be set before the helper is imported.
