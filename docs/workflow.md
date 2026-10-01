@@ -15,10 +15,11 @@ How work moves from the backlog to `main`.
 2. Create a branch from `main` named `<type>/<issue-number>-<what-it-does>`, e.g. `feature/24-login-page`, `fix/31-refresh-loop-on-login`, `chore/3-lint-and-format-setup`.
 3. Build to the Definition of Done below, committing in small steps.
 4. Push and open a pull request using the template. The description links the issue with `Closes #<number>`.
-5. CI must be green. Review the diff as if someone else wrote it.
-6. Merge with a **merge commit** so every detailed commit stays visible on `main`. Delete the branch.
-7. Mark the task `done` in [backlog.md](backlog.md) and tick the [requirements.md](requirements.md) rows it covers, with evidence.
-8. Spec gaps or conflicts go into [spec-notes.md](spec-notes.md). Any choice someone could reasonably question gets an ADR in [decisions/](decisions/README.md).
+5. On the branch, mark the task `done` in [backlog.md](backlog.md) and tick the [requirements.md](requirements.md) rows it covers, with evidence.
+6. Tick every item in the issue's _What to do_ and _Done when_ lists that was delivered. Anything not delivered stays unticked and is explained in the PR (or moved to a new issue).
+7. CI must be green. Review the diff as if someone else wrote it.
+8. Merge with a **merge commit** so every detailed commit stays visible on `main`. The branch is deleted automatically.
+9. Spec gaps or conflicts go into [spec-notes.md](spec-notes.md). Any choice someone could reasonably question gets an ADR in [decisions/](decisions/README.md).
 
 ## Commits
 

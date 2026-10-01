@@ -14,3 +14,7 @@ docs/design/design-tokens.json
 
 # Private notes and third-party material
 specs/
+
+# Tracking tables: kept compact so ticking one row changes one line
+docs/requirements.md
+docs/backlog.md
