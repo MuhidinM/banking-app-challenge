@@ -33,6 +33,7 @@ Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get
 | `pnpm dev`                                | Start the development server                                                      |
 | `pnpm build` / `pnpm start`               | Production build / serve it                                                       |
 | `pnpm test`                               | Unit and component tests (Vitest); `test:watch`, `test:coverage`                  |
+| `pnpm e2e`                                | Playwright tests on a mock-mode build; once: `pnpm exec playwright install`       |
 | `pnpm typecheck`                          | Generate Next.js route types, then `tsc --noEmit`                                 |
 | `pnpm lint` / `pnpm lint:fix`             | ESLint, zero warnings allowed                                                     |
 | `pnpm format` / `pnpm format:check`       | Prettier                                                                          |
@@ -40,7 +41,7 @@ Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get
 | `pnpm api:types` / `pnpm api:types:check` | Generate API types from the snapshot / check they're current                      |
 | `pnpm tokens` / `pnpm tokens:check`       | Generate the theme CSS from `docs/design/design-tokens.json` / check it's current |
 
-Git hooks run lint and format on staged files before each commit, and the type-check and tests before each push. CI runs all checks plus a production build on every pull request.
+Git hooks run lint and format on staged files before each commit, and the type-check and tests before each push. CI runs all checks plus a production build on every pull request, and the end-to-end tests in a second job.
 
 ## Documentation
 
