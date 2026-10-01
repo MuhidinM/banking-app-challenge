@@ -1,22 +1,33 @@
 "use client";
 
 import {
+  ArrowDownLeft,
   ArrowLeftRight,
+  ArrowUpRight,
   CircleDollarSign,
   Hash,
   Landmark,
   Lock,
   Percent,
   ReceiptText,
+  RotateCcw,
+  ScrollText,
   User,
+  WalletCards,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 import { ThemeToggle } from "@/shared/theme/theme-toggle";
 import { AmountField } from "@/shared/ui/amount-field";
 import { Button } from "@/shared/ui/button";
+import { Card, SectionHeader } from "@/shared/ui/card";
+import { Badge, InlineMessage } from "@/shared/ui/feedback";
+import { FilterPills } from "@/shared/ui/filter-pills";
+import { ListRow, RowList } from "@/shared/ui/list-row";
 import { RadioCards } from "@/shared/ui/radio-cards";
 import { SelectField } from "@/shared/ui/select-field";
+import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
+import { EmptyState, ErrorState } from "@/shared/ui/states";
 import { PasswordField, TextField } from "@/shared/ui/text-field";
 
 function Section({ title, note, children }: { title: string; note: string; children: ReactNode }) {
@@ -41,6 +52,7 @@ export function ComponentGallery() {
   const [account, setAccount] = useState("checking");
   const [biller, setBiller] = useState<string | undefined>(undefined);
   const [accountType, setAccountType] = useState("SAVINGS");
+  const [direction, setDirection] = useState<"ALL" | "CREDIT" | "DEBIT">("ALL");
 
   const add = (cents: number) => () =>
     setAmount(((Number.parseFloat(amount || "0") * 100 + cents) / 100).toFixed(2));
@@ -162,6 +174,140 @@ export function ComponentGallery() {
               { label: "Max", onSelect: () => {} },
             ]}
           />
+        </div>
+      </Section>
+
+      <Section
+        title="Rows"
+        note="Tinted discs carry meaning: primary for accounts, green for money in, neutral for money out. Amounts are signed."
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <SectionHeader title="My accounts" action={{ label: "View all", href: "#rows" }} />
+            <Card className="overflow-hidden">
+              <RowList>
+                <ListRow
+                  icon={Landmark}
+                  tone="primary"
+                  title="Checking"
+                  meta="•••• 8057"
+                  value="ETB 8,640.00"
+                  valueMeta="Available"
+                  href="#rows"
+                />
+                <ListRow
+                  icon={CircleDollarSign}
+                  tone="primary"
+                  title="Savings"
+                  meta="•••• 8911"
+                  value="ETB 2,200.00"
+                  valueMeta="Available"
+                  href="#rows"
+                />
+              </RowList>
+            </Card>
+          </div>
+          <div id="rows" className="flex flex-col gap-3">
+            <SectionHeader title="Recent activity" action={{ label: "View all", href: "#rows" }} />
+            <Card className="overflow-hidden">
+              <RowList>
+                <ListRow
+                  icon={RotateCcw}
+                  tone="credit"
+                  title="Refund from merchant"
+                  meta="Refund · 15:18"
+                  value="+ETB 1,665.00"
+                  valueClassName="text-credit"
+                  onClick={() => {}}
+                />
+                <ListRow
+                  icon={Percent}
+                  title="Monthly access fee"
+                  meta="Access fee · 20:18"
+                  value="-ETB 15.00"
+                  onClick={() => {}}
+                />
+              </RowList>
+            </Card>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        title="Filters, badges, feedback"
+        note="Filter pills switch a list; badges label; messages inform."
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="flex flex-col gap-4">
+            <FilterPills
+              label="Show"
+              value={direction}
+              onValueChange={setDirection}
+              options={[
+                { value: "ALL", label: "All" },
+                {
+                  value: "CREDIT",
+                  label: "Money in",
+                  icon: ArrowDownLeft,
+                  iconClassName: "text-credit",
+                },
+                {
+                  value: "DEBIT",
+                  label: "Money out",
+                  icon: ArrowUpRight,
+                  iconClassName: "text-debit",
+                },
+              ]}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Badge>Neutral</Badge>
+              <Badge tone="credit">Money in</Badge>
+              <Badge tone="debit">Money out</Badge>
+              <Badge tone="primary">2 accounts</Badge>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <InlineMessage>Informational message.</InlineMessage>
+            <InlineMessage tone="success">Sent ETB 250.00 to 2899010846.</InlineMessage>
+            <InlineMessage tone="warning">
+              Transfers are instant and cannot be reversed. Check the account number.
+            </InlineMessage>
+            <InlineMessage tone="error">Your session expired. Please sign in again.</InlineMessage>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        title="Loading, empty, error"
+        note="Skeletons match the rows they stand in for; empty and error states say what to do next."
+      >
+        <div className="grid gap-5 md:grid-cols-3">
+          <Card className="overflow-hidden">
+            <LoadingRegion label="Loading your accounts">
+              <ul className="divide-y divide-border">
+                <ListRowSkeleton />
+                <ListRowSkeleton />
+              </ul>
+            </LoadingRegion>
+          </Card>
+          <Card>
+            <EmptyState
+              icon={ScrollText}
+              title="No transactions yet"
+              description="Money in and out of this account will show up here."
+            />
+          </Card>
+          <Card>
+            <ErrorState onRetry={() => {}} />
+          </Card>
+          <Card className="md:col-span-3">
+            <EmptyState
+              icon={WalletCards}
+              title="No accounts yet"
+              description="Open an account to start saving or making transfers."
+              action={<Button size="compact">Open an account</Button>}
+            />
+          </Card>
         </div>
       </Section>
 
