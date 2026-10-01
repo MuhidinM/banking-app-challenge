@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
@@ -10,6 +10,8 @@ import { fakeSessionEnvironment as fakeEnvironment } from "@/test/fake-session-e
 
 import { createAppSession } from "./session";
 import { REFRESH_TOKEN_KEY, type SessionEnvironment, createSessionStore } from "./session-store";
+
+import type { SessionChannel, SessionMessage } from "./session-channel";
 
 const credentials = { username: "demo.jane", passwordHash: DEMO_PASSWORD };
 
@@ -111,5 +113,86 @@ describe("session against the mock API", () => {
     await session.restore();
     expect(session.store.getSnapshot().status).toBe("anonymous");
     expect(counter.refreshes).toBe(0);
+  });
+});
+
+/** Two tabs' channels, joined in memory. */
+function linkedChannels() {
+  type Listener = (message: SessionMessage) => void;
+  const listeners = [new Set<Listener>(), new Set<Listener>()] as const;
+  const channel = (own: 0 | 1): SessionChannel => ({
+    post: (message) => listeners[own === 0 ? 1 : 0].forEach((listener) => listener(message)),
+    subscribe(listener) {
+      listeners[own].add(listener);
+      return () => listeners[own].delete(listener);
+    },
+  });
+  return [channel(0), channel(1)] as const;
+}
+
+describe("logout", () => {
+  it("forgets the tokens and the cookie, and reports the session ended once", async () => {
+    const { environment, values, cookie } = fakeEnvironment();
+    const onSessionEnded = vi.fn();
+    const session = createAppSession(createSessionStore(environment), { onSessionEnded });
+    await session.signIn(credentials);
+
+    session.signOut();
+
+    expect(session.store.getSnapshot()).toEqual({
+      status: "anonymous",
+      endedBecause: "signed-out",
+    });
+    expect(session.store.getAccessToken()).toBeNull();
+    expect(values.has(REFRESH_TOKEN_KEY)).toBe(false);
+    expect(cookie).toHaveBeenLastCalledWith(false);
+    expect(onSessionEnded).toHaveBeenCalledExactlyOnceWith("signed-out");
+    await expect(session.client.request("/api/users/me")).rejects.toMatchObject({ status: 401 });
+  });
+
+  it("logs out the other tabs too", async () => {
+    const [thisChannel, otherChannel] = linkedChannels();
+    const onOtherEnded = vi.fn();
+    const thisTab = createAppSession(createSessionStore(fakeEnvironment().environment), {
+      channel: thisChannel,
+    });
+    const otherTab = createAppSession(createSessionStore(fakeEnvironment().environment), {
+      channel: otherChannel,
+      onSessionEnded: onOtherEnded,
+    });
+    await thisTab.signIn(credentials);
+    await otherTab.signIn(credentials);
+
+    thisTab.signOut();
+
+    expect(otherTab.store.getSnapshot()).toEqual({
+      status: "anonymous",
+      endedBecause: "signed-out",
+    });
+    expect(otherTab.store.getAccessToken()).toBeNull();
+    expect(onOtherEnded).toHaveBeenCalledExactlyOnceWith("signed-out");
+  });
+
+  it('reports "expired" when the API rejects the refresh token', async () => {
+    const { environment } = fakeEnvironment();
+    const onSessionEnded = vi.fn();
+    await createAppSession(createSessionStore(environment)).signIn(credentials);
+    expireRefreshTokens();
+
+    const afterReload = createAppSession(createSessionStore(environment), { onSessionEnded });
+    await afterReload.restore().catch(() => {});
+
+    expect(onSessionEnded).toHaveBeenCalledExactlyOnceWith("expired");
+  });
+
+  it("doesn't report an end for a visitor who never signed in", () => {
+    const onSessionEnded = vi.fn();
+    const session = createAppSession(createSessionStore(fakeEnvironment().environment), {
+      onSessionEnded,
+    });
+
+    session.signOut();
+
+    expect(onSessionEnded).not.toHaveBeenCalled();
   });
 });

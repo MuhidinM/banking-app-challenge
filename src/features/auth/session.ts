@@ -8,12 +8,15 @@
 
 import { isNetworkError } from "@/shared/api/api-error";
 import { type HttpClient, createHttpClient } from "@/shared/api/http-client";
+import { getQueryClient } from "@/shared/api/query-client";
 import { createTokenRefresher } from "@/shared/api/token-refresh";
 import type { LoginRequest, LoginResponse } from "@/shared/api/types";
 import { env } from "@/shared/config/env";
+import { clearToasts } from "@/shared/ui/toast";
 
 import { createAuthApi } from "./api";
-import { type SessionStore, createSessionStore } from "./session-store";
+import { type SessionChannel, createSessionChannel } from "./session-channel";
+import { type SessionState, type SessionStore, createSessionStore } from "./session-store";
 
 export interface AppSession {
   store: SessionStore;
@@ -28,11 +31,29 @@ export interface AppSession {
    * more than once.
    */
   restore(): Promise<void>;
+  /**
+   * Logs out: forgets the tokens and the cookie, and tells the other tabs to
+   * do the same. The API has no logout endpoint; the refresh token simply
+   * expires. Through `onSessionEnded`, the cached data and toasts go too.
+   */
+  signOut(): void;
+}
+
+export interface AppSessionOptions {
+  baseUrl?: string;
+  /** The other open tabs; null (the default) for a session on its own, as in tests. */
+  channel?: SessionChannel | null;
+  /**
+   * Runs once each time a session ends: logout here or in another tab, or the
+   * API rejecting the refresh token. The app clears the query cache and
+   * toasts, so nothing from this session shows in the next one.
+   */
+  onSessionEnded?: (reason: NonNullable<SessionState["endedBecause"]>) => void;
 }
 
 export function createAppSession(
   store: SessionStore,
-  { baseUrl = env.apiBaseUrl }: { baseUrl?: string } = {},
+  { baseUrl = env.apiBaseUrl, channel = null, onSessionEnded = () => {} }: AppSessionOptions = {},
 ): AppSession {
   // The refresher calls the auth API, which uses this same client. That's safe:
   // the refresh request is sent without auth, so it can't trigger a refresh.
@@ -54,6 +75,22 @@ export function createAppSession(
   late.authApi = api;
 
   let restoring: Promise<void> | null = null;
+
+  let previous = store.getSnapshot();
+  store.subscribe(() => {
+    const current = store.getSnapshot();
+    if (current.status === "anonymous" && previous.status !== "anonymous") {
+      onSessionEnded(current.endedBecause ?? "signed-out");
+    }
+    previous = current;
+  });
+
+  // Another tab logged out: so does this one (without telling the others again).
+  channel?.subscribe((message) => {
+    if (message.type === "signed-out" && store.getSnapshot().status !== "anonymous") {
+      store.signOut();
+    }
+  });
 
   return {
     store,
@@ -90,6 +127,11 @@ export function createAppSession(
         });
       return restoring;
     },
+
+    signOut() {
+      store.signOut();
+      channel?.post({ type: "signed-out" });
+    },
   };
 }
 
@@ -97,6 +139,12 @@ let appSession: AppSession | undefined;
 
 /** The app's session, created on first use. Browser only. */
 export function getAppSession(): AppSession {
-  appSession ??= createAppSession(createSessionStore());
+  appSession ??= createAppSession(createSessionStore(), {
+    channel: createSessionChannel(),
+    onSessionEnded: () => {
+      getQueryClient().clear();
+      clearToasts();
+    },
+  });
   return appSession;
 }
