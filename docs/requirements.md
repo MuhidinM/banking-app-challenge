@@ -18,7 +18,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-01 | Base URL from env; `.env.example` committed | T-004 | Base URL from `NEXT_PUBLIC_API_BASE_URL`, validated at startup in `src/shared/config/env.ts`; `.env.example` committed (#4) | ☑ |
 | R-API-02 | All calls async and handle network errors (offline, timeout, DNS) | T-020 | `createHttpClient` is async throughout; no response → `NetworkError` (offline / timeout / unreachable), tested; cancellations pass through untouched (#16) | ☑ |
 | R-API-03 | Single typed API client; components never call `fetch` (lint rule `no-restricted-globals` outside `shared/api`) | T-020, T-003 | One client in `src/shared/api/http-client.ts`; ESLint bans `fetch` everywhere else in src/ (#3, #16) | ☑ |
-| R-API-04 | Store access + refresh tokens | T-022 |  | ☐ |
+| R-API-04 | Store access + refresh tokens | T-022 | Access token in memory, refresh token in localStorage (memory fallback), both rotated on refresh (`session-store.ts`); tests check the access token never reaches storage (#18) | ☑ |
 | R-API-05 | `Authorization: Bearer` on protected calls | T-020 | Bearer token attached on protected calls, read per request; `auth: false` for login/register/refresh; tested (#16) | ☑ |
 | R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 | On 401 the client refreshes via POST /api/auth/refresh-token, stores both rotated tokens and retries once (`http-client.ts`, `token-refresh.ts`); integration tests against the mock API (#17) | ☑ |
 | R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 | Five concurrent 401s → exactly one refresh request, all five succeed (`token-refresh.integration.test.ts`); unit tests with a controllable refresh (#17) | ☑ |
@@ -38,7 +38,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 |  | ☐ |
 | R-AUTH-06 | Protected pages unreachable without a session | T-025 |  | ☐ |
 | R-AUTH-07 | Valid session skips the login page | T-025 |  | ☐ |
-| R-AUTH-08 | Session survives page reload | T-022 |  | ☐ |
+| R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload with a fresh store over the same storage (#18). Browser check with the login page in #20 | ◐ |
 | R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 |  | ☐ |
 
 ## D. Main flow (Req 3)
