@@ -78,7 +78,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-08 | Validation before send: positive amounts, 10-digit account numbers, required fields | T-060, T-070 |  | ☐ |
 | R-UX-09 | Labelled fields | T-013 | axe | ☐ |
 | R-UX-10 | Keyboard navigation | T-091 |  | ☐ |
-| R-UX-11 | Visible focus (spec: 3px accent-soft + accent border on controls; 2px accent offset 2 on buttons/links) | T-011 |  | ☐ |
+| R-UX-11 | Visible focus (spec: 3px accent-soft + accent border on controls; 2px accent offset 2 on buttons/links) | T-011 | Spec focus styles in `src/shared/theme/base.css`: 2px accent `:focus-visible` outline for buttons/links, `focus-control` accent border + 3px ring for fields; checked with keyboard Tab (#10). Applied to each component as it is built (T-013 on) | ◐ |
 | R-UX-12 | Sufficient contrast (WCAG AA, both themes) | T-010, T-091 | Contrast of every token colour pair measured in `scripts/design-contrast.test.ts` (#9). Ink and muted text pass in both themes; 9 pairs from the spec tokens fail and are kept by decision (N-016). Full axe check in T-091 | ◐ |
 | R-UX-13 | `aria-live` for toasts and inline errors | T-015 |  | ☐ |
 | R-UX-14 | Usable 360 → 1440 px | T-092 |  | ☐ |

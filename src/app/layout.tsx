@@ -1,4 +1,5 @@
 import { MockApiProvider } from "@/mocks/mock-api-provider";
+import { fontVariables } from "@/shared/theme/fonts";
 
 import type { Metadata } from "next";
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" className={fontVariables}>
       <body>
         <MockApiProvider>{children}</MockApiProvider>
       </body>
