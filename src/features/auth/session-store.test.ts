@@ -7,10 +7,12 @@ import { REFRESH_TOKEN_KEY, createSessionStore } from "./session-store";
 const pair = { accessToken: "access-1", refreshToken: "refresh-1" };
 
 describe("session store", () => {
-  it("starts anonymous without a stored refresh token", () => {
-    const store = createSessionStore(fakeEnvironment().environment);
+  it("starts anonymous without a stored refresh token, and drops a stale session cookie", () => {
+    const { environment, cookie } = fakeEnvironment();
+    const store = createSessionStore(environment);
     expect(store.getSnapshot()).toEqual({ status: "anonymous", endedBecause: null });
     expect(store.getAccessToken()).toBeNull();
+    expect(cookie).toHaveBeenCalledExactlyOnceWith(false);
   });
 
   it('starts "unknown" with a stored refresh token, until it is checked', () => {
