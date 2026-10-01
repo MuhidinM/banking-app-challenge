@@ -118,7 +118,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-04 | Total balance correct with >10 accounts | T-040 | ☐ |
 | X-05 | Money math in cents; no float drift | Branded `Cents` type; sums, comparisons and input parsing in integer cents; tests show 0.1 + 0.2 = 30 cents and exact round-trips up to ETB 1,000,000,000 (#15) | ☑ |
 | X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
-| X-07 | Session inspector ("expire token now") behind a flag | T-029 | ☐ |
+| X-07 | Session inspector ("expire token now") behind a flag | Session inspector behind NEXT_PUBLIC_DEV_TOOLS (loaded only when on): token countdowns, refresh count, "Expire access token now", one or three calls, "Expire refresh token too"; tested; in a browser, three calls after expiring made one refresh (#25) | ☑ |
 | X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
 | X-09 | Query cache cleared on logout / refresh failure | The query cache (and toasts) are cleared whenever a session ends: logout, logout in another tab, or a rejected refresh token; tested (#23) | ☑ |
 | X-10 | CSP + security headers; `noindex` | T-094 | ☐ |

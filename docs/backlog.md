@@ -42,7 +42,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-026 | [#22](https://github.com/MuhidinM/banking-app-challenge/issues/22) | Register page: zod schema mirroring API (username 3–50, password ≥6, phone pattern), confirm password, AUTH_003/004 on fields, auto-login after success | R-AUTH-03/04/05 | M | done |
 | T-027 | [#23](https://github.com/MuhidinM/banking-app-challenge/issues/23) | Logout: clear tokens, cookie, `queryClient.clear()`, broadcast to other tabs | R-AUTH-09, X-09 | S | done |
 | T-028 | [#24](https://github.com/MuhidinM/banking-app-challenge/issues/24) | Cross-tab: Web Locks around refresh, storage event to share new tokens and logout; test | X-03 | M | done |
-| T-029 | [#25](https://github.com/MuhidinM/banking-app-challenge/issues/25) | Session inspector (flag): token expiry countdown, refresh count, "expire access token now" | X-07 | S | todo |
+| T-029 | [#25](https://github.com/MuhidinM/banking-app-challenge/issues/25) | Session inspector (flag): token expiry countdown, refresh count, "expire access token now" | X-07 | S | done |
 
 ## M3 — App shell
 
