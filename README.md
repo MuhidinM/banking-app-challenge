@@ -24,7 +24,7 @@ Set `NEXT_PUBLIC_API_MOCKING=on` in `.env.local` and restart `pnpm dev`. Every A
 
 ### Watch the token refresh
 
-Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get a **Session** button in the bottom-left corner. It shows when both tokens expire and how often this tab has refreshed. **Expire access token now** followed by **3 calls at once** shows three 401s, a single refresh, and three retries that succeed. **Expire refresh token too** shows the session ending and the login page's "session expired" banner. It works with the mock and with the real API, because it only replaces the token this tab holds.
+Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get a **Session** button in the bottom-right corner. It shows when both tokens expire and how often this tab has refreshed. **Expire access token now** followed by **3 calls at once** shows three 401s, a single refresh, and three retries that succeed. **Expire refresh token too** shows the session ending and the login page's "session expired" banner. It works with the mock and with the real API, because it only replaces the token this tab holds.
 
 ## Scripts
 

@@ -72,7 +72,7 @@ export function SessionInspector() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-pill bg-ink px-4 py-2 type-label text-surface shadow-float"
+        className="fixed right-4 bottom-24 z-50 flex items-center gap-2 rounded-pill bg-ink px-4 py-2 type-label text-surface shadow-float md:bottom-4"
       >
         <Timer aria-hidden="true" className="size-4" strokeWidth={2} />
         Session
@@ -97,7 +97,7 @@ export function SessionInspector() {
   return (
     <section
       aria-label="Session inspector"
-      className="fixed bottom-4 left-4 z-50 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-float"
+      className="fixed right-4 bottom-24 z-50 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-float md:bottom-4"
     >
       <header className="flex items-center justify-between">
         <h2 className="type-heading text-ink">Session inspector</h2>
