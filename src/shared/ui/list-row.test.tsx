@@ -7,6 +7,24 @@ import { Card, SectionHeader } from "./card";
 import { ListRow, RowList } from "./list-row";
 
 describe("ListRow", () => {
+  it("reads as one sentence when given a label, hiding the visible pieces", () => {
+    render(
+      <RowList>
+        <ListRow
+          icon={RotateCcw}
+          title="Refund from merchant"
+          meta="Refund · 15:18"
+          value="+ETB 1,665.00"
+          label="Refund from merchant, money in, ETB 1,665.00."
+          onClick={() => {}}
+        />
+      </RowList>,
+    );
+    expect(
+      screen.getByRole("button", { name: "Refund from merchant, money in, ETB 1,665.00." }),
+    ).toBeInTheDocument();
+  });
+
   it("is a link to the account when given an href, named by its whole content", () => {
     render(
       <RowList>
