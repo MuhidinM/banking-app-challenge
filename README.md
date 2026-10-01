@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kifiya Banking Web Client
 
-## Getting Started
+[![CI](https://github.com/MuhidinM/banking-app-challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/MuhidinM/banking-app-challenge/actions/workflows/ci.yml)
 
-First, run the development server:
+A responsive banking web client for the Kifiya Web Developer Challenge, built with Next.js 16, React 19 and TypeScript against the [challenge banking API](https://challenge-api.qena.dev/scalar).
+
+> **Work in progress.** This README covers setup only. The full README (features, architecture, the token refresh flow, trade-offs) is tracked in [#53](https://github.com/MuhidinM/banking-app-challenge/issues/53). Progress is on the [project board](https://github.com/users/MuhidinM/projects/2).
+
+## Getting started
+
+Requires Node.js 24 (see `.nvmrc`) and pnpm 12.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>. Environment variables are described in [`.env.example`](.env.example).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command                                   | What it does                                                           |
+| ----------------------------------------- | ---------------------------------------------------------------------- |
+| `pnpm dev`                                | Start the development server                                           |
+| `pnpm build` / `pnpm start`               | Production build / serve it                                            |
+| `pnpm test`                               | Unit and component tests (Vitest); `test:watch`, `test:coverage`       |
+| `pnpm typecheck`                          | Generate Next.js route types, then `tsc --noEmit`                      |
+| `pnpm lint` / `pnpm lint:fix`             | ESLint, zero warnings allowed                                          |
+| `pnpm format` / `pnpm format:check`       | Prettier                                                               |
+| `pnpm api:snapshot`                       | Download the API's current OpenAPI document to `docs/api/openapi.json` |
+| `pnpm api:types` / `pnpm api:types:check` | Generate API types from the snapshot / check they're current           |
 
-## Learn More
+Git hooks run lint and format on staged files before each commit, and the type-check and tests before each push. CI runs all checks plus a production build on every pull request.
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Architecture, decisions, requirements traceability and the backlog are in [`docs/`](docs/README.md).
