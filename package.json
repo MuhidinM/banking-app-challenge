@@ -14,7 +14,9 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "api:types": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts",
+    "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check"
   },
   "dependencies": {
     "next": "16.3.7",

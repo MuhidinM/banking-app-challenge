@@ -17,7 +17,12 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.test.{ts,tsx}", "src/test/**", "src/mocks/**"],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/test/**",
+        "src/mocks/**",
+        "src/shared/api/schema.ts",
+      ],
       reporter: ["text", "html"],
     },
   },
