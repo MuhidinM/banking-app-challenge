@@ -1,0 +1,16 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+
+# Lockfile, generated files, and files kept byte-identical to their source
+pnpm-lock.yaml
+next-env.d.ts
+docs/api/openapi.json
+docs/design/design-tokens.json
+
+# Private notes and third-party material
+specs/
