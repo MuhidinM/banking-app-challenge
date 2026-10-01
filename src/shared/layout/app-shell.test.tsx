@@ -1,7 +1,9 @@
 import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AppShell } from "./app-shell";
+import { PageHeader } from "./page-header";
 
 let pathname = "/";
 vi.mock("next/navigation", () => ({ usePathname: () => pathname }));
@@ -50,5 +52,44 @@ describe("AppShell", () => {
     expect(screen.getByRole("main")).toHaveTextContent("Your accounts");
     expect(sidebar().getByText("Jane Doe")).toBeInTheDocument();
     expect(sidebar().getByRole("link", { name: "Kifiya, home" })).toHaveAttribute("href", "/");
+  });
+});
+
+describe("AppShell keyboard support", () => {
+  it("reaches the skip link first, and it points at the main region", async () => {
+    render(<AppShell>Page</AppShell>);
+
+    await userEvent.tab();
+
+    const skip = screen.getByRole("link", { name: "Skip to content" });
+    expect(skip).toHaveFocus();
+    const target = document.querySelector(skip.getAttribute("href")!);
+    expect(target).toBe(screen.getByRole("main"));
+  });
+
+  it("moves focus to the new page's heading after a navigation, not on first load", () => {
+    const page = (title: string) => (
+      <AppShell>
+        <PageHeader title={title} />
+      </AppShell>
+    );
+    pathname = "/";
+    const { rerender } = render(page("Kifiya Banking"));
+    expect(document.body).toHaveFocus();
+
+    pathname = "/accounts";
+    rerender(page("Accounts"));
+
+    expect(screen.getByRole("heading", { level: 1, name: "Accounts" })).toHaveFocus();
+  });
+
+  it("falls back to the main region when the page has no heading", () => {
+    pathname = "/";
+    const { rerender } = render(<AppShell>Home</AppShell>);
+
+    pathname = "/activity";
+    rerender(<AppShell>Activity</AppShell>);
+
+    expect(screen.getByRole("main")).toHaveFocus();
   });
 });
