@@ -32,7 +32,7 @@ An empty checkbox on something closed reads as forgotten work, so deferred items
 
 `main` only changes through pull requests. Branch protection requires:
 
-- the CI check **Lint, type-check, test and build** to pass ([ci.yml](../.github/workflows/ci.yml)),
+- the CI checks **Lint, type-check, test and build** and **End-to-end tests (Playwright, mock API)** to pass ([ci.yml](../.github/workflows/ci.yml)),
 - the branch to be up to date with `main` before merging,
 - all review conversations to be resolved.
 
