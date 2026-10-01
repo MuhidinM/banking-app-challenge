@@ -89,8 +89,9 @@ Cache updates after mutations:
 
 ([ADR-0007](decisions/0007-money-and-dates.md))
 
-- Money is handled in integer cents and formatted once (`ETB 2,200.00`, signed `+ETB` / `−ETB`, tabular figures).
-- API timestamps are UTC without an offset; `parseApiDate()` treats them as UTC. Grouping into Today / Yesterday / date uses the user's local time zone.
+- Money is handled in integer cents and formatted once (`ETB 2,200.00`, signed `+ETB` / `−ETB`, tabular figures). `src/shared/lib/money.ts` brands cents as their own type (`Cents`), so an amount in ETB can't be used where cents are expected without `toCents()`; user input is parsed digit by digit, never through floats.
+- API timestamps are UTC without an offset; `parseApiDate()` (`src/shared/lib/dates.ts`) treats them as UTC. Grouping into Today / Yesterday / date uses the user's local time zone. Intl supplies only the numeric fields in that zone; weekday and month names are the app's own, because locale data differs between browsers ("Sep" vs "Sept").
+- Account numbers stay strings (leading zeros); `src/shared/lib/account-number.ts` validates 10 digits, masks (`•••• 8057`) and groups (`8751 1380 57`).
 
 ## Receipts
 

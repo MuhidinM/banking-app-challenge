@@ -113,10 +113,10 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Item | Task | ✓ |
 |---|---|---|---|
 | X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | ☐ |
-| X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | T-016 | ☐ |
+| X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
 | X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | ☐ |
 | X-04 | Total balance correct with >10 accounts | T-040 | ☐ |
-| X-05 | Money math in cents; no float drift | T-016 | ☐ |
+| X-05 | Money math in cents; no float drift | Branded `Cents` type; sums, comparisons and input parsing in integer cents; tests show 0.1 + 0.2 = 30 cents and exact round-trips up to ETB 1,000,000,000 (#15) | ☑ |
 | X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
 | X-07 | Session inspector ("expire token now") behind a flag | T-029 | ☐ |
 | X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
