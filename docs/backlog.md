@@ -50,7 +50,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 |---|---|---|---|---|---|
 | T-030 | [#26](https://github.com/MuhidinM/banking-app-challenge/issues/26) | `(app)` layout: sidebar 260 px ≥768, bottom nav with centre Transfer action <768, user footer + logout | R-UX-03, R-FLOW-05 | M | done |
 | T-031 | [#27](https://github.com/MuhidinM/banking-app-challenge/issues/27) | PageHeader (back button, title, actions), skip link, focus to `<h1>` on navigation | X-13 | S | done |
-| T-032 | [#28](https://github.com/MuhidinM/banking-app-challenge/issues/28) | `loading.tsx`, `error.tsx`, `not-found.tsx`, `global-error.tsx` in design language | R-UX-04/07 | S | todo |
+| T-032 | [#28](https://github.com/MuhidinM/banking-app-challenge/issues/28) | `loading.tsx`, `error.tsx`, `not-found.tsx`, `global-error.tsx` in design language | R-UX-04/07 | S | done |
 
 ## M4 — Accounts and dashboard
 
