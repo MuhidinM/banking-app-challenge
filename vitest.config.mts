@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     environment: "jsdom",
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
     setupFiles: ["./src/test/setup.ts"],
     // src/shared/config/env.ts validates on import; tests get a fixed, fake API origin.
     env: { NEXT_PUBLIC_API_BASE_URL: "https://api.test" },
