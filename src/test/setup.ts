@@ -8,12 +8,11 @@ import { resetMockApi } from "@/mocks/state";
 
 // jsdom lacks a few browser APIs that Radix's Select calls while opening and
 // choosing; no-op stand-ins let component tests drive it with the keyboard.
-if (!Element.prototype.hasPointerCapture) {
-  Element.prototype.hasPointerCapture = () => false;
-  Element.prototype.releasePointerCapture = () => {};
-}
-if (!Element.prototype.scrollIntoView) {
-  Element.prototype.scrollIntoView = () => {};
+// (Files that run in the node environment, like the route proxy's, have no DOM.)
+if (typeof Element !== "undefined") {
+  Element.prototype.hasPointerCapture ??= () => false;
+  Element.prototype.releasePointerCapture ??= () => {};
+  Element.prototype.scrollIntoView ??= () => {};
 }
 
 // Every request goes to the mock API; one it doesn't handle fails the test
