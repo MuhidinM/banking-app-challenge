@@ -22,6 +22,10 @@ Open <http://localhost:3000>. Environment variables are described in [`.env.exam
 
 Set `NEXT_PUBLIC_API_MOCKING=on` in `.env.local` and restart `pnpm dev`. Every API call is then answered by an in-browser mock ([MSW](https://mswjs.io)) with sample data, and nothing is sent to the shared API. Sign in with the demo users documented by the API: `demo.jane` (two accounts with history), `demo.john` (a transfer recipient) or `demo.empty` (no transactions), all with the password `Password123!`. The mock keeps its data in localStorage, so a reload keeps you signed in and keeps your transfers; clear the site's data to start again from the seed.
 
+### Watch the token refresh
+
+Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get a **Session** button in the bottom-left corner. It shows when both tokens expire and how often this tab has refreshed. **Expire access token now** followed by **3 calls at once** shows three 401s, a single refresh, and three retries that succeed. **Expire refresh token too** shows the session ending and the login page's "session expired" banner. It works with the mock and with the real API, because it only replaces the token this tab holds.
+
 ## Scripts
 
 | Command                                   | What it does                                                                      |
