@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { LoaderCircle, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -63,9 +63,12 @@ export function Button({
   );
 
   if (asChild) {
+    // Slottable puts the icon inside the child element (e.g. a Next.js <Link>),
+    // before its own text, so a link styled as a button keeps its icon.
     return (
       <Slot className={classes} {...props}>
-        {children}
+        {Icon && <Icon aria-hidden="true" className="size-icon shrink-0" strokeWidth={1.75} />}
+        <Slottable>{children}</Slottable>
       </Slot>
     );
   }
