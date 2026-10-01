@@ -19,7 +19,8 @@
     "api:types": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts",
     "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check",
     "tokens": "node scripts/generate-tokens.mts",
-    "tokens:check": "node scripts/generate-tokens.mts --check"
+    "tokens:check": "node scripts/generate-tokens.mts --check",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -36,6 +37,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",

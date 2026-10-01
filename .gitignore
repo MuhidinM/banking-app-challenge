@@ -43,3 +43,8 @@ next-env.d.ts
 
 # private working notes + Kifiya challenge material (brief, UI spec, screens) — local only
 /specs/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
