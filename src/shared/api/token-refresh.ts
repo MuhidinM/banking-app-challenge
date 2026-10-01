@@ -60,7 +60,19 @@ export function createTokenRefresher({
 }: TokenRefresherConfig): TokenRefresher {
   let inFlight: Promise<string | null> | null = null;
 
-  async function performRefresh(): Promise<string | null> {
+  /**
+   * `seenAccess` is this tab's access token when the refresh was asked for.
+   * Inside the cross-tab lock, another tab may already have refreshed and
+   * shared its new access token (features/auth/session-channel.ts): then it
+   * is used as is, without a second call that would rotate the tokens again.
+   */
+  async function performRefresh(
+    seenAccess: string | null,
+    retried = false,
+  ): Promise<string | null> {
+    const shared = tokens.getAccessToken();
+    if (shared && shared !== seenAccess) return shared;
+
     const refreshToken = tokens.getRefreshToken();
     if (!refreshToken) {
       tokens.clear();
@@ -75,6 +87,13 @@ export function createTokenRefresher({
       return pair.accessToken;
     } catch (error) {
       if (isRejectedRefresh(error)) {
+        // Rejected because another tab rotated the tokens during this call
+        // (possible only without the cross-tab lock): the session is fine.
+        // Use that tab's tokens, or try once more with the new refresh token.
+        const latest = tokens.getRefreshToken();
+        if (!retried && latest !== null && latest !== refreshToken) {
+          return performRefresh(seenAccess, true);
+        }
         tokens.clear();
         onSessionExpired();
         return null;
@@ -99,9 +118,12 @@ export function createTokenRefresher({
         return Promise.resolve(null);
       }
 
-      inFlight ??= runExclusive(performRefresh).finally(() => {
-        inFlight = null;
-      });
+      if (!inFlight) {
+        const seenAccess = current;
+        inFlight = runExclusive(() => performRefresh(seenAccess)).finally(() => {
+          inFlight = null;
+        });
+      }
       return inFlight;
     },
   };
