@@ -15,7 +15,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-API-01 | Base URL from env; `.env.example` committed | T-004 |  | ☐ |
+| R-API-01 | Base URL from env; `.env.example` committed | T-004 | Base URL from `NEXT_PUBLIC_API_BASE_URL`, validated at startup in `src/shared/config/env.ts`; `.env.example` committed (#4) | ☑ |
 | R-API-02 | All calls async and handle network errors (offline, timeout, DNS) | T-020 |  | ☐ |
 | R-API-03 | Single typed API client; components never call `fetch` (lint rule `no-restricted-globals` outside `shared/api`) | T-020, T-003 | Lint ban on `fetch` outside `src/shared/api` (#3); typed client pending (T-020) | ◐ |
 | R-API-04 | Store access + refresh tokens | T-022 |  | ☐ |
@@ -96,7 +96,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 |  | ☐ |
 | R-CQ-08 | ≥1 component test (RTL) | T-024 |  | ☐ |
 | R-CQ-09 | E2E tests (plus) | T-093 |  | ☐ |
-| R-CQ-10 | `.env.example` committed | T-004 |  | ☐ |
+| R-CQ-10 | `.env.example` committed | T-004 | `.env.example` documents every variable (#4) | ☑ |
 
 ## G. Submission
 
