@@ -89,6 +89,10 @@ export function createSessionStore(
     status: read() ? "unknown" : "anonymous",
     endedBecause: null,
   };
+  // No session to restore, but the hint cookie may outlive it (token removed by
+  // hand, storage cleared). Drop it, or the proxy would keep sending /login to
+  // the dashboard and the guard back to /login.
+  if (state.status === "anonymous") setSessionCookie(false);
   const listeners = new Set<() => void>();
 
   const setState = (next: SessionState) => {

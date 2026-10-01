@@ -22,7 +22,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-05 | `Authorization: Bearer` on protected calls | T-020 | Bearer token attached on protected calls, read per request; `auth: false` for login/register/refresh; tested (#16) | ☑ |
 | R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 | On 401 the client refreshes via POST /api/auth/refresh-token, stores both rotated tokens and retries once (`http-client.ts`, `token-refresh.ts`); integration tests against the mock API (#17) | ☑ |
 | R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 | Five concurrent 401s → exactly one refresh request, all five succeed (`token-refresh.integration.test.ts`); unit tests with a controllable refresh (#17) | ☑ |
-| R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and calls `onSessionExpired` once; tested (#17). Navigation to /login and clearing the query cache are wired in #21 / #23 | ◐ |
+| R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and ends the session as expired (#17); `RequireSession` then sends the user to `/login?reason=expired` with the way back (#21). Clearing the query cache comes with logout in #23 | ◐ |
 | R-API-09 | Transfer `note` optional, max 140 chars, becomes description | T-060 |  | ☐ |
 | R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 |  | ☐ |
 | R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 | `describeError()` maps every documented code to copy, per screen and per field (e.g. ACC_002 → amount, AUTH_003 → username); 31 tests (#19) | ☑ |
@@ -36,8 +36,8 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-AUTH-03 | Register: username, password, first, last, email (optional), phone; client validation | T-026 |  | ☐ |
 | R-AUTH-04 | Register calls `POST /api/auth/register`; then auto-login **or** login with confirmation | T-026 |  | ☐ |
 | R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 |  | ☐ |
-| R-AUTH-06 | Protected pages unreachable without a session | T-025 |  | ☐ |
-| R-AUTH-07 | Valid session skips the login page | T-025 |  | ☐ |
+| R-AUTH-06 | Protected pages unreachable without a session | T-025 | `proxy.ts` redirects signed-out visitors from protected pages to `/login?next=…`; `RequireSession` renders protected pages only with a session; tested, and the proxy redirect checked in the browser (#21) | ☑ |
+| R-AUTH-07 | Valid session skips the login page | T-025 | Signed in, `/login` and `/register` go to `next` or `/` (proxy on the cookie, `RedirectWhenSignedIn` after a restore); external `next` ignored; tested (#21) | ☑ |
 | R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload (#18); confirmed in Chrome with mock mode: sign in, reload, still signed in (#20, after #80 kept the mock across reloads) | ☑ |
 | R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 |  | ☐ |
 

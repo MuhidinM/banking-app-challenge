@@ -4,10 +4,7 @@
  * (an open redirect would let a phishing link bounce through our login page).
  */
 
-export const HOME_PATH = "/";
-
-/** Pages that make no sense to return to once signed in. */
-const AUTH_PATHS = ["/login", "/register"];
+import { HOME_PATH, isAuthPath } from "./routes";
 
 // Any fixed origin works: it only tells us whether `next` would leave the site.
 const BASE = "https://return-path.invalid";
@@ -24,8 +21,7 @@ export function safeReturnPath(next: string | string[] | undefined): string {
   // "//evil.example" and "/\evil.example" are protocol-relative: the browser
   // would leave the site. The URL parser resolves them to another origin.
   if (url.origin !== BASE) return HOME_PATH;
-  if (AUTH_PATHS.some((path) => url.pathname === path || url.pathname.startsWith(`${path}/`))) {
-    return HOME_PATH;
-  }
+  // The sign-in pages make no sense to return to once signed in.
+  if (isAuthPath(url.pathname)) return HOME_PATH;
   return `${url.pathname}${url.search}${url.hash}`;
 }

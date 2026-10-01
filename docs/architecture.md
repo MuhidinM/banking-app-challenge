@@ -12,9 +12,11 @@ The API authenticates with bearer tokens held in the browser, so the Next.js ser
 
 Route protection is layered:
 
-1. `proxy.ts` — optimistic redirect based on a non-sensitive `has_session` cookie (it contains no token). Prevents a flash of the wrong page.
-2. Client guard — no refresh token → `/login`. This is the real check in the client.
+1. `src/proxy.ts` — optimistic redirect based on a non-sensitive `has_session` cookie (it contains no token). Signed out: protected pages → `/login?next=<path>`. Signed in: `/login` and `/register` → `next` or `/`. Prevents a flash of the wrong page.
+2. Client guard — `RequireSession` in `app/(app)/layout.tsx` renders a page only with a session: a loading state while the stored session is restored, and `/login` (with `next`, plus `reason=expired` when the API rejected the session) when there is none. This is the real check in the client, and how an expired session reaches the login page. A store created without a refresh token drops a stale cookie, so the two never redirect each other in a loop.
 3. The API — the final authority on every request.
+
+Which paths are protected, and the login URL, live in `features/auth/routes.ts`; `next` is only followed when it stays on this site (`safeReturnPath`).
 
 ## API layer
 
