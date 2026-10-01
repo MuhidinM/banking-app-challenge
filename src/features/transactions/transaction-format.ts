@@ -17,6 +17,7 @@ import {
   type DateOptions,
   type DayGroup,
   formatDateTime,
+  formatFullDateTime,
   formatTime,
   groupByDay,
   parseApiDate,
@@ -85,6 +86,39 @@ export function transactionSentence(
   return `${transactionTitle(transaction)}. ${directionLabel(transaction)}, ${amount}. ${
     transactionTypeInfo[transaction.type].label
   }, ${when}.`;
+}
+
+/** "TX-000117" (design notes: "TX-" and the id padded to six digits). */
+export function transactionReference(transaction: Transaction): string {
+  return `TX-${String(transaction.id).padStart(6, "0")}`;
+}
+
+/** "From" for money in, "To" for money out: the other account's label. */
+export const counterpartyLabel = (transaction: Transaction) =>
+  isCredit(transaction) ? "From" : "To";
+
+/**
+ * Plain text for "Share receipt" (N-014: the API has no receipt document).
+ * The date is written in full, since the text is read later and elsewhere.
+ */
+export function receiptText(transaction: Transaction, options: DateOptions = {}): string {
+  const lines = [
+    "Kifiya Bank transaction receipt",
+    transactionTitle(transaction),
+    `${signedAmount(transaction)} (${directionLabel(transaction)})`,
+    `Type: ${transactionTypeInfo[transaction.type].label}`,
+    `Date: ${formatFullDateTime(parseApiDate(transaction.timestamp), options)}`,
+  ];
+  if (transaction.relatedAccount) {
+    lines.push(
+      `${counterpartyLabel(transaction)}: ${formatAccountNumber(transaction.relatedAccount)}`,
+    );
+  }
+  lines.push(`Reference: ${transactionReference(transaction)}`);
+  if (transaction.balanceAfter != null) {
+    lines.push(`Balance after: ${formatMoney(toCents(transaction.balanceAfter))}`);
+  }
+  return lines.join("\n");
 }
 
 /** Rows under Today / Yesterday / "Sunday, 30 Aug", by the user's local day (ADR-0007). */

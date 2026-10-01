@@ -2,16 +2,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getAppSession } from "@/features/auth/session";
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
 import type { Page, Transaction } from "@/shared/api/types";
+import { fakeNavigation } from "@/test/fake-navigation";
 
 import { flattenHistory } from "./queries";
 import { TransactionHistory } from "./transaction-history";
+
+vi.mock("next/navigation", async () => (await import("@/test/fake-navigation")).navigationModule);
 
 // Seed: account 1 is Jane's checking (13 rows), account 5 is demo.empty's.
 const JANE_CHECKING = 1;
@@ -33,7 +36,10 @@ async function signIn(username = "demo.jane") {
 }
 
 describe("TransactionHistory", () => {
-  beforeEach(() => signIn());
+  beforeEach(async () => {
+    fakeNavigation.reset("/activity?account=1");
+    await signIn();
+  });
 
   it("shows a loading state, then the first page with a count", async () => {
     renderHistory(JANE_CHECKING);

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { readAccountParam } from "./account-activity";
+import { readIdParam } from "./url-params";
 
-describe("readAccountParam", () => {
+describe("readIdParam", () => {
   it.each([
     ["1", 1],
     ["42", 42],
@@ -14,6 +14,6 @@ describe("readAccountParam", () => {
     ["abc", null],
     ["99999999999999999999", null],
   ])("%s → %s", (value, expected) => {
-    expect(readAccountParam(value)).toBe(expected);
+    expect(readIdParam(value)).toBe(expected);
   });
 });
