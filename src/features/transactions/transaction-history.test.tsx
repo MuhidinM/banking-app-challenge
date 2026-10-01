@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -26,8 +26,7 @@ function renderHistory(accountId: number) {
   );
 }
 
-const rows = () =>
-  within(screen.getByRole("list", { name: "Transactions" })).getAllByRole("listitem");
+const rows = () => screen.getAllByRole("listitem");
 
 async function signIn(username = "demo.jane") {
   await getAppSession().signIn({ username, passwordHash: DEMO_PASSWORD });
@@ -42,6 +41,20 @@ describe("TransactionHistory", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Loading transactions");
     expect(await screen.findByText("Showing 10 of 13")).toBeInTheDocument();
     expect(rows()).toHaveLength(10);
+  });
+
+  it("groups the rows under day headings, each row read as one sentence", async () => {
+    renderHistory(JANE_CHECKING);
+    await screen.findByText("Showing 10 of 13");
+
+    const days = screen.getAllByRole("heading", { level: 2 });
+    expect(days.length).toBeGreaterThan(1);
+    for (const day of days) {
+      expect(day).toHaveTextContent(
+        /^(Today|Yesterday|[A-Z][a-z]+day, \d{1,2} [A-Z][a-z]{2}( \d{4})?)$/,
+      );
+    }
+    expect(rows()[0]).toHaveTextContent(/\. Money (in|out), ETB [\d,]+\.\d{2}\. /);
   });
 
   it("appends the next page below the loaded rows and hides the button at the end", async () => {

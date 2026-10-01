@@ -1,21 +1,31 @@
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
-
 import type { Transaction } from "@/shared/api/types";
-import { parseApiDate, formatTime } from "@/shared/lib/dates";
-import { formatMoney, toCents } from "@/shared/lib/money";
 import { ListRow } from "@/shared/ui/list-row";
 
-/** One transaction in a history list: description, time and signed amount. */
+import {
+  isCredit,
+  signedAmount,
+  transactionMeta,
+  transactionSentence,
+  transactionTitle,
+  transactionTypeInfo,
+} from "./transaction-format";
+
+/**
+ * One transaction (UI spec, component sheet "Rows"): type icon, title,
+ * "Type · time" and the signed amount. Money in has a green disc and amount,
+ * but the sign carries the direction too, and screen readers hear it in words.
+ */
 export function TransactionRow({ transaction }: { transaction: Transaction }) {
-  const credit = transaction.direction === "CREDIT";
+  const credit = isCredit(transaction);
   return (
     <ListRow
-      icon={credit ? ArrowDownLeft : ArrowUpRight}
+      icon={transactionTypeInfo[transaction.type].icon}
       tone={credit ? "credit" : "neutral"}
-      title={transaction.description ?? "Transaction"}
-      meta={formatTime(parseApiDate(transaction.timestamp))}
-      value={formatMoney(toCents(transaction.amount), { sign: credit ? "credit" : "debit" })}
-      valueClassName={credit ? "text-credit" : undefined}
+      title={transactionTitle(transaction)}
+      meta={transactionMeta(transaction)}
+      value={signedAmount(transaction)}
+      {...(credit ? { valueClassName: "text-credit" } : {})}
+      label={transactionSentence(transaction)}
     />
   );
 }

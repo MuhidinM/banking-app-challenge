@@ -12,6 +12,7 @@ import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
 import { flattenHistory, useTransactionHistory } from "./queries";
+import { groupTransactionsByDay } from "./transaction-format";
 import { TransactionRow } from "./transaction-row";
 
 /**
@@ -21,7 +22,14 @@ import { TransactionRow } from "./transaction-row";
  * it is, so the list never jumps and keyboard focus stays on the button.
  * After the last page the button goes away, and focus moves to the count.
  */
-export function TransactionHistory({ accountId }: { accountId: number }) {
+export function TransactionHistory({
+  accountId,
+  dayHeading: DayHeading = "h2",
+}: {
+  accountId: number;
+  /** Level of the day headings: h3 when the history sits under its own h2 (account details). */
+  dayHeading?: "h2" | "h3";
+}) {
   const history = useTransactionHistory(accountId);
   const countRef = useRef<HTMLParagraphElement>(null);
 
@@ -81,13 +89,24 @@ export function TransactionHistory({ accountId }: { accountId: number }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="overflow-hidden">
-        <RowList aria-label="Transactions">
-          {transactions.map((transaction) => (
-            <TransactionRow key={transaction.id} transaction={transaction} />
-          ))}
-        </RowList>
-      </Card>
+      {groupTransactionsByDay(transactions).map((group) => (
+        <section
+          key={group.key}
+          aria-labelledby={`day-${group.key}`}
+          className="flex flex-col gap-3"
+        >
+          <DayHeading id={`day-${group.key}`} className="type-body-strong text-ink-muted">
+            {group.label}
+          </DayHeading>
+          <Card className="overflow-hidden">
+            <RowList>
+              {group.items.map((transaction) => (
+                <TransactionRow key={transaction.id} transaction={transaction} />
+              ))}
+            </RowList>
+          </Card>
+        </section>
+      ))}
 
       <div className="flex flex-col items-center gap-2">
         {history.hasNextPage && (
