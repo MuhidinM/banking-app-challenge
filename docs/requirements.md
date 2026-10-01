@@ -71,9 +71,9 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | Theme generated from `design-tokens.json` (colours, type scale, radii, shadows, spacing, sizes, gradients; both themes) by `pnpm tokens`, checked in CI (#9). Screen-by-screen fidelity follows with each UI task | ◐ |
 | R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser | ☑ |
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 |  | ☐ |
-| R-UX-04 | Skeletons/spinners while loading | T-014 |  | ☐ |
+| R-UX-04 | Skeletons/spinners while loading | T-014 | Skeletons matching row geometry (identical heights measured) inside a `LoadingRegion` status, reduced-motion aware; route-level loading in T-032 (#13). Each screen uses them as it is built | ◐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
-| R-UX-06 | Empty states: no accounts, no transactions | T-014 |  | ☐ |
+| R-UX-06 | Empty states: no accounts, no transactions | T-014 | `EmptyState` with an action (#13); the no-accounts and no-transactions screens use it in T-041 / T-050 | ◐ |
 | R-UX-07 | Errors from API code + generic network message; **never raw backend text** | T-023 |  | ☐ |
 | R-UX-08 | Validation before send: positive amounts, 10-digit account numbers, required fields | T-060, T-070 |  | ☐ |
 | R-UX-09 | Labelled fields | T-013 | Every field component is labelled through FormField (label `for` the control) and described by its hint/error; tested by role and accessible name (#12). Applied in each form from T-024 on | ◐ |
