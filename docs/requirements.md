@@ -7,8 +7,8 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-TS-01 | React 18+ with TypeScript **strict** | T-001 | | ☐ |
-| R-TS-02 | Next.js App Router (or Vite + RR) | T-001 | | ☐ |
+| R-TS-01 | React 18+ with TypeScript **strict** | T-001 | React 19.2; `strict` + `noUncheckedIndexedAccess` in tsconfig.json; `tsc --noEmit` clean (#1) | ☑ |
+| R-TS-02 | Next.js App Router (or Vite + RR) | T-001 | Next.js 16.3 App Router under `src/app` (#1) | ☑ |
 | R-TS-03 | Function components + hooks only, no class components (lint rule) | T-003 | | ☐ |
 
 ## B. API integration (Req 1)
