@@ -1,6 +1,7 @@
 import { MockApiProvider } from "@/mocks/mock-api-provider";
 import { fontVariables } from "@/shared/theme/fonts";
 import { themeInitScript } from "@/shared/theme/theme-preference";
+import { Toaster } from "@/shared/ui/toast";
 
 import type { Metadata } from "next";
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <MockApiProvider>{children}</MockApiProvider>
+        <Toaster />
       </body>
     </html>
   );
