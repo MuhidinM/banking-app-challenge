@@ -22,6 +22,7 @@
     "tokens:check": "node scripts/generate-tokens.mts --check"
   },
   "dependencies": {
+    "lucide-react": "^1.49.0",
     "next": "16.3.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",

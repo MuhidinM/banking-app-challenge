@@ -69,7 +69,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
 | R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | Theme generated from `design-tokens.json` (colours, type scale, radii, shadows, spacing, sizes, gradients; both themes) by `pnpm tokens`, checked in CI (#9). Screen-by-screen fidelity follows with each UI task | ◐ |
-| R-UX-02 | Light + dark theme; follows OS; user override | T-012 |  | ☐ |
+| R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser | ☑ |
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 |  | ☐ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 |  | ☐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 |  | ☐ |
@@ -119,7 +119,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-05 | Money math in cents; no float drift | T-016 | ☐ |
 | X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
 | X-07 | Session inspector ("expire token now") behind a flag | T-029 | ☐ |
-| X-08 | No theme flash on first paint | T-012 | ☐ |
+| X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
 | X-09 | Query cache cleared on logout / refresh failure | T-027 | ☐ |
 | X-10 | CSP + security headers; `noindex` | T-094 | ☐ |
 | X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
