@@ -33,7 +33,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 
 | ID | Issue | Task | Reqs | Size | Status |
 |---|---|---|---|---|---|
-| T-020 | [#16](https://github.com/MuhidinM/banking-app-challenge/issues/16) | `http-client.ts`: base URL, JSON, bearer, timeout + abort, `ApiError` normalisation, network error type; unit tests | R-API-02/03/05, R-CQ-06 | M | todo |
+| T-020 | [#16](https://github.com/MuhidinM/banking-app-challenge/issues/16) | `http-client.ts`: base URL, JSON, bearer, timeout + abort, `ApiError` normalisation, network error type; unit tests | R-API-02/03/05, R-CQ-06 | M | done |
 | T-021 | [#17](https://github.com/MuhidinM/banking-app-challenge/issues/17) | Refresh: on 401 single-flight refresh, rotate both tokens, retry once, no loop on refresh endpoint, failure → session cleared; tests incl. 5 concurrent 401s → 1 refresh | R-API-06/07/08, R-CQ-07 | M | todo |
 | T-022 | [#18](https://github.com/MuhidinM/banking-app-challenge/issues/18) | Session store: access in memory, refresh in localStorage, status machine, `has_session` cookie hint; reload restores via refresh | R-API-04, R-AUTH-08 | M | todo |
 | T-023 | [#19](https://github.com/MuhidinM/banking-app-challenge/issues/19) | `error-messages.ts`: every API code → copy, per context (login, register, transfer, bill); field-level mapping | R-API-11, R-UX-07 | S | todo |
