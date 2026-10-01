@@ -58,6 +58,62 @@
   }
 }
 
+/*
+ * Enter and exit animations for dialogs, sheets and toasts. Radix waits for
+ * the exit animation before unmounting. Components drop them under
+ * `motion-reduce:` so nothing slides for users who asked for less motion.
+ * Centring uses Tailwind's `translate` property, so these only nudge via `transform`.
+ */
+@theme {
+  --animate-overlay-in: kb-fade-in 160ms ease-out;
+  --animate-overlay-out: kb-fade-out 140ms ease-in;
+  --animate-sheet-in: kb-sheet-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-sheet-out: kb-sheet-out 160ms ease-in;
+  --animate-dialog-in: kb-dialog-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-dialog-out: kb-dialog-out 120ms ease-in;
+  --animate-toast-in: kb-toast-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-toast-out: kb-fade-out 140ms ease-in;
+
+  @keyframes kb-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes kb-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes kb-sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes kb-sheet-out {
+    to {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes kb-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+  @keyframes kb-dialog-out {
+    to {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+  @keyframes kb-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+}
+
 /* Money: tabular figures so digits line up, and an amount never wraps. */
 @utility amount {
   font-variant-numeric: tabular-nums;
