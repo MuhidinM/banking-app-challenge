@@ -1,0 +1,202 @@
+/*
+ * GENERATED FILE: do not edit. Source: docs/design/design-tokens.json
+ * Regenerate with `pnpm tokens`; CI fails if this file is out of date.
+ */
+
+/* Light theme (default). */
+:root {
+  color-scheme: light;
+  --kb-color-primary: #02404f;
+  --kb-color-primary-hover: #0f5565;
+  --kb-color-primary-soft: #dfebee;
+  --kb-color-accent: #eb7d23;
+  --kb-color-accent-soft: #fdebdc;
+  --kb-color-surface: #ffffff;
+  --kb-color-surface-muted: #f3f5f6;
+  --kb-color-border: #dde3e6;
+  --kb-color-ink: #0b1f26;
+  --kb-color-ink-muted: #56666d;
+  --kb-color-ink-subtle: #74858c;
+  --kb-color-on-primary: #ffffff;
+  --kb-color-credit: #1f9d55;
+  --kb-color-credit-soft: #e6f6ec;
+  --kb-color-debit: #d9482b;
+  --kb-color-debit-soft: #fdecea;
+  --kb-color-warning: #b86a10;
+  --kb-color-warning-soft: #fdebdc;
+  --kb-gradient-balance: linear-gradient(120deg, #02404f 0%, #0f5565 55%, #2f8397 100%);
+}
+
+/* Dark theme: when chosen explicitly, or when the OS prefers dark and light isn't forced. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --kb-color-primary: #0f5565;
+  --kb-color-primary-hover: #17697c;
+  --kb-color-primary-soft: #143843;
+  --kb-color-accent: #eb7d23;
+  --kb-color-accent-soft: #3a2411;
+  --kb-color-surface: #10202a;
+  --kb-color-surface-muted: #0a1519;
+  --kb-color-border: #23363e;
+  --kb-color-ink: #e8f0f2;
+  --kb-color-ink-muted: #a3b3b9;
+  --kb-color-ink-subtle: #7d8f96;
+  --kb-color-on-primary: #ffffff;
+  --kb-color-credit: #3fc27b;
+  --kb-color-credit-soft: #10321f;
+  --kb-color-debit: #f0745c;
+  --kb-color-debit-soft: #3a1812;
+  --kb-color-warning: #f0a04b;
+  --kb-color-warning-soft: #3a2411;
+  --kb-gradient-balance: linear-gradient(120deg, #0f5565 0%, #02404f 55%, #0a1519 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --kb-color-primary: #0f5565;
+    --kb-color-primary-hover: #17697c;
+    --kb-color-primary-soft: #143843;
+    --kb-color-accent: #eb7d23;
+    --kb-color-accent-soft: #3a2411;
+    --kb-color-surface: #10202a;
+    --kb-color-surface-muted: #0a1519;
+    --kb-color-border: #23363e;
+    --kb-color-ink: #e8f0f2;
+    --kb-color-ink-muted: #a3b3b9;
+    --kb-color-ink-subtle: #7d8f96;
+    --kb-color-on-primary: #ffffff;
+    --kb-color-credit: #3fc27b;
+    --kb-color-credit-soft: #10321f;
+    --kb-color-debit: #f0745c;
+    --kb-color-debit-soft: #3a1812;
+    --kb-color-warning: #f0a04b;
+    --kb-color-warning-soft: #3a2411;
+    --kb-gradient-balance: linear-gradient(120deg, #0f5565 0%, #02404f 55%, #0a1519 100%);
+  }
+}
+
+/* Tailwind utilities backed by the variables above. */
+@theme inline {
+  /* Only design-token colours: Tailwind's default palette is removed. */
+  --color-*: initial;
+  --color-primary: var(--kb-color-primary);
+  --color-primary-hover: var(--kb-color-primary-hover);
+  --color-primary-soft: var(--kb-color-primary-soft);
+  --color-accent: var(--kb-color-accent);
+  --color-accent-soft: var(--kb-color-accent-soft);
+  --color-surface: var(--kb-color-surface);
+  --color-surface-muted: var(--kb-color-surface-muted);
+  --color-border: var(--kb-color-border);
+  --color-ink: var(--kb-color-ink);
+  --color-ink-muted: var(--kb-color-ink-muted);
+  --color-ink-subtle: var(--kb-color-ink-subtle);
+  --color-on-primary: var(--kb-color-on-primary);
+  --color-credit: var(--kb-color-credit);
+  --color-credit-soft: var(--kb-color-credit-soft);
+  --color-debit: var(--kb-color-debit);
+  --color-debit-soft: var(--kb-color-debit-soft);
+  --color-warning: var(--kb-color-warning);
+  --color-warning-soft: var(--kb-color-warning-soft);
+  --color-brand-peacock-green: #02404f;
+  --color-brand-orange: #eb7d23;
+  --color-brand-teal-blue: #0f5565;
+  --color-brand-light: #f3f5f6;
+
+  --text-display: 2rem;
+  --text-display--line-height: 1.2;
+  --text-display--font-weight: 600;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.4;
+  --text-title--font-weight: 600;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.4;
+  --text-heading--font-weight: 600;
+  --text-body-strong: 0.9375rem;
+  --text-body-strong--line-height: 1.4;
+  --text-body-strong--font-weight: 500;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.4;
+  --text-body--font-weight: 400;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 500;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--font-weight: 400;
+
+  --radius-card: 16px;
+  --radius-control: 12px;
+  --radius-button: 14px;
+  --radius-pill: 999px;
+  --shadow-card: 0 6px 20px -8px rgba(2,64,79,.18), 0 1px 2px rgba(2,64,79,.06);
+  --shadow-float: 0 12px 32px -12px rgba(2,64,79,.32);
+
+  /* Spacing (the 4px grid is Tailwind's default step: p-1 = 4px). */
+  --spacing-page: 1.25rem;
+  --spacing-card: 1.25rem;
+  --spacing-row-y: 0.875rem;
+  --spacing-row-x: 1.25rem;
+  --spacing-section: 1.5rem;
+  --spacing-related: 0.75rem;
+
+  /* Sizes: h-control, h-button-compact, min-h-row, size-icon, w-sidebar, max-w-content… */
+  --spacing-control: 3.25rem;
+  --spacing-control-compact: 2.75rem;
+  --spacing-button: 3.25rem;
+  --spacing-button-compact: 2.75rem;
+  --spacing-hit: 2.75rem;
+  --spacing-row: 4.5rem;
+  --spacing-icon: 1.25rem;
+  --spacing-disc: 2.75rem;
+  --spacing-sidebar: 16.25rem;
+  --container-content: 64rem;
+}
+
+/* Balance card background, e.g. `bg-balance`. */
+@utility bg-balance {
+  background-image: var(--kb-gradient-balance);
+}
+
+/* The spec's type styles in one class each, including the family: `type-heading`… */
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  font-weight: var(--text-display--font-weight);
+}
+@utility type-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+@utility type-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--text-heading--line-height);
+  font-weight: var(--text-heading--font-weight);
+}
+@utility type-body-strong {
+  font-family: var(--font-text);
+  font-size: var(--text-body-strong);
+  line-height: var(--text-body-strong--line-height);
+  font-weight: var(--text-body-strong--font-weight);
+}
+@utility type-body {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}
+@utility type-label {
+  font-family: var(--font-text);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+@utility type-caption {
+  font-family: var(--font-text);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}

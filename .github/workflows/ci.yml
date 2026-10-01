@@ -49,6 +49,9 @@ jobs:
       - name: Check generated API types are up to date
         run: pnpm api:types:check
 
+      - name: Check generated design tokens are up to date
+        run: pnpm tokens:check
+
       - name: Type-check
         run: pnpm typecheck
 

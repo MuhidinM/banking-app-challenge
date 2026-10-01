@@ -68,7 +68,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | fidelity report | ☐ |
+| R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | Theme generated from `design-tokens.json` (colours, type scale, radii, shadows, spacing, sizes, gradients; both themes) by `pnpm tokens`, checked in CI (#9). Screen-by-screen fidelity follows with each UI task | ◐ |
 | R-UX-02 | Light + dark theme; follows OS; user override | T-012 |  | ☐ |
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 |  | ☐ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 |  | ☐ |
@@ -79,7 +79,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-09 | Labelled fields | T-013 | axe | ☐ |
 | R-UX-10 | Keyboard navigation | T-091 |  | ☐ |
 | R-UX-11 | Visible focus (spec: 3px accent-soft + accent border on controls; 2px accent offset 2 on buttons/links) | T-011 |  | ☐ |
-| R-UX-12 | Sufficient contrast (WCAG AA, both themes) | T-091 | axe | ☐ |
+| R-UX-12 | Sufficient contrast (WCAG AA, both themes) | T-010, T-091 | Contrast of every token colour pair measured in `scripts/design-contrast.test.ts` (#9). Ink and muted text pass in both themes; 9 pairs from the spec tokens fail and are kept by decision (N-016). Full axe check in T-091 | ◐ |
 | R-UX-13 | `aria-live` for toasts and inline errors | T-015 |  | ☐ |
 | R-UX-14 | Usable 360 → 1440 px | T-092 |  | ☐ |
 

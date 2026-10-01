@@ -4,6 +4,21 @@ import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 
+// Function components and hooks only.
+const noClassComponents = {
+  selector:
+    "ClassDeclaration[superClass.name=/^(Component|PureComponent)$/], ClassDeclaration[superClass.property.name=/^(Component|PureComponent)$/]",
+  message: "Use a function component and hooks instead of a class component.",
+};
+
+// Colours come from the design tokens (bg-surface, text-ink...). The default Tailwind
+// palette is removed, so a raw hex value is the only way around them.
+const noHexColours = {
+  selector:
+    "Literal[value=/#[0-9a-fA-F]{3,8}(?![\\w-])/], TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}(?![\\w-])/]",
+  message: "Use a design-token colour (bg-surface, text-ink-muted...) instead of a hex value.",
+};
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -29,15 +44,7 @@ const eslintConfig = defineConfig([
       // Debug output must not ship; warnings and errors are allowed on purpose.
       "no-console": ["error", { allow: ["warn", "error"] }],
 
-      // Function components and hooks only.
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector:
-            "ClassDeclaration[superClass.name=/^(Component|PureComponent)$/], ClassDeclaration[superClass.property.name=/^(Component|PureComponent)$/]",
-          message: "Use a function component and hooks instead of a class component.",
-        },
-      ],
+      "no-restricted-syntax": ["error", noClassComponents],
 
       "import/order": [
         "error",
@@ -108,6 +115,13 @@ const eslintConfig = defineConfig([
         },
       ],
     },
+  },
+
+  // Application code: no raw colours (rules don't merge, so the class rule is repeated).
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["**/*.test.{ts,tsx}", "src/mocks/**", "src/test/**"],
+    rules: { "no-restricted-syntax": ["error", noClassComponents, noHexColours] },
   },
 
   // Tests may assert on values they know exist.
