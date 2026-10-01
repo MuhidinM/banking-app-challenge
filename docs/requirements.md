@@ -124,7 +124,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-10 | CSP + security headers; `noindex` | T-094 | ☐ |
 | X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
 | X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 | ☐ |
-| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | Dialogs trap focus and return it to the trigger on close; tested (#14). Focus to the page heading on navigation comes in T-031 | ◐ |
+| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | Dialogs trap focus and return it to the trigger on close; tested (#14). After a client-side navigation focus moves to the new page's h1 (`RouteFocus`), Next's route announcer reads the unique page title, and a skip link comes first in the tab order; tested and checked in a browser (#27) | ☑ |
 | X-14 | `prefers-reduced-motion` respected | T-091 | ☐ |
 | X-15 | Long values don't break layout (long biller, long note, ETB 1,000,000,000.00) | T-092 | ☐ |
 
