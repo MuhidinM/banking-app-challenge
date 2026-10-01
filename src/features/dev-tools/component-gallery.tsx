@@ -12,6 +12,7 @@ import {
   ReceiptText,
   RotateCcw,
   ScrollText,
+  Share,
   User,
   WalletCards,
 } from "lucide-react";
@@ -21,14 +22,16 @@ import { ThemeToggle } from "@/shared/theme/theme-toggle";
 import { AmountField } from "@/shared/ui/amount-field";
 import { Button } from "@/shared/ui/button";
 import { Card, SectionHeader } from "@/shared/ui/card";
+import { Dialog, DialogClose } from "@/shared/ui/dialog";
 import { Badge, InlineMessage } from "@/shared/ui/feedback";
 import { FilterPills } from "@/shared/ui/filter-pills";
-import { ListRow, RowList } from "@/shared/ui/list-row";
+import { IconDisc, ListRow, RowList } from "@/shared/ui/list-row";
 import { RadioCards } from "@/shared/ui/radio-cards";
 import { SelectField } from "@/shared/ui/select-field";
 import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 import { PasswordField, TextField } from "@/shared/ui/text-field";
+import { toast } from "@/shared/ui/toast";
 
 function Section({ title, note, children }: { title: string; note: string; children: ReactNode }) {
   return (
@@ -70,7 +73,7 @@ export function ComponentGallery() {
       </header>
 
       <Section title="Buttons" note="52px default, 44px compact. One primary action per screen.">
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           <Button>Primary</Button>
           <Button variant="soft">Soft</Button>
           <Button variant="outline">Outline</Button>
@@ -98,7 +101,7 @@ export function ComponentGallery() {
         title="Fields"
         note="Contained 52px inputs: visible boundary on grey pages, room for icons, explicit focus and error states."
       >
-        <div id="fields" className="grid gap-5 md:grid-cols-3">
+        <div id="fields" className="grid grid-cols-1 gap-5 md:grid-cols-3">
           <TextField label="Default" icon={User} placeholder="placeholder text" />
           <TextField
             label="Filled with hint"
@@ -131,7 +134,7 @@ export function ComponentGallery() {
         title="Money inputs"
         note="The account picker shows the balance where the decision is made; the amount field is large, with quick chips."
       >
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <SelectField
             label="Account select"
             value={account}
@@ -181,7 +184,7 @@ export function ComponentGallery() {
         title="Rows"
         note="Tinted discs carry meaning: primary for accounts, green for money in, neutral for money out. Amounts are signed."
       >
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="flex flex-col gap-3">
             <SectionHeader title="My accounts" action={{ label: "View all", href: "#rows" }} />
             <Card className="overflow-hidden">
@@ -237,7 +240,7 @@ export function ComponentGallery() {
         title="Filters, badges, feedback"
         note="Filter pills switch a list; badges label; messages inform."
       >
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="flex flex-col gap-4">
             <FilterPills
               label="Show"
@@ -281,7 +284,7 @@ export function ComponentGallery() {
         title="Loading, empty, error"
         note="Skeletons match the rows they stand in for; empty and error states say what to do next."
       >
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           <Card className="overflow-hidden">
             <LoadingRegion label="Loading your accounts">
               <ul className="divide-y divide-border">
@@ -308,6 +311,102 @@ export function ComponentGallery() {
               action={<Button size="compact">Open an account</Button>}
             />
           </Card>
+        </div>
+      </Section>
+
+      <Section
+        title="Dialogs and toasts"
+        note="A centred dialog on desktop, a bottom sheet below 768px. Toasts appear at the top and are announced."
+      >
+        <div className="flex flex-wrap gap-3">
+          <Dialog
+            title="Transaction"
+            description="Details of the refund from merchant."
+            trigger={<Button variant="outline">Open transaction details</Button>}
+            footer={
+              <Button variant="outline" icon={Share}>
+                Share receipt
+              </Button>
+            }
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3.5">
+                <IconDisc icon={RotateCcw} tone="credit" />
+                <div className="flex-1">
+                  <p className="type-body-strong">Refund from merchant</p>
+                  <p className="type-caption text-ink-muted">Today, 15:18</p>
+                </div>
+                <p className="type-body-strong amount text-credit">+ETB 1,665.00</p>
+              </div>
+              <Card className="overflow-hidden">
+                <dl className="divide-y divide-border">
+                  {[
+                    [
+                      "Type",
+                      <Badge key="t" tone="credit">
+                        Refund
+                      </Badge>,
+                    ],
+                    ["Direction", "Money in"],
+                    ["Account", "Checking •••• 8057"],
+                    ["Reference", "TX-000117"],
+                    ["Balance after", "ETB 8,640.00"],
+                  ].map(([term, detail]) => (
+                    <div
+                      key={String(term)}
+                      className="flex items-center justify-between gap-4 px-4 py-3"
+                    >
+                      <dt className="type-body text-ink-muted">{term}</dt>
+                      <dd className="type-body text-ink">{detail}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Card>
+            </div>
+          </Dialog>
+
+          <Dialog
+            title="Review transfer"
+            trigger={<Button>Review transfer</Button>}
+            footer={
+              <>
+                <Button
+                  fullWidth
+                  onClick={() => toast({ title: "Sent ETB 250.00 to 2899010846." })}
+                >
+                  Confirm and send
+                </Button>
+                <DialogClose asChild>
+                  <Button variant="ghost" fullWidth>
+                    Edit details
+                  </Button>
+                </DialogClose>
+              </>
+            }
+          >
+            <div className="flex flex-col gap-4">
+              <p className="text-center type-display amount">ETB 250.00</p>
+              <InlineMessage tone="warning">
+                Transfers are instant and cannot be reversed. Check the account number.
+              </InlineMessage>
+            </div>
+          </Dialog>
+
+          <Button variant="soft" onClick={() => toast({ title: "Sent ETB 250.00 to 2899010846." })}>
+            Success toast
+          </Button>
+          <Button
+            variant="soft"
+            onClick={() =>
+              toast({
+                tone: "error",
+                title: "Can't reach the bank right now.",
+                description: "Check your connection and try again.",
+              })
+            }
+          >
+            Error toast
+          </Button>
         </div>
       </Section>
 

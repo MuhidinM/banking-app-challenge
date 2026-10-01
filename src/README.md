@@ -36,3 +36,4 @@ ESLint enforces all four rules (`import/no-restricted-paths`, `no-restricted-glo
 - **Imports** use the `@/` alias across folders and relative paths within a feature.
 - **Generated files** are never edited by hand: `shared/api/schema.ts` comes from `pnpm api:types`.
 - **Folders exist only when they have a file.** No empty placeholders and no layers (services, repositories, managers) without a second use.
+- **Grids start with `grid-cols-1`.** A grid without explicit columns gets one `auto` column that grows to its content's widest unbreakable line (such as a truncated row title), which overflowed a 375px screen. `grid-cols-1` is `minmax(0, 1fr)`, so content shrinks and truncates instead.
