@@ -119,3 +119,26 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+/*
+ * Sign-in and register: the brand panel on the left (web only). The tokens have
+ * no gradient for it (spec note N-022), so these are sampled from the screens:
+ * light matches the balance-card gradient; dark (WebLoginDark) stays flat
+ * primaryHover and lightens to the same teal in the corner. Text on it is white
+ * in both themes; the logo is dark on the dark panel, as drawn.
+ */
+@utility bg-auth-panel {
+  background-image: linear-gradient(120deg, #02404f 0%, #0f5565 55%, #2f8397 100%);
+  --auth-panel-logo: var(--color-on-primary);
+
+  :root[data-theme="dark"] & {
+    background-image: linear-gradient(120deg, #17697c 0%, #17697c 55%, #2f8397 100%);
+    --auth-panel-logo: var(--color-surface);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) & {
+      background-image: linear-gradient(120deg, #17697c 0%, #17697c 55%, #2f8397 100%);
+      --auth-panel-logo: var(--color-surface);
+    }
+  }
+}

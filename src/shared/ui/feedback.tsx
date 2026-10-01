@@ -27,6 +27,8 @@ interface InlineMessageProps {
    * "assertive" for errors that block the task. Omit for messages present from the start.
    */
   announce?: "polite" | "assertive";
+  /** Replaces the tone's icon, e.g. CircleAlert on the login page's "session expired" banner. */
+  icon?: LucideIcon;
   className?: string;
 }
 
@@ -35,9 +37,11 @@ export function InlineMessage({
   tone = "info",
   children,
   announce,
+  icon,
   className,
 }: InlineMessageProps) {
-  const { classes, iconClass, icon: Icon } = messageTones[tone];
+  const { classes, iconClass, icon: toneIcon } = messageTones[tone];
+  const Icon = icon ?? toneIcon;
   const role = announce === "assertive" ? "alert" : announce === "polite" ? "status" : undefined;
 
   return (
