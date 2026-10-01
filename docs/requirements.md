@@ -114,7 +114,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 |---|---|---|---|
 | X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | ☐ |
 | X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
-| X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | ☐ |
+| X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | Web Locks around the refresh; new access tokens, logout and expiry shared over a BroadcastChannel; test: two tabs needing a refresh make one call and both stay signed in, and without Web Locks both still stay signed in; checked in a browser: signing in in one tab signs in the other (#24) | ☑ |
 | X-04 | Total balance correct with >10 accounts | T-040 | ☐ |
 | X-05 | Money math in cents; no float drift | Branded `Cents` type; sums, comparisons and input parsing in integer cents; tests show 0.1 + 0.2 = 30 cents and exact round-trips up to ETB 1,000,000,000 (#15) | ☑ |
 | X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |

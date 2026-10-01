@@ -9,12 +9,13 @@
 import { isNetworkError } from "@/shared/api/api-error";
 import { type HttpClient, createHttpClient } from "@/shared/api/http-client";
 import { getQueryClient } from "@/shared/api/query-client";
-import { createTokenRefresher } from "@/shared/api/token-refresh";
+import { type TokenPair, createTokenRefresher } from "@/shared/api/token-refresh";
 import type { LoginRequest, LoginResponse } from "@/shared/api/types";
 import { env } from "@/shared/config/env";
 import { clearToasts } from "@/shared/ui/toast";
 
 import { createAuthApi } from "./api";
+import { type RunExclusive, createRefreshLock } from "./refresh-lock";
 import { type SessionChannel, createSessionChannel } from "./session-channel";
 import { type SessionState, type SessionStore, createSessionStore } from "./session-store";
 
@@ -49,18 +50,33 @@ export interface AppSessionOptions {
    * toasts, so nothing from this session shows in the next one.
    */
   onSessionEnded?: (reason: NonNullable<SessionState["endedBecause"]>) => void;
+  /** Makes the token refresh exclusive across tabs (Web Locks); per tab when omitted. */
+  runExclusive?: RunExclusive;
 }
 
 export function createAppSession(
   store: SessionStore,
-  { baseUrl = env.apiBaseUrl, channel = null, onSessionEnded = () => {} }: AppSessionOptions = {},
+  {
+    baseUrl = env.apiBaseUrl,
+    channel = null,
+    onSessionEnded = () => {},
+    runExclusive,
+  }: AppSessionOptions = {},
 ): AppSession {
+  // New tokens (sign-in or refresh) are shared with the other tabs, so they
+  // don't refresh again with a refresh token that has just been rotated.
+  const setTokens = (pair: TokenPair) => {
+    store.setTokens(pair);
+    channel?.post({ type: "tokens", accessToken: pair.accessToken });
+  };
+
   // The refresher calls the auth API, which uses this same client. That's safe:
   // the refresh request is sent without auth, so it can't trigger a refresh.
   // The two depend on each other, so the refresher reads the auth API through a holder.
   const late: { authApi?: ReturnType<typeof createAuthApi> } = {};
   const refresher = createTokenRefresher({
-    tokens: store,
+    tokens: { ...store, setTokens },
+    runExclusive,
     requestRefresh: (refreshToken) => {
       if (!late.authApi) throw new Error("Auth API used before the session was created.");
       return late.authApi.refreshTokens(refreshToken);
@@ -76,19 +92,33 @@ export function createAppSession(
 
   let restoring: Promise<void> | null = null;
 
+  // Set while applying another tab's message, so it isn't sent back out.
+  let fromOtherTab = false;
+
   let previous = store.getSnapshot();
   store.subscribe(() => {
     const current = store.getSnapshot();
     if (current.status === "anonymous" && previous.status !== "anonymous") {
-      onSessionEnded(current.endedBecause ?? "signed-out");
+      const reason = current.endedBecause ?? "signed-out";
+      onSessionEnded(reason);
+      // The API rejected the refresh token here; the other tabs share it, so
+      // their sessions are over too.
+      if (reason === "expired" && !fromOtherTab) channel?.post({ type: "expired" });
     }
     previous = current;
   });
 
-  // Another tab logged out: so does this one (without telling the others again).
   channel?.subscribe((message) => {
-    if (message.type === "signed-out" && store.getSnapshot().status !== "anonymous") {
-      store.signOut();
+    fromOtherTab = true;
+    try {
+      if (message.type === "tokens") {
+        store.adoptAccessToken(message.accessToken);
+      } else if (store.getSnapshot().status !== "anonymous") {
+        if (message.type === "signed-out") store.signOut();
+        else store.expire();
+      }
+    } finally {
+      fromOtherTab = false;
     }
   });
 
@@ -99,7 +129,7 @@ export function createAppSession(
 
     async signIn(credentials) {
       const response = await api.login(credentials);
-      store.setTokens(response);
+      setTokens(response);
       return response;
     },
 
@@ -141,6 +171,7 @@ let appSession: AppSession | undefined;
 export function getAppSession(): AppSession {
   appSession ??= createAppSession(createSessionStore(), {
     channel: createSessionChannel(),
+    runExclusive: createRefreshLock(),
     onSessionEnded: () => {
       getQueryClient().clear();
       clearToasts();

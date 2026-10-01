@@ -78,7 +78,7 @@ Trade-off: a successful XSS could read the refresh token. Mitigations: strict CS
 
 On load, `SessionBootstrap` (root layout) calls `restore()`: one refresh through the same single-flight refresher. A rejected token ends the session as expired, an unreachable API keeps the user signed in, and anything else ends the session rather than leaving it `unknown`. A non-sensitive `has_session=1` cookie mirrors the status for the route proxy.
 
-Logout (`signOut()`) forgets the tokens and the cookie; the API has no logout endpoint, so the refresh token just expires. Whenever a session ends (logout, or the API rejecting the refresh token), `onSessionEnded` clears the query cache (`src/shared/api/query-client.ts`) and the toasts, so nothing from one session shows in the next. A logout is also posted on a `BroadcastChannel` (`session-channel.ts`), and every other open tab logs out too; `RequireSession` then sends each to `/login`.
+Logout (`signOut()`) forgets the tokens and the cookie; the API has no logout endpoint, so the refresh token just expires. Whenever a session ends (logout, or the API rejecting the refresh token), `onSessionEnded` clears the query cache (`src/shared/api/query-client.ts`) and the toasts, so nothing from one session shows in the next. Tabs share the session over a `BroadcastChannel` (`session-channel.ts`): new access tokens after a refresh or sign-in (so another tab doesn't refresh again with a rotated token), logout and expiry (every tab then ends its session and `RequireSession` sends it to `/login`). Refreshes are serialised across tabs with Web Locks (`refresh-lock.ts`, ADR-0005).
 
 ## State
 

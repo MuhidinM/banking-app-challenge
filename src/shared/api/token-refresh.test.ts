@@ -142,3 +142,55 @@ describe("createTokenRefresher", () => {
     expect(exclusiveRuns).toBe(1);
   });
 });
+
+describe("createTokenRefresher across tabs (#24)", () => {
+  it("uses the token another tab shared while this one waited for the lock", async () => {
+    const tokens = memoryStore({ accessToken: "old-access", refreshToken: "refresh-1" });
+    const requestRefresh = vi.fn();
+    // The other tab holds the lock, refreshes, and shares its tokens before releasing it.
+    const runExclusive = async <T>(task: () => Promise<T>) => {
+      tokens.setTokens({ accessToken: "other-tab-access", refreshToken: "refresh-2" });
+      return task();
+    };
+    const refresher = createTokenRefresher({
+      tokens,
+      requestRefresh,
+      onSessionExpired: vi.fn(),
+      runExclusive,
+    });
+
+    expect(await refresher.refresh("old-access")).toBe("other-tab-access");
+    expect(requestRefresh).not.toHaveBeenCalled();
+  });
+
+  it("isn't logged out when another tab rotated the tokens during its call (no lock)", async () => {
+    const tokens = memoryStore({ accessToken: "old-access", refreshToken: "refresh-1" });
+    const onSessionExpired = vi.fn();
+    const requestRefresh = vi.fn(async (refreshToken: string) => {
+      if (refreshToken === "refresh-1") {
+        // Meanwhile the other tab used refresh-1 first and stored refresh-2.
+        tokens.pair.refreshToken = "refresh-2";
+        throw new ApiError({ status: 401, code: "AUTH_005" });
+      }
+      return { accessToken: "new-access", refreshToken: "refresh-3" };
+    });
+    const refresher = createTokenRefresher({ tokens, requestRefresh, onSessionExpired });
+
+    expect(await refresher.refresh("old-access")).toBe("new-access");
+    expect(requestRefresh).toHaveBeenNthCalledWith(2, "refresh-2");
+    expect(onSessionExpired).not.toHaveBeenCalled();
+  });
+
+  it("still ends the session when the refresh token is rejected for real", async () => {
+    const tokens = memoryStore({ accessToken: "old-access", refreshToken: "refresh-1" });
+    const onSessionExpired = vi.fn();
+    const requestRefresh = vi.fn(async () => {
+      throw new ApiError({ status: 401, code: "AUTH_005" });
+    });
+    const refresher = createTokenRefresher({ tokens, requestRefresh, onSessionExpired });
+
+    expect(await refresher.refresh("old-access")).toBeNull();
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(onSessionExpired).toHaveBeenCalledOnce();
+  });
+});

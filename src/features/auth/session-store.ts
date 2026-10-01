@@ -45,6 +45,12 @@ export interface SessionStore extends TokenStore {
    * that reaches the API refreshes the session or ends it.
    */
   trustStoredSession(): void;
+  /**
+   * Another tab refreshed (or signed in) and shared its new access token. The
+   * refresh token it stored is already in localStorage, so only the access
+   * token changes. Ignored when no refresh token is stored.
+   */
+  adoptAccessToken(accessToken: string): void;
 }
 
 function browserEnvironment(): SessionEnvironment {
@@ -135,6 +141,11 @@ export function createSessionStore(
     signOut: () => end("signed-out"),
     trustStoredSession() {
       if (state.status === "unknown") setState({ status: "authenticated", endedBecause: null });
+    },
+    adoptAccessToken(next) {
+      if (!read()) return;
+      accessToken = next;
+      setState({ status: "authenticated", endedBecause: null });
     },
 
     getSnapshot: () => state,

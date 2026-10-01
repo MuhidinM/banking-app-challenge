@@ -4,13 +4,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
-import { expireRefreshTokens } from "@/mocks/tokens";
+import { expireAccessTokens, expireRefreshTokens } from "@/mocks/tokens";
 import type { User } from "@/shared/api/types";
 import { fakeSessionEnvironment as fakeEnvironment } from "@/test/fake-session-environment";
 
 import { createAppSession } from "./session";
 import { REFRESH_TOKEN_KEY, type SessionEnvironment, createSessionStore } from "./session-store";
 
+import type { RunExclusive } from "./refresh-lock";
 import type { SessionChannel, SessionMessage } from "./session-channel";
 
 const credentials = { username: "demo.jane", passwordHash: DEMO_PASSWORD };
@@ -194,5 +195,82 @@ describe("logout", () => {
     session.signOut();
 
     expect(onSessionEnded).not.toHaveBeenCalled();
+  });
+});
+
+/** Web Locks for tests: tasks run one at a time, in order. */
+function sharedLock(): RunExclusive {
+  let tail: Promise<unknown> = Promise.resolve();
+  return <T>(task: () => Promise<T>) => {
+    const run = tail.then(task);
+    tail = run.catch(() => {});
+    return run;
+  };
+}
+
+/** Two tabs of one browser: one localStorage, one channel between them. */
+async function twoSignedInTabs({ lock }: { lock: boolean }) {
+  const { environment } = fakeEnvironment();
+  const [channelA, channelB] = linkedChannels();
+  const runExclusive = lock ? sharedLock() : undefined;
+  const tabA = createAppSession(createSessionStore(environment), {
+    channel: channelA,
+    runExclusive,
+  });
+  const tabB = createAppSession(createSessionStore(environment), {
+    channel: channelB,
+    runExclusive,
+  });
+  await tabA.signIn(credentials);
+  return { tabA, tabB };
+}
+
+describe("two tabs (#24)", () => {
+  it("signing in in one tab signs in the other", async () => {
+    const { tabA, tabB } = await twoSignedInTabs({ lock: true });
+
+    expect(tabB.store.getSnapshot().status).toBe("authenticated");
+    expect(tabB.store.getAccessToken()).toBe(tabA.store.getAccessToken());
+  });
+
+  it("two tabs needing a refresh make one call and both stay signed in", async () => {
+    const { tabA, tabB } = await twoSignedInTabs({ lock: true });
+    expireAccessTokens();
+    const counter = countRefreshes();
+
+    const [meA, meB] = await Promise.all([
+      tabA.client.request<User>("/api/users/me"),
+      tabB.client.request<User>("/api/users/me"),
+    ]);
+
+    expect(counter.refreshes).toBe(1);
+    expect([meA.username, meB.username]).toEqual(["demo.jane", "demo.jane"]);
+    expect(tabA.store.getSnapshot().status).toBe("authenticated");
+    expect(tabB.store.getSnapshot().status).toBe("authenticated");
+  });
+
+  it("without Web Locks, both tabs still stay signed in", async () => {
+    const { tabA, tabB } = await twoSignedInTabs({ lock: false });
+    expireAccessTokens();
+
+    const [meA, meB] = await Promise.all([
+      tabA.client.request<User>("/api/users/me"),
+      tabB.client.request<User>("/api/users/me"),
+    ]);
+
+    expect([meA.username, meB.username]).toEqual(["demo.jane", "demo.jane"]);
+    expect(tabA.store.getSnapshot().status).toBe("authenticated");
+    expect(tabB.store.getSnapshot().status).toBe("authenticated");
+  });
+
+  it("a refresh token the API rejects ends the session in both tabs", async () => {
+    const { tabA, tabB } = await twoSignedInTabs({ lock: true });
+    expireAccessTokens();
+    expireRefreshTokens();
+
+    await tabA.client.request("/api/users/me").catch(() => {});
+
+    expect(tabA.store.getSnapshot()).toEqual({ status: "anonymous", endedBecause: "expired" });
+    expect(tabB.store.getSnapshot()).toEqual({ status: "anonymous", endedBecause: "expired" });
   });
 });
