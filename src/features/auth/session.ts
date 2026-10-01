@@ -44,8 +44,9 @@ export function createAppSession(
       if (!late.authApi) throw new Error("Auth API used before the session was created.");
       return late.authApi.refreshTokens(refreshToken);
     },
-    // store.clear() (called by the refresher) already ended the session as "expired";
-    // pages react to that through the store (#21).
+    // store.clear() (called by the refresher) already ended the session as
+    // "expired". RequireSession sees that in the store and sends the user to
+    // /login?reason=expired, so nothing else is needed here.
     onSessionExpired: () => {},
   });
   const client = createHttpClient({ baseUrl, getAccessToken: store.getAccessToken, refresher });
