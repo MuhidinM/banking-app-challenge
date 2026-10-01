@@ -64,6 +64,18 @@ Tab A request ──401──┘          │
 
 Trade-off: a successful XSS could read the refresh token. Mitigations: strict CSP, no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations.
 
+### Session wiring
+
+`src/features/auth/session.ts` builds the app's one session: the session store (`session-store.ts`), the refresher, the HTTP client every feature uses, and the auth API. It is created on first use in the browser, never at import time, because client components also render on the server.
+
+| Status          | Meaning                                                                                 |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `unknown`       | A refresh token is stored but not checked yet (right after load)                        |
+| `authenticated` | Signed in, or a stored session that couldn't be checked because the API was unreachable |
+| `anonymous`     | Signed out; `endedBecause` is `expired` or `signed-out`                                 |
+
+On load, `SessionBootstrap` (root layout) calls `restore()`: one refresh through the same single-flight refresher. A rejected token ends the session as expired, an unreachable API keeps the user signed in, and anything else ends the session rather than leaving it `unknown`. A non-sensitive `has_session=1` cookie mirrors the status for the route proxy.
+
 ## State
 
 ([ADR-0004](decisions/0004-state-management.md))
