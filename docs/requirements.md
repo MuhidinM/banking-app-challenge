@@ -45,10 +45,10 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-FLOW-01 | Dashboard greeting from `GET /api/users/me` | T-040 |  | ☐ |
-| R-FLOW-02 | Total balance across **all** accounts | T-040 |  | ☐ |
+| R-FLOW-01 | Dashboard greeting from `GET /api/users/me` | T-040 | "Good morning / afternoon / evening" by local time with the full name from `GET /api/users/me` (`useCurrentUser`); tested (#29) | ☑ |
+| R-FLOW-02 | Total balance across **all** accounts | T-040 | `listAll()` loads every page of `GET /api/accounts`; `totalBalance()` adds in cents; tested with 13 and 120 accounts (#29) | ☑ |
 | R-FLOW-03 | Accounts list (`GET /api/accounts`, paginated): number, type, balance | T-041 |  | ☐ |
-| R-FLOW-04 | Recent transactions of one account on dashboard | T-040 |  | ☐ |
+| R-FLOW-04 | Recent transactions of one account on dashboard | T-040 | The latest 3 transactions of the first account, named above the rows, with "View all" to its history; tested against the mock (#29) | ☑ |
 | R-FLOW-05 | Navigation to all other screens | T-030 | Sidebar and bottom nav link Home, Accounts, Activity, Transfer and Profile, with the current section marked (`aria-current`); the screens behind them are built in M4–M8, Pay bill is reached from the dashboard (#29) (#26) | ◐ |
 | R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 |  | ☐ |
 | R-FLOW-07 | New account appears without full reload | T-042 |  | ☐ |
@@ -110,23 +110,23 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 ## H. Additional quality criteria (beyond the brief)
 
-| ID | Item | Task | ✓ |
-|---|---|---|---|
-| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | ☐ |
-| X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
-| X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | Web Locks around the refresh; new access tokens, logout and expiry shared over a BroadcastChannel; test: two tabs needing a refresh make one call and both stay signed in, and without Web Locks both still stay signed in; checked in a browser: signing in in one tab signs in the other (#24) | ☑ |
-| X-04 | Total balance correct with >10 accounts | T-040 | ☐ |
-| X-05 | Money math in cents; no float drift | Branded `Cents` type; sums, comparisons and input parsing in integer cents; tests show 0.1 + 0.2 = 30 cents and exact round-trips up to ETB 1,000,000,000 (#15) | ☑ |
-| X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
-| X-07 | Session inspector ("expire token now") behind a flag | Session inspector behind NEXT_PUBLIC_DEV_TOOLS (loaded only when on): token countdowns, refresh count, "Expire access token now", one or three calls, "Expire refresh token too"; tested; in a browser, three calls after expiring made one refresh (#25) | ☑ |
-| X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
-| X-09 | Query cache cleared on logout / refresh failure | The query cache (and toasts) are cleared whenever a session ends: logout, logout in another tab, or a rejected refresh token; tested (#23) | ☑ |
-| X-10 | CSP + security headers; `noindex` | Nonce-based CSP from the proxy (scripts need the nonce, connect only to self and the API, no framing) plus nosniff, Referrer-Policy, Permissions-Policy, HSTS, COOP; noindex meta, X-Robots-Tag and robots.txt (ADR-0010). Production build: injected handler and cross-origin fetch blocked, sign-in and theme script work with no violations (#49) | ☑ |
-| X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
-| X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 | ☐ |
-| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | Dialogs trap focus and return it to the trigger on close; tested (#14). After a client-side navigation focus moves to the new page's h1 (`RouteFocus`), Next's route announcer reads the unique page title, and a skip link comes first in the tab order; tested and checked in a browser (#27) | ☑ |
-| X-14 | `prefers-reduced-motion` respected | T-091 | ☐ |
-| X-15 | Long values don't break layout (long biller, long note, ETB 1,000,000,000.00) | T-092 | ☐ |
+| ID | Item | Task | Evidence | ✓ |
+|---|---|---|---|---|
+| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 |  | ☐ |
+| X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | T-016 | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
+| X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | Web Locks around the refresh; new access tokens, logout and expiry shared over a BroadcastChannel; test: two tabs needing a refresh make one call and both stay signed in, and without Web Locks both still stay signed in; checked in a browser: signing in in one tab signs in the other (#24) | ☑ |
+| X-04 | Total balance correct with >10 accounts | T-040 | Dashboard test with 13 accounts: total ETB 11,945.50 "Across 13 accounts"; API test with 120 accounts over three pages (#29) | ☑ |
+| X-05 | Money math in cents; no float drift | T-016 | Branded `Cents` type; sums, comparisons and input parsing in integer cents; tests show 0.1 + 0.2 = 30 cents and exact round-trips up to ETB 1,000,000,000 (#15) | ☑ |
+| X-06 | Mock mode runs the full app offline | T-005 | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
+| X-07 | Session inspector ("expire token now") behind a flag | T-029 | Session inspector behind NEXT_PUBLIC_DEV_TOOLS (loaded only when on): token countdowns, refresh count, "Expire access token now", one or three calls, "Expire refresh token too"; tested; in a browser, three calls after expiring made one refresh (#25) | ☑ |
+| X-08 | No theme flash on first paint | T-012 | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
+| X-09 | Query cache cleared on logout / refresh failure | T-027 | The query cache (and toasts) are cleared whenever a session ends: logout, logout in another tab, or a rejected refresh token; tested (#23) | ☑ |
+| X-10 | CSP + security headers; `noindex` | T-094 | Nonce-based CSP from the proxy (scripts need the nonce, connect only to self and the API, no framing) plus nosniff, Referrer-Policy, Permissions-Policy, HSTS, COOP; noindex meta, X-Robots-Tag and robots.txt (ADR-0010). Production build: injected handler and cross-origin fetch blocked, sign-in and theme script work with no violations (#49) | ☑ |
+| X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 |  | ☐ |
+| X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 |  | ☐ |
+| X-13 | Focus moves to page heading on route change; dialogs trap and restore focus | T-091 | Dialogs trap focus and return it to the trigger on close; tested (#14). After a client-side navigation focus moves to the new page's h1 (`RouteFocus`), Next's route announcer reads the unique page title, and a skip link comes first in the tab order; tested and checked in a browser (#27) | ☑ |
+| X-14 | `prefers-reduced-motion` respected | T-091 |  | ☐ |
+| X-15 | Long values don't break layout (long biller, long note, ETB 1,000,000,000.00) | T-092 |  | ☐ |
 
 ## I. Release checklist
 
