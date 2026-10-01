@@ -33,9 +33,9 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 |---|---|---|---|---|
 | R-AUTH-01 | Login: username + password → `POST /api/auth/login` → store tokens → dashboard | T-024 | Login page signs in through `POST /api/auth/login`, stores the tokens and goes to `/` or the validated `?next=` path; component test (#20) | ☑ |
 | R-AUTH-02 | Friendly message on invalid credentials | T-024 | Wrong credentials show "Username or password is incorrect." from `describeError(…, "login")`; network failures get their own copy; component tests (#20) | ☑ |
-| R-AUTH-03 | Register: username, password, first, last, email (optional), phone; client validation | T-026 |  | ☐ |
-| R-AUTH-04 | Register calls `POST /api/auth/register`; then auto-login **or** login with confirmation | T-026 |  | ☐ |
-| R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 |  | ☐ |
+| R-AUTH-03 | Register: username, password, first, last, email (optional), phone; client validation | T-026 | All six fields plus confirm password; `validateRegister()` applies the API rules (username 3–50, password ≥6, phone pattern, email optional) before sending; 14 tests (#22) | ☑ |
+| R-AUTH-04 | Register calls `POST /api/auth/register`; then auto-login **or** login with confirmation | T-026 | `POST /api/auth/register`, then automatic sign-in and the dashboard with a welcome toast naming the new checking account; if only the sign-in fails, login with "Your account is ready" (#22) | ☑ |
+| R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 | AUTH_003 on Username, AUTH_004 on Email via `describeError(…, "register")`, focused, cleared when the field changes; component tests (#22) | ☑ |
 | R-AUTH-06 | Protected pages unreachable without a session | T-025 | `proxy.ts` redirects signed-out visitors from protected pages to `/login?next=…`; `RequireSession` renders protected pages only with a session; tested, and the proxy redirect checked in the browser (#21) | ☑ |
 | R-AUTH-07 | Valid session skips the login page | T-025 | Signed in, `/login` and `/register` go to `next` or `/` (proxy on the cookie, `RedirectWhenSignedIn` after a restore); external `next` ignored; tested (#21) | ☑ |
 | R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload (#18); confirmed in Chrome with mock mode: sign in, reload, still signed in (#20, after #80 kept the mock across reloads) | ☑ |
