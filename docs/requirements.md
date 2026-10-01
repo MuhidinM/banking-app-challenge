@@ -49,7 +49,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-02 | Total balance across **all** accounts | T-040 |  | ☐ |
 | R-FLOW-03 | Accounts list (`GET /api/accounts`, paginated): number, type, balance | T-041 |  | ☐ |
 | R-FLOW-04 | Recent transactions of one account on dashboard | T-040 |  | ☐ |
-| R-FLOW-05 | Navigation to all other screens | T-030 |  | ☐ |
+| R-FLOW-05 | Navigation to all other screens | T-030 | Sidebar and bottom nav link Home, Accounts, Activity, Transfer and Profile, with the current section marked (`aria-current`); the screens behind them are built in M4–M8, Pay bill is reached from the dashboard (#29) (#26) | ◐ |
 | R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 |  | ☐ |
 | R-FLOW-07 | New account appears without full reload | T-042 |  | ☐ |
 | R-FLOW-08 | Transfer: from (own accounts), recipient number, amount, optional note | T-060 |  | ☐ |
@@ -70,7 +70,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 |---|---|---|---|---|
 | R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | Theme generated from `design-tokens.json` (colours, type scale, radii, shadows, spacing, sizes, gradients; both themes) by `pnpm tokens`, checked in CI (#9). Screen-by-screen fidelity follows with each UI task | ◐ |
 | R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser | ☑ |
-| R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 |  | ☐ |
+| R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 | `AppShell`: 260 px sidebar from 768 px, bottom nav with the raised Transfer disc below it; measured against the redlines at 1440×900 and 390×844 (#26) | ☑ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 | Skeletons matching row geometry (identical heights measured) inside a `LoadingRegion` status, reduced-motion aware; route-level loading in T-032 (#13). Each screen uses them as it is built | ◐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
 | R-UX-06 | Empty states: no accounts, no transactions | T-014 | `EmptyState` with an action (#13); the no-accounts and no-transactions screens use it in T-041 / T-050 | ◐ |
