@@ -31,8 +31,8 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-AUTH-01 | Login: username + password → `POST /api/auth/login` → store tokens → dashboard | T-024 |  | ☐ |
-| R-AUTH-02 | Friendly message on invalid credentials | T-024 |  | ☐ |
+| R-AUTH-01 | Login: username + password → `POST /api/auth/login` → store tokens → dashboard | T-024 | Login page signs in through `POST /api/auth/login`, stores the tokens and goes to `/` or the validated `?next=` path; component test (#20) | ☑ |
+| R-AUTH-02 | Friendly message on invalid credentials | T-024 | Wrong credentials show "Username or password is incorrect." from `describeError(…, "login")`; network failures get their own copy; component tests (#20) | ☑ |
 | R-AUTH-03 | Register: username, password, first, last, email (optional), phone; client validation | T-026 |  | ☐ |
 | R-AUTH-04 | Register calls `POST /api/auth/register`; then auto-login **or** login with confirmation | T-026 |  | ☐ |
 | R-AUTH-05 | Duplicate username / email errors shown on the right field | T-026 |  | ☐ |
@@ -94,7 +94,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass locally, in the pre-commit hook (#3) and in CI on every PR (`.github/workflows/ci.yml`, #6) | ☑ |
 | R-CQ-06 | Unit tests: API client | T-020 | `http-client.test.ts` (12) and `api-error.test.ts` (8): success, ErrorResponse → ApiError, network error, offline, timeout, abort, headers and bodies (#16) | ☑ |
 | R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 | `token-refresh.test.ts` (8) and `token-refresh.integration.test.ts` (7), including the many-concurrent-401s case; breaking single-flight fails 5 of them (#17) | ☑ |
-| R-CQ-08 | ≥1 component test (RTL) | T-024 |  | ☐ |
+| R-CQ-08 | ≥1 component test (RTL) | T-024 | RTL component tests for the UI kit and the login form (7 tests: sign-in, wrong credentials, disabled while signing in, missing fields, network failure, expired banner, show/hide password) (#20) | ☑ |
 | R-CQ-09 | E2E tests (plus) | T-093 |  | ☐ |
 | R-CQ-10 | `.env.example` committed | T-004 | `.env.example` documents every variable (#4) | ☑ |
 
