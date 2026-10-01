@@ -21,7 +21,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 
 | ID | Issue | Task | Reqs | Size | Status |
 |---|---|---|---|---|---|
-| T-010 | [#9](https://github.com/MuhidinM/banking-app-challenge/issues/9) | `scripts/generate-tokens.ts`: design-tokens.json → `tokens.css` (light `:root`, dark `[data-theme=dark]`) + Tailwind `@theme` | R-UX-01 | M | todo |
+| T-010 | [#9](https://github.com/MuhidinM/banking-app-challenge/issues/9) | `scripts/generate-tokens.ts`: design-tokens.json → `tokens.css` (light `:root`, dark `[data-theme=dark]`) + Tailwind `@theme` | R-UX-01 | M | done |
 | T-011 | [#10](https://github.com/MuhidinM/banking-app-challenge/issues/10) | Fonts via `next/font` (Montserrat text, Raleway headings), type scale utilities, focus ring utilities, tabular nums | R-UX-01/11 | S | todo |
 | T-012 | [#11](https://github.com/MuhidinM/banking-app-challenge/issues/11) | Theme: system / light / dark, inline script before paint (no flash), toggle in sidebar + profile | R-UX-02, X-08 | M | todo |
 | T-013 | [#12](https://github.com/MuhidinM/banking-app-challenge/issues/12) | UI primitives: Button (primary, soft, outline, ghost, danger, loading, compact), TextField (icon, error, hint, disabled), AmountField (ETB prefix, chips), Select, RadioCard | R-UX-05/09 | L | todo |

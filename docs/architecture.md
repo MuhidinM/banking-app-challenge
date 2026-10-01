@@ -98,7 +98,9 @@ The transfer and bill-payment responses don't include a transaction id, date or 
 
 ## Theming
 
-`scripts/generate-tokens.ts` turns [design/design-tokens.json](design/design-tokens.json) into CSS custom properties (light on `:root`, dark on `[data-theme="dark"]`) and a Tailwind v4 `@theme` block. An inline script sets `data-theme` before first paint from the stored choice (`system | light | dark`), so there's no theme flash. ([ADR-0006](decisions/0006-design-tokens-pipeline.md))
+`scripts/generate-tokens.mts` (`pnpm tokens`) turns [design/design-tokens.json](design/design-tokens.json) into `src/shared/theme/tokens.css`: CSS custom properties (light on `:root`; dark on `[data-theme="dark"]`, or by OS preference unless light is forced) and a Tailwind v4 `@theme` block, so components use token names (`bg-surface`, `text-ink-muted`, `rounded-card`, `h-control`, `type-heading`, `bg-balance`). Tailwind's default palette is removed, sizes and type are in rem, and CI fails if the generated file is stale (`pnpm tokens:check`). An inline script sets `data-theme` before first paint from the stored choice (`system | light | dark`), so there's no theme flash. ([ADR-0006](decisions/0006-design-tokens-pipeline.md))
+
+Tokens are used as given, with one documented override (dark `onPrimary` → white, [N-001](spec-notes.md)). `scripts/design-contrast.test.ts` measures WCAG contrast for every colour pair the screens use; pairs the spec's own tokens fail are pinned as known limitations ([N-016](spec-notes.md)).
 
 ## Mock mode
 
