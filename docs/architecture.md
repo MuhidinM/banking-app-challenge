@@ -125,12 +125,14 @@ MSW handlers in `src/mocks/` implement the API contract (token rotation, expiry,
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | `db.ts`, `fixtures.ts`   | In-memory bank (money in cents) and seed data: `demo.jane`, `demo.john`, `demo.empty`                                |
 | `tokens.ts`              | JWT-shaped access (10 min) and refresh (24 h) tokens; refresh rotates both; test controls to expire them             |
-| `http.ts`, `state.ts`    | API-shaped errors and timestamps, pagination, auth and ownership checks                                              |
+| `http.ts`, `state.ts`    | API-shaped errors and timestamps, pagination, auth and ownership checks; a JSON snapshot of the bank and its tokens  |
 | `handlers/`              | One MSW handler per endpoint; assumptions where the API description is silent are listed at the top of `accounts.ts` |
-| `node.ts` / `browser.ts` | MSW server for tests / service worker for the browser                                                                |
+| `node.ts` / `browser.ts` | MSW server for tests / service worker for the browser, which saves the snapshot to localStorage (`kb-mock-api`)      |
 | `mock-api-provider.tsx`  | Starts the worker before the app renders; if it can't start, shows an error instead of falling back to the real API  |
 
 In tests, `src/test/setup.ts` fails any request the mock doesn't handle and resets the mock bank after each test.
+
+In the browser the mock lives in the page's memory, so `browser.ts` saves the bank and its issued tokens after every mocked response and loads them on the next page load. A reload keeps the user signed in and keeps their transfers, as with the real API (#80). Clearing the site's data starts again from the seed.
 
 ## Folder structure
 

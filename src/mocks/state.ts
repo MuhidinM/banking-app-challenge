@@ -1,7 +1,13 @@
 import { type AccountRecord, type MockDb, type UserRecord } from "./db";
 import { createSeedDb } from "./fixtures";
 import { MockApiError } from "./http";
-import { checkAccessToken, resetTokens } from "./tokens";
+import {
+  type TokenSnapshot,
+  checkAccessToken,
+  resetTokens,
+  restoreTokens,
+  snapshotTokens,
+} from "./tokens";
 
 let db: MockDb = createSeedDb();
 
@@ -14,6 +20,58 @@ export function getDb(): MockDb {
 export function resetMockApi(now: Date = new Date()): void {
   db = createSeedDb(now);
   resetTokens();
+}
+
+/** Bump when MockDb or TokenSnapshot changes shape, so old saved data is ignored. */
+const SNAPSHOT_VERSION = 1;
+
+interface MockApiSnapshot {
+  version: typeof SNAPSHOT_VERSION;
+  db: MockDb;
+  tokens: TokenSnapshot;
+}
+
+/**
+ * The mock bank's data and issued tokens as a JSON string. The browser mock
+ * saves it after every response, so a reload keeps the user signed in and
+ * keeps their transfers, like the real API (src/mocks/browser.ts).
+ */
+export function snapshotMockApi(): string {
+  const snapshot: MockApiSnapshot = { version: SNAPSHOT_VERSION, db, tokens: snapshotTokens() };
+  return JSON.stringify(snapshot);
+}
+
+/**
+ * Loads a snapshot from snapshotMockApi(). Returns false, and changes nothing,
+ * if it is from another version or can't be read; the caller keeps the seed.
+ */
+export function restoreMockApi(json: string): boolean {
+  let snapshot: MockApiSnapshot;
+  try {
+    snapshot = JSON.parse(json) as MockApiSnapshot;
+  } catch {
+    return false;
+  }
+  if (
+    snapshot?.version !== SNAPSHOT_VERSION ||
+    !Array.isArray(snapshot.db?.users) ||
+    !Array.isArray(snapshot.db.accounts) ||
+    !Array.isArray(snapshot.db.transactions) ||
+    !Array.isArray(snapshot.tokens?.refresh) ||
+    !Array.isArray(snapshot.tokens.access)
+  ) {
+    return false;
+  }
+  db = {
+    ...snapshot.db,
+    // JSON turned the Dates into ISO strings.
+    transactions: snapshot.db.transactions.map((transaction) => ({
+      ...transaction,
+      timestamp: new Date(transaction.timestamp),
+    })),
+  };
+  restoreTokens(snapshot.tokens);
+  return true;
 }
 
 /**

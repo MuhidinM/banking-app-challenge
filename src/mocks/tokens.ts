@@ -93,3 +93,24 @@ export function resetTokens(): void {
   accessTokens.clear();
   refreshTokens.clear();
 }
+
+/** The issued tokens as plain data, so the browser mock can keep them across reloads. */
+export interface TokenSnapshot {
+  counter: number;
+  access: [token: string, issued: IssuedToken][];
+  refresh: [token: string, issued: IssuedToken][];
+}
+
+export function snapshotTokens(): TokenSnapshot {
+  // Expired tokens would be refused anyway; leaving them out keeps the snapshot small.
+  const live = (tokens: Map<string, IssuedToken>) =>
+    [...tokens].filter(([, issued]) => issued.expiresAt > Date.now());
+  return { counter, access: live(accessTokens), refresh: live(refreshTokens) };
+}
+
+export function restoreTokens(snapshot: TokenSnapshot): void {
+  resetTokens();
+  counter = snapshot.counter;
+  for (const [token, issued] of snapshot.access) accessTokens.set(token, issued);
+  for (const [token, issued] of snapshot.refresh) refreshTokens.set(token, issued);
+}
