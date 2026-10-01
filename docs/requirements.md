@@ -22,7 +22,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-API-05 | `Authorization: Bearer` on protected calls | T-020 | Bearer token attached on protected calls, read per request; `auth: false` for login/register/refresh; tested (#16) | ☑ |
 | R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 | On 401 the client refreshes via POST /api/auth/refresh-token, stores both rotated tokens and retries once (`http-client.ts`, `token-refresh.ts`); integration tests against the mock API (#17) | ☑ |
 | R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 | Five concurrent 401s → exactly one refresh request, all five succeed (`token-refresh.integration.test.ts`); unit tests with a controllable refresh (#17) | ☑ |
-| R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and ends the session as expired (#17); `RequireSession` then sends the user to `/login?reason=expired` with the way back (#21). Clearing the query cache comes with logout in #23 | ◐ |
+| R-API-08 | Refresh fails → clear session → login | T-021, T-025 | A rejected refresh clears the tokens and ends the session as expired (#17); `RequireSession` sends the user to `/login?reason=expired` with the way back (#21); the query cache is cleared (#23) | ☑ |
 | R-API-09 | Transfer `note` optional, max 140 chars, becomes description | T-060 |  | ☐ |
 | R-API-10 | `balanceAfter` shown when present, handled when missing | T-052 |  | ☐ |
 | R-API-11 | Error codes → friendly messages (ACC_002, ACC_004, AUTH_003, VAL_001 + all others in API-NOTES) | T-023 | `describeError()` maps every documented code to copy, per screen and per field (e.g. ACC_002 → amount, AUTH_003 → username); 31 tests (#19) | ☑ |
@@ -39,7 +39,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-AUTH-06 | Protected pages unreachable without a session | T-025 | `proxy.ts` redirects signed-out visitors from protected pages to `/login?next=…`; `RequireSession` renders protected pages only with a session; tested, and the proxy redirect checked in the browser (#21) | ☑ |
 | R-AUTH-07 | Valid session skips the login page | T-025 | Signed in, `/login` and `/register` go to `next` or `/` (proxy on the cookie, `RedirectWhenSignedIn` after a restore); external `next` ignored; tested (#21) | ☑ |
 | R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload (#18); confirmed in Chrome with mock mode: sign in, reload, still signed in (#20, after #80 kept the mock across reloads) | ☑ |
-| R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 |  | ☐ |
+| R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 | `signOut()` clears the tokens, storage and cookie; `onSessionEnded` clears the query cache and toasts; other tabs log out through a BroadcastChannel; tested (#23) | ☑ |
 
 ## D. Main flow (Req 3)
 
@@ -120,7 +120,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | X-06 | Mock mode runs the full app offline | MSW mock of every endpoint, used by all tests (`onUnhandledRequest: "error"`) and by the app when `NEXT_PUBLIC_API_MOCKING=on`; 26 contract tests; confirmed in Chrome: "[MSW] Mocking enabled." and demo login answered by the mock with 200 (#5) | ☑ |
 | X-07 | Session inspector ("expire token now") behind a flag | T-029 | ☐ |
 | X-08 | No theme flash on first paint | Inline `<head>` script applies the stored theme before first paint (#11). Production build: OS light + stored dark loads dark, console empty | ☑ |
-| X-09 | Query cache cleared on logout / refresh failure | T-027 | ☐ |
+| X-09 | Query cache cleared on logout / refresh failure | The query cache (and toasts) are cleared whenever a session ends: logout, logout in another tab, or a rejected refresh token; tested (#23) | ☑ |
 | X-10 | CSP + security headers; `noindex` | T-094 | ☐ |
 | X-11 | Fidelity report (ours vs spec, both themes, web + mobile) | T-095 | ☐ |
 | X-12 | Lighthouse ≥ 90 on perf / a11y / best practices | T-096 | ☐ |
