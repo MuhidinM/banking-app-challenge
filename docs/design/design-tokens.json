@@ -1,0 +1,159 @@
+{
+  "name": "Kifiya Banking App UI",
+  "version": "3.0",
+  "source": "brand-hub.kifiya.et",
+  "brand": {
+    "peacockGreen": "#02404F",
+    "orange": "#EB7D23",
+    "tealBlue": "#0F5565",
+    "light": "#F3F5F6"
+  },
+  "color": {
+    "light": {
+      "primary": "#02404f",
+      "primaryHover": "#0f5565",
+      "primarySoft": "#dfebee",
+      "accent": "#eb7d23",
+      "accentSoft": "#fdebdc",
+      "surface": "#ffffff",
+      "surfaceMuted": "#f3f5f6",
+      "border": "#dde3e6",
+      "ink": "#0b1f26",
+      "inkMuted": "#56666d",
+      "inkSubtle": "#74858c",
+      "onPrimary": "#ffffff",
+      "credit": "#1f9d55",
+      "creditSoft": "#e6f6ec",
+      "debit": "#d9482b",
+      "debitSoft": "#fdecea",
+      "warning": "#b86a10",
+      "warningSoft": "#fdebdc"
+    },
+    "dark": {
+      "primary": "#0f5565",
+      "primaryHover": "#17697c",
+      "primarySoft": "#143843",
+      "accent": "#eb7d23",
+      "accentSoft": "#3a2411",
+      "surface": "#10202a",
+      "surfaceMuted": "#0a1519",
+      "border": "#23363e",
+      "ink": "#e8f0f2",
+      "inkMuted": "#a3b3b9",
+      "inkSubtle": "#7d8f96",
+      "onPrimary": "#10202a",
+      "credit": "#3fc27b",
+      "creditSoft": "#10321f",
+      "debit": "#f0745c",
+      "debitSoft": "#3a1812",
+      "warning": "#f0a04b",
+      "warningSoft": "#3a2411"
+    }
+  },
+  "typography": {
+    "text": "Montserrat",
+    "display": "Raleway",
+    "scale": [
+      {
+        "name": "display",
+        "size": 32,
+        "weight": 600,
+        "lineHeight": 1.2,
+        "family": "Raleway",
+        "use": "Balances"
+      },
+      {
+        "name": "title",
+        "size": 24,
+        "weight": 600,
+        "lineHeight": 1.4,
+        "family": "Raleway",
+        "use": "Screen titles"
+      },
+      {
+        "name": "heading",
+        "size": 18,
+        "weight": 600,
+        "lineHeight": 1.4,
+        "family": "Raleway",
+        "use": "Section heads"
+      },
+      {
+        "name": "bodyStrong",
+        "size": 15,
+        "weight": 500,
+        "lineHeight": 1.4,
+        "family": "Montserrat",
+        "use": "Row titles, field values"
+      },
+      {
+        "name": "body",
+        "size": 14,
+        "weight": 400,
+        "lineHeight": 1.4,
+        "family": "Montserrat",
+        "use": "Copy, compact buttons"
+      },
+      {
+        "name": "label",
+        "size": 13,
+        "weight": 500,
+        "lineHeight": 1.4,
+        "family": "Montserrat",
+        "use": "Field labels, links"
+      },
+      {
+        "name": "caption",
+        "size": 12,
+        "weight": 400,
+        "lineHeight": 1.4,
+        "family": "Montserrat",
+        "use": "Meta, hints (minimum size)"
+      }
+    ]
+  },
+  "radius": {
+    "card": 16,
+    "control": 12,
+    "button": 14,
+    "pill": 999
+  },
+  "shadow": {
+    "card": "0 6px 20px -8px rgba(2,64,79,.18), 0 1px 2px rgba(2,64,79,.06)",
+    "float": "0 12px 32px -12px rgba(2,64,79,.32)"
+  },
+  "spacing": {
+    "grid": 4,
+    "pagePaddingMobile": 20,
+    "cardPadding": 20,
+    "rowPadding": "14px 20px",
+    "sectionGap": 24,
+    "relatedGap": 12
+  },
+  "sizes": {
+    "control": 52,
+    "compactControl": 44,
+    "button": 52,
+    "compactButton": 44,
+    "minHitTarget": 44,
+    "rowMinHeight": 72,
+    "icon": 20,
+    "disc": 44,
+    "sidebarWidth": 260,
+    "contentMaxWidth": 1024
+  },
+  "frames": {
+    "mobile": [
+      390,
+      844
+    ],
+    "web": [
+      1440,
+      900
+    ]
+  },
+  "gradient": {
+    "light": "linear-gradient(120deg, #02404f 0%, #0f5565 55%, #2f8397 100%)",
+    "dark": "linear-gradient(120deg, #0f5565 0%, #02404f 55%, #0a1519 100%)"
+  }
+}
