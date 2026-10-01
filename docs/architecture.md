@@ -154,11 +154,14 @@ src/
 │  ├─ lib/           money · dates · account number
 │  ├─ theme/         generated tokens.css · theme provider · theme script
 │  └─ config/        validated env
-├─ mocks/            MSW handlers · fixtures
+├─ mocks/            MSW mock of the API · in-memory bank · demo data
+├─ test/             shared test setup (MSW server, cleanup)
 └─ proxy.ts
 e2e/                 Playwright specs
-scripts/             token and API type generation
+scripts/             token and API type generation, OpenAPI snapshot
 ```
+
+Dependencies point one way: `app → features → shared`, with `mocks` depending only on `shared` and reachable from the app only through `MockApiProvider`. ESLint enforces this (`import/no-restricted-paths`), as well as the rule that only `shared/api` calls `fetch`. [src/README.md](../src/README.md) is the short guide for where new code goes.
 
 Unit and component tests sit next to their source as `*.test.ts(x)`. A folder only exists once it has a file; there are no service/repository layers without a second use.
 

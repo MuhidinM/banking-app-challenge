@@ -72,6 +72,44 @@ const eslintConfig = defineConfig([
     },
   },
 
+  // Layers (see src/README.md): app → features → shared. Lower layers never
+  // import higher ones, and the mock API stays out of application code.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["**/*.test.{ts,tsx}", "src/test/**"],
+    rules: {
+      "import/no-restricted-paths": [
+        "error",
+        {
+          zones: [
+            {
+              target: "./src/shared",
+              from: ["./src/features", "./src/app"],
+              message: "Shared code must not depend on features or routes.",
+            },
+            {
+              target: "./src/features",
+              from: "./src/app",
+              message: "Features must not depend on routes; pass data in as props instead.",
+            },
+            {
+              target: "./src/mocks",
+              from: ["./src/features", "./src/app"],
+              message: "The mock API only depends on src/shared, like the real API's contract.",
+            },
+            {
+              target: ["./src/app", "./src/features", "./src/shared"],
+              from: "./src/mocks",
+              except: ["./mock-api-provider.tsx"],
+              message:
+                "Only tests may use the mock API directly. The app reaches it through MockApiProvider.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Tests may assert on values they know exist.
   {
     files: ["**/*.test.{ts,tsx}", "e2e/**"],

@@ -87,7 +87,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| R-CQ-01 | Feature/domain folders | T-002 |  | ☐ |
+| R-CQ-01 | Feature/domain folders | T-002 | Feature-based layout documented in `src/README.md`; layer direction `app → features → shared` enforced by `import/no-restricted-paths` (#2). Complete once the first feature folders land (M1/M2) | ◐ |
 | R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` + `no-non-null-assertion` as errors (#3); API models generated from the OpenAPI snapshot with named types in `src/shared/api/types.ts` (#8); typed client pending (T-020) | ◐ |
 | R-CQ-03 | Small components, custom hooks, composition over prop drilling | all | review | ☐ |
 | R-CQ-04 | Clear server-state vs UI-state split | ADR-0004 |  | ☐ |
