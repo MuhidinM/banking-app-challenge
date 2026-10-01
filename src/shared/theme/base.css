@@ -49,6 +49,13 @@
   & :focus-visible {
     outline: none;
   }
+
+  /* Error state (component sheet "Error"): red border and soft red ring, focused or not. */
+  &[data-invalid],
+  &[data-invalid]:focus-within {
+    border-color: var(--color-debit);
+    box-shadow: 0 0 0 3px var(--color-debit-soft);
+  }
 }
 
 /* Money: tabular figures so digits line up, and an amount never wraps. */

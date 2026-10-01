@@ -3,6 +3,8 @@
 import { type LucideIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useId } from "react";
 
+import { cn } from "@/shared/lib/cn";
+
 import { type ThemePreference, isThemePreference } from "./theme-preference";
 import { useTheme } from "./use-theme";
 
@@ -23,7 +25,7 @@ interface ThemeToggleProps {
  * arrow keys move between options and screen readers announce "Theme, radio
  * group, 1 of 3". Styled like the spec's filter pills.
  */
-export function ThemeToggle({ variant = "labels", className = "" }: ThemeToggleProps) {
+export function ThemeToggle({ variant = "labels", className }: ThemeToggleProps) {
   const { preference, setPreference } = useTheme();
   const name = useId();
 
@@ -37,14 +39,13 @@ export function ThemeToggle({ variant = "labels", className = "" }: ThemeToggleP
           <label
             key={value}
             title={variant === "icons" ? label : undefined}
-            className={[
-              "inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center gap-2 rounded-pill type-label",
+            className={cn(
+              "inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center gap-2 rounded-pill px-4 type-label",
               "text-ink-muted transition-colors hover:text-ink",
               "has-checked:bg-primary has-checked:text-on-primary",
               "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent",
-              // One padding per variant: two px-* classes would be decided by CSS order, not by this list.
-              variant === "icons" ? "px-0" : "px-4",
-            ].join(" ")}
+              variant === "icons" && "px-0",
+            )}
           >
             <input
               type="radio"

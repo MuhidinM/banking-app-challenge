@@ -2,7 +2,13 @@ import { readFile } from "node:fs/promises";
 
 import { describe, expect, it } from "vitest";
 
-import { overrides, renderTokensCss, resolvePalette, tokensSchema } from "./generate-tokens.mts";
+import {
+  overrides,
+  renderTokenNamesTs,
+  renderTokensCss,
+  resolvePalette,
+  tokensSchema,
+} from "./generate-tokens.mts";
 import tokensJson from "../docs/design/design-tokens.json";
 
 const tokens = tokensSchema.parse(tokensJson);
@@ -61,5 +67,14 @@ describe("design token generator", () => {
     // Tests run in jsdom, where import.meta.url is not a file URL; paths are from the repo root.
     const committed = await readFile("src/shared/theme/tokens.css", "utf8");
     expect(committed).toBe(css);
+  });
+
+  it("lists the same names in token-names.ts as utilities in tokens.css", async () => {
+    const committed = await readFile("src/shared/theme/token-names.ts", "utf8");
+    expect(committed).toBe(renderTokenNamesTs(tokens));
+    for (const name of ["control", "button-compact", "row-y", "sidebar"]) {
+      expect(css).toContain(`--spacing-${name}:`);
+      expect(committed).toContain(`"${name}"`);
+    }
   });
 });
