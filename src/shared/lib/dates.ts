@@ -109,9 +109,13 @@ export function formatDateTime(
   const time = formatTime(date, options);
   if (days === 0) return `Today, ${time}`;
   if (days === 1) return `Yesterday, ${time}`;
+  return formatFullDateTime(date, options);
+}
 
+/** "2 Sep 2026, 23:24" always, for text read later, such as a shared receipt. */
+export function formatFullDateTime(date: Date, options: DateOptions = {}): string {
   const { year, month, day } = zonedParts(date, options);
-  return `${day} ${MONTHS[month - 1]} ${year}, ${time}`;
+  return `${day} ${MONTHS[month - 1]} ${year}, ${formatTime(date, options)}`;
 }
 
 export interface DayGroup<T> {
