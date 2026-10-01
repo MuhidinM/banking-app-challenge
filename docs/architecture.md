@@ -31,7 +31,7 @@ UI component ─► feature hook (useAccounts, useTransfer…) ─► TanStack Q
 ```
 
 - Types are generated from [api/openapi.json](api/openapi.json) with `openapi-typescript` into `src/shared/api/schema.ts` (`pnpm api:types`; CI checks it is current with `pnpm api:types:check`). `src/shared/api/types.ts` gives them readable names (`Account`, `Transaction`, `Page<T>` …) and is the only module that imports the generated file. `pnpm api:snapshot` refreshes the OpenAPI copy from the live API.
-- `ApiError` is a typed class. `getErrorMessage(error, context)` maps API codes to user copy ([api-notes.md](api-notes.md)). Unknown codes get a generic message. The server's `message` field is never rendered.
+- Failures are one of two classes (`src/shared/api/api-error.ts`): `ApiError` (non-2xx: `status`, `code` from the API or `"UNKNOWN"`, and `serverMessage` kept for logs only) and `NetworkError` (no response: `offline`, `timeout` or `unreachable`). A cancellation by the caller is rethrown untouched so TanStack Query treats it as cancelled. `getErrorMessage(error, context)` maps codes to user copy ([api-notes.md](api-notes.md)); unknown codes get a generic message. The server's `message` field is never rendered.
 - Responses for auth and money are validated with zod at the boundary, so malformed data fails in one place.
 - A lint rule forbids `fetch` outside `shared/api`.
 

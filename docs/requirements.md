@@ -16,10 +16,10 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
 | R-API-01 | Base URL from env; `.env.example` committed | T-004 | Base URL from `NEXT_PUBLIC_API_BASE_URL`, validated at startup in `src/shared/config/env.ts`; `.env.example` committed (#4) | ☑ |
-| R-API-02 | All calls async and handle network errors (offline, timeout, DNS) | T-020 |  | ☐ |
-| R-API-03 | Single typed API client; components never call `fetch` (lint rule `no-restricted-globals` outside `shared/api`) | T-020, T-003 | Lint ban on `fetch` outside `src/shared/api` (#3); typed client pending (T-020) | ◐ |
+| R-API-02 | All calls async and handle network errors (offline, timeout, DNS) | T-020 | `createHttpClient` is async throughout; no response → `NetworkError` (offline / timeout / unreachable), tested; cancellations pass through untouched (#16) | ☑ |
+| R-API-03 | Single typed API client; components never call `fetch` (lint rule `no-restricted-globals` outside `shared/api`) | T-020, T-003 | One client in `src/shared/api/http-client.ts`; ESLint bans `fetch` everywhere else in src/ (#3, #16) | ☑ |
 | R-API-04 | Store access + refresh tokens | T-022 |  | ☐ |
-| R-API-05 | `Authorization: Bearer` on protected calls | T-020 |  | ☐ |
+| R-API-05 | `Authorization: Bearer` on protected calls | T-020 | Bearer token attached on protected calls, read per request; `auth: false` for login/register/refresh; tested (#16) | ☑ |
 | R-API-06 | On 401 → `POST /api/auth/refresh-token` → replace **both** tokens → retry original **once** | T-021 |  | ☐ |
 | R-API-07 | Concurrent 401s trigger **one** refresh (unit test) | T-021 |  | ☐ |
 | R-API-08 | Refresh fails → clear session → login | T-021, T-025 |  | ☐ |
@@ -92,7 +92,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-CQ-03 | Small components, custom hooks, composition over prop drilling | all | review | ☐ |
 | R-CQ-04 | Clear server-state vs UI-state split | ADR-0004 |  | ☐ |
 | R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass locally, in the pre-commit hook (#3) and in CI on every PR (`.github/workflows/ci.yml`, #6) | ☑ |
-| R-CQ-06 | Unit tests: API client | T-020 |  | ☐ |
+| R-CQ-06 | Unit tests: API client | T-020 | `http-client.test.ts` (12) and `api-error.test.ts` (8): success, ErrorResponse → ApiError, network error, offline, timeout, abort, headers and bodies (#16) | ☑ |
 | R-CQ-07 | Unit tests: refresh logic incl. many concurrent 401s → one refresh | T-021 |  | ☐ |
 | R-CQ-08 | ≥1 component test (RTL) | T-024 |  | ☐ |
 | R-CQ-09 | E2E tests (plus) | T-093 |  | ☐ |
