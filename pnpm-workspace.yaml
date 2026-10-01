@@ -1,3 +1,6 @@
+# Packages allowed to run install scripts (pnpm asks before running any).
 allowBuilds:
+  # Copies public/mockServiceWorker.js on install so it matches the installed MSW version.
+  msw: true
   sharp: false
   unrs-resolver: false

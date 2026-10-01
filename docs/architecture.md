@@ -104,6 +104,17 @@ The transfer and bill-payment responses don't include a transaction id, date or 
 
 MSW handlers in `src/mocks/` implement the API contract (token rotation, expiry, pagination, error codes). The same handlers serve the app when `NEXT_PUBLIC_API_MOCKING=on`, the Vitest suite, and Playwright in CI, so tests never load the shared API. ([ADR-0009](decisions/0009-mock-mode.md))
 
+| File                     | Role                                                                                                                 |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `db.ts`, `fixtures.ts`   | In-memory bank (money in cents) and seed data: `demo.jane`, `demo.john`, `demo.empty`                                |
+| `tokens.ts`              | JWT-shaped access (10 min) and refresh (24 h) tokens; refresh rotates both; test controls to expire them             |
+| `http.ts`, `state.ts`    | API-shaped errors and timestamps, pagination, auth and ownership checks                                              |
+| `handlers/`              | One MSW handler per endpoint; assumptions where the API description is silent are listed at the top of `accounts.ts` |
+| `node.ts` / `browser.ts` | MSW server for tests / service worker for the browser                                                                |
+| `mock-api-provider.tsx`  | Starts the worker before the app renders; if it can't start, shows an error instead of falling back to the real API  |
+
+In tests, `src/test/setup.ts` fails any request the mock doesn't handle and resets the mock bank after each test.
+
 ## Folder structure
 
 Feature (domain) folders. `app/` only holds routes; route files compose feature components.
