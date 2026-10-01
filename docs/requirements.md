@@ -88,7 +88,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
 | R-CQ-01 | Feature/domain folders | T-002 |  | ☐ |
-| R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` + `no-non-null-assertion` as errors (#3); typed models pending (T-008, T-020) | ◐ |
+| R-CQ-02 | Typed API models, no `any` (lint: `no-explicit-any` as error) | T-003, T-020 | `no-explicit-any` + `no-non-null-assertion` as errors (#3); API models generated from the OpenAPI snapshot with named types in `src/shared/api/types.ts` (#8); typed client pending (T-020) | ◐ |
 | R-CQ-03 | Small components, custom hooks, composition over prop drilling | all | review | ☐ |
 | R-CQ-04 | Clear server-state vs UI-state split | ADR-0004 |  | ☐ |
 | R-CQ-05 | ESLint + Prettier configured and passing | T-003 | `pnpm lint` (zero warnings) and `pnpm format:check` pass; pre-commit hook (#3); CI pending (T-006) | ◐ |

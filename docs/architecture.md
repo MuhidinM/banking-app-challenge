@@ -30,7 +30,7 @@ UI component ─► feature hook (useAccounts, useTransfer…) ─► TanStack Q
                                                                           └─ failure → clear session → /login?reason=expired
 ```
 
-- Types are generated from [api/openapi.json](api/openapi.json) with `openapi-typescript`; domain types narrow them where the API is loose.
+- Types are generated from [api/openapi.json](api/openapi.json) with `openapi-typescript` into `src/shared/api/schema.ts` (`pnpm api:types`; CI checks it is current with `pnpm api:types:check`). `src/shared/api/types.ts` gives them readable names (`Account`, `Transaction`, `Page<T>` …) and is the only module that imports the generated file. `pnpm api:snapshot` refreshes the OpenAPI copy from the live API.
 - `ApiError` is a typed class. `getErrorMessage(error, context)` maps API codes to user copy ([api-notes.md](api-notes.md)). Unknown codes get a generic message. The server's `message` field is never rendered.
 - Responses for auth and money are validated with zod at the boundary, so malformed data fails in one place.
 - A lint rule forbids `fetch` outside `shared/api`.
@@ -137,7 +137,7 @@ src/
 │  ├─ profile/       components
 │  └─ dev-tools/     session inspector (behind a flag)
 ├─ shared/
-│  ├─ api/           http client · ApiError · error messages · generated schema types
+│  ├─ api/           http client · ApiError · error messages · generated schema + named types
 │  ├─ ui/            Button · TextField · AmountField · AccountSelect · Card · ListRow · Dialog/Sheet · Skeleton · EmptyState · Toast · Pill
 │  ├─ layout/        Sidebar · BottomNav · PageHeader
 │  ├─ lib/           money · dates · account number

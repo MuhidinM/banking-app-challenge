@@ -14,7 +14,10 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "api:snapshot": "node scripts/update-openapi-snapshot.mjs",
+    "api:types": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts",
+    "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check"
   },
   "dependencies": {
     "next": "16.3.7",
@@ -40,6 +43,7 @@
     "husky": "^9.1.7",
     "jsdom": "^30.1.1",
     "lint-staged": "^17.6.0",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
