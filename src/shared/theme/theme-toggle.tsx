@@ -38,11 +38,12 @@ export function ThemeToggle({ variant = "labels", className = "" }: ThemeToggleP
             key={value}
             title={variant === "icons" ? label : undefined}
             className={[
-              "inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center gap-2 rounded-pill px-4 type-label",
+              "inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center gap-2 rounded-pill type-label",
               "text-ink-muted transition-colors hover:text-ink",
               "has-checked:bg-primary has-checked:text-on-primary",
               "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent",
-              variant === "icons" ? "px-0" : "",
+              // One padding per variant: two px-* classes would be decided by CSS order, not by this list.
+              variant === "icons" ? "px-0" : "px-4",
             ].join(" ")}
           >
             <input
