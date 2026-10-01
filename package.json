@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:fix": "eslint --fix",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "16.3.7",
