@@ -5,20 +5,20 @@ CORS allows `http://localhost:3000`, `http://localhost:5173`, `https://*.vercel.
 
 ## Endpoints
 
-| Method | Path | Auth | Body / params | Returns | Errors |
-|---|---|---|---|---|---|
-| POST | `/api/auth/register` | — | `username` (3–50), `passwordHash` (≥6, plain password), `firstName`, `lastName`, `email?`, `phoneNumber` (`^\+?[0-9. ()-]{7,25}$`) | 201 `{message, username, userId, initialAccountNumber}` | VAL_001, AUTH_003, AUTH_004 |
-| POST | `/api/auth/login` | — | `username`, `passwordHash` | `{message, username, userId, accessToken, refreshToken}` | 401 AUTH_001, 400 VAL_001 |
-| POST | `/api/auth/refresh-token` | — | `refreshToken` | `{message, accessToken, refreshToken}` — **both rotate** | 401 AUTH_005, 400 VAL_001 |
-| GET | `/api/users/me` | ✓ | — | `{id, username, firstName, lastName, email?, phoneNumber}` | |
-| GET | `/api/accounts` | ✓ | `page` (0-based), `size` (10), `sort` (`id,ASC`), `accountNumber?` | Page of `Account`, **or a single `Account` when `accountNumber` is given** (`oneOf`) | 403 ACC_004 if not ours |
-| GET | `/api/accounts/{id}` | ✓ | internal id | `Account` | ACC_001, ACC_004 |
-| POST | `/api/accounts` | ✓ | `accountType`, `initialBalance` (≥0, **required** in schema; doc says defaults to 0 → always send it) | 201 `Account` | VAL_001 |
-| POST | `/api/accounts/transfer` | ✓ | `fromAccountNumber`, `toAccountNumber`, `amount` (0.01–1,000,000,000), `note?` (≤140) | `{message, amount, fromAccountNumber, toAccountNumber}` | ACC_001, ACC_002, ACC_003, ACC_004, TXN_001, VAL_001 |
-| POST | `/api/accounts/pay-bill` | ✓ | `accountNumber`, `biller`, `amount` (≥0.01) | `{message, amount, accountNumber, biller}` | ACC_002, ACC_004, TXN_001, VAL_001 |
-| GET | `/api/transactions/{accountId}` | ✓ | **internal id**, `page`, `size`, `sort` (`timestamp,DESC`) | Page of `Transaction` | ACC_004, ACC_001 |
-| GET | `/api/accounts/transfer/{transactionId}` | ✓ | — | `Transaction` (must be FUND_TRANSFER) | TXN_003, TXN_004 |
-| GET | `/api/accounts/pay-bill/{transactionId}` | ✓ | — | `Transaction` (must be BILL_PAYMENT) | TXN_003, TXN_004 |
+| Method | Path                                     | Auth | Body / params                                                                                                                      | Returns                                                                              | Errors                                               |
+| ------ | ---------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| POST   | `/api/auth/register`                     | —    | `username` (3–50), `passwordHash` (≥6, plain password), `firstName`, `lastName`, `email?`, `phoneNumber` (`^\+?[0-9. ()-]{7,25}$`) | 201 `{message, username, userId, initialAccountNumber}`                              | VAL_001, AUTH_003, AUTH_004                          |
+| POST   | `/api/auth/login`                        | —    | `username`, `passwordHash`                                                                                                         | `{message, username, userId, accessToken, refreshToken}`                             | 401 AUTH_001, 400 VAL_001                            |
+| POST   | `/api/auth/refresh-token`                | —    | `refreshToken`                                                                                                                     | `{message, accessToken, refreshToken}` — **both rotate**                             | 401 AUTH_005, 400 VAL_001                            |
+| GET    | `/api/users/me`                          | ✓    | —                                                                                                                                  | `{id, username, firstName, lastName, email?, phoneNumber}`                           |                                                      |
+| GET    | `/api/accounts`                          | ✓    | `page` (0-based), `size` (10), `sort` (`id,ASC`), `accountNumber?`                                                                 | Page of `Account`, **or a single `Account` when `accountNumber` is given** (`oneOf`) | 403 ACC_004 if not ours                              |
+| GET    | `/api/accounts/{id}`                     | ✓    | internal id                                                                                                                        | `Account`                                                                            | ACC_001, ACC_004                                     |
+| POST   | `/api/accounts`                          | ✓    | `accountType`, `initialBalance` (≥0, **required** in schema; doc says defaults to 0 → always send it)                              | 201 `Account`                                                                        | VAL_001                                              |
+| POST   | `/api/accounts/transfer`                 | ✓    | `fromAccountNumber`, `toAccountNumber`, `amount` (0.01–1,000,000,000), `note?` (≤140)                                              | `{message, amount, fromAccountNumber, toAccountNumber}`                              | ACC_001, ACC_002, ACC_003, ACC_004, TXN_001, VAL_001 |
+| POST   | `/api/accounts/pay-bill`                 | ✓    | `accountNumber`, `biller`, `amount` (≥0.01)                                                                                        | `{message, amount, accountNumber, biller}`                                           | ACC_002, ACC_004, TXN_001, VAL_001                   |
+| GET    | `/api/transactions/{accountId}`          | ✓    | **internal id**, `page`, `size`, `sort` (`timestamp,DESC`)                                                                         | Page of `Transaction`                                                                | ACC_004, ACC_001                                     |
+| GET    | `/api/accounts/transfer/{transactionId}` | ✓    | —                                                                                                                                  | `Transaction` (must be FUND_TRANSFER)                                                | TXN_003, TXN_004                                     |
+| GET    | `/api/accounts/pay-bill/{transactionId}` | ✓    | —                                                                                                                                  | `Transaction` (must be BILL_PAYMENT)                                                 | TXN_003, TXN_004                                     |
 
 ## Models
 
@@ -32,24 +32,24 @@ CORS allows `http://localhost:3000`, `http://localhost:5173`, `https://*.vercel.
 
 ## Error codes → user copy
 
-| Code | HTTP | Meaning | Copy (context) |
-|---|---|---|---|
-| AUTH_001 | 401 | Invalid credentials / not authenticated | Login: "Username or password is incorrect." |
-| AUTH_002 | 404 | User not found | "We couldn't find your profile. Please sign in again." |
-| AUTH_003 | 400 | Username exists | Field `username`: "This username is taken. Try another." |
-| AUTH_004 | 400 | Email exists | Field `email`: "An account with this email already exists." |
-| AUTH_005 | 401 | Invalid/expired token | Login banner: "Your session expired. Please sign in again." |
-| ACC_001 | 404 | Account not found | Field `toAccountNumber`: "Account not found. Check the number." |
-| ACC_002 | 400 | Insufficient funds | Field `amount`: "Insufficient funds. Available: ETB x." |
-| ACC_003 | 400 | Same account | Field `toAccountNumber`: "Cannot transfer to the same account." |
-| ACC_004 | 403 | Not your account | "This account isn't linked to your profile." |
-| TXN_001 | 400 | Invalid amount | Field `amount`: "Enter an amount greater than ETB 0.00." |
-| TXN_003 | 400 | Wrong transaction type | "This receipt can't be shown here." |
-| TXN_004 | 404 | Transaction not found | "We couldn't find this transaction." |
-| VAL_001 | 400 | Validation | "Some details aren't valid. Check the highlighted fields." |
-| GEN_001 | 500 | Server error | "Something went wrong on our side. Please try again." |
-| (network) | — | Offline / DNS / CORS / timeout | "Can't reach the bank right now. Check your connection and try again." |
-| (unknown) | any | Anything else | "Something went wrong. Please try again." |
+| Code      | HTTP | Meaning                                 | Copy (context)                                                         |
+| --------- | ---- | --------------------------------------- | ---------------------------------------------------------------------- |
+| AUTH_001  | 401  | Invalid credentials / not authenticated | Login: "Username or password is incorrect."                            |
+| AUTH_002  | 404  | User not found                          | "We couldn't find your profile. Please sign in again."                 |
+| AUTH_003  | 400  | Username exists                         | Field `username`: "This username is taken. Try another."               |
+| AUTH_004  | 400  | Email exists                            | Field `email`: "An account with this email already exists."            |
+| AUTH_005  | 401  | Invalid/expired token                   | Login banner: "Your session expired. Please sign in again."            |
+| ACC_001   | 404  | Account not found                       | Field `toAccountNumber`: "Account not found. Check the number."        |
+| ACC_002   | 400  | Insufficient funds                      | Field `amount`: "Insufficient funds. Available: ETB x."                |
+| ACC_003   | 400  | Same account                            | Field `toAccountNumber`: "Cannot transfer to the same account."        |
+| ACC_004   | 403  | Not your account                        | "This account isn't linked to your profile."                           |
+| TXN_001   | 400  | Invalid amount                          | Field `amount`: "Enter an amount greater than ETB 0.00."               |
+| TXN_003   | 400  | Wrong transaction type                  | "This receipt can't be shown here."                                    |
+| TXN_004   | 404  | Transaction not found                   | "We couldn't find this transaction."                                   |
+| VAL_001   | 400  | Validation                              | "Some details aren't valid. Check the highlighted fields."             |
+| GEN_001   | 500  | Server error                            | "Something went wrong on our side. Please try again."                  |
+| (network) | —    | Offline / DNS / CORS / timeout          | "Can't reach the bank right now. Check your connection and try again." |
+| (unknown) | any  | Anything else                           | "Something went wrong. Please try again."                              |
 
 ## Integration notes
 

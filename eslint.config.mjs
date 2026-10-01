@@ -1,17 +1,95 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import prettier from "eslint-config-prettier/flat";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+
+  // Full recommended accessibility rules (next only enables a few).
+  // The plugin itself is already registered by eslint-config-next.
+  { rules: jsxA11y.flatConfigs.recommended.rules },
+
+  {
+    rules: {
+      // Typed API models with no `any` leaks.
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true },
+      ],
+
+      // Raw HTML injection is the main XSS risk for tokens kept in the browser.
+      "react/no-danger": "error",
+
+      // Debug output must not ship; warnings and errors are allowed on purpose.
+      "no-console": ["error", { allow: ["warn", "error"] }],
+
+      // Function components and hooks only.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "ClassDeclaration[superClass.name=/^(Component|PureComponent)$/], ClassDeclaration[superClass.property.name=/^(Component|PureComponent)$/]",
+          message: "Use a function component and hooks instead of a class component.",
+        },
+      ],
+
+      "import/order": [
+        "error",
+        {
+          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"], "type"],
+          pathGroups: [{ pattern: "@/**", group: "internal" }],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
+    },
+  },
+
+  // Only the shared API client may talk to the network.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/shared/api/**", "src/mocks/**", "**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-globals": [
+        "error",
+        { name: "fetch", message: "Call the API through src/shared/api, not fetch directly." },
+      ],
+      "no-restricted-properties": [
+        "error",
+        { object: "window", property: "fetch", message: "Call the API through src/shared/api." },
+        {
+          object: "globalThis",
+          property: "fetch",
+          message: "Call the API through src/shared/api.",
+        },
+      ],
+    },
+  },
+
+  // Tests may assert on values they know exist.
+  {
+    files: ["**/*.test.{ts,tsx}", "e2e/**"],
+    rules: { "@typescript-eslint/no-non-null-assertion": "off" },
+  },
+
+  // Must stay last: turns off rules that conflict with Prettier.
+  prettier,
+
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
+    "playwright-report/**",
+    "test-results/**",
     "next-env.d.ts",
+    "specs/**",
   ]),
 ]);
 

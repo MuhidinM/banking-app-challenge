@@ -12,10 +12,10 @@ Closes #
 
 <!-- For UI changes: light and dark, desktop (1440 px) and mobile (390 px). Delete if not a UI change. -->
 
-| | Light | Dark |
-|---|---|---|
-| Desktop | | |
-| Mobile | | |
+|         | Light | Dark |
+| ------- | ----- | ---- |
+| Desktop |       |      |
+| Mobile  |       |      |
 
 ## How it was tested
 

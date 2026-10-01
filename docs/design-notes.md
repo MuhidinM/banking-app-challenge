@@ -5,22 +5,22 @@ Web frames 1440×900, mobile 390×844, PNGs at 2×, redline values in CSS px at 
 
 ## Screens
 
-| Screen | Web PNG | Mobile PNG | Redline | Route |
-|---|---|---|---|---|
-| Login (+ session expired banner) | WebLogin | Login | web + mobile | `/login` |
-| Register (error state) | WebRegister | Register | — | `/register` |
-| Dashboard / Home | WebDashboard | Main | web + mobile | `/` |
-| My accounts | (sidebar → Accounts) | Accounts | — | `/accounts` |
-| Open an account | WebNewAccount | NewAccount | mobile | `/accounts/new` |
-| Account & activity | WebAccountDetail | AccountDetail | mobile | `/accounts/[accountId]` |
-| Activity (filter) | — | Transactions | — | `/activity` |
-| Transaction detail | WebTransactionDetail (modal) | TransactionDetail (sheet) | — | `?tx=<id>` |
-| Transfer · details + summary | WebTransfer | Transfer | web + mobile | `/transfer` |
-| Transfer · review | WebTransferReview (dialog) | TransferReview (sheet) | mobile | dialog on `/transfer` |
-| Transfer · receipt | (toast "Sent ETB 250.00 to …" on web) | TransferSuccess | — | `/transfer/receipt/[txId]` |
-| Pay a bill (insufficient funds) | WebPayBill | PayBill | — | `/pay-bill` |
-| Profile | WebProfile | Profile | — | `/profile` |
-| Components sheet | Components | — | components | — |
+| Screen                           | Web PNG                               | Mobile PNG                | Redline      | Route                      |
+| -------------------------------- | ------------------------------------- | ------------------------- | ------------ | -------------------------- |
+| Login (+ session expired banner) | WebLogin                              | Login                     | web + mobile | `/login`                   |
+| Register (error state)           | WebRegister                           | Register                  | —            | `/register`                |
+| Dashboard / Home                 | WebDashboard                          | Main                      | web + mobile | `/`                        |
+| My accounts                      | (sidebar → Accounts)                  | Accounts                  | —            | `/accounts`                |
+| Open an account                  | WebNewAccount                         | NewAccount                | mobile       | `/accounts/new`            |
+| Account & activity               | WebAccountDetail                      | AccountDetail             | mobile       | `/accounts/[accountId]`    |
+| Activity (filter)                | —                                     | Transactions              | —            | `/activity`                |
+| Transaction detail               | WebTransactionDetail (modal)          | TransactionDetail (sheet) | —            | `?tx=<id>`                 |
+| Transfer · details + summary     | WebTransfer                           | Transfer                  | web + mobile | `/transfer`                |
+| Transfer · review                | WebTransferReview (dialog)            | TransferReview (sheet)    | mobile       | dialog on `/transfer`      |
+| Transfer · receipt               | (toast "Sent ETB 250.00 to …" on web) | TransferSuccess           | —            | `/transfer/receipt/[txId]` |
+| Pay a bill (insufficient funds)  | WebPayBill                            | PayBill                   | —            | `/pay-bill`                |
+| Profile                          | WebProfile                            | Profile                   | —            | `/profile`                 |
+| Components sheet                 | Components                            | —                         | components   | —                          |
 
 Note: the web transfer screen shows a success toast. The brief requires a receipt screen, not only a toast — we do both (toast + receipt route).
 
