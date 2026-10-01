@@ -1,3 +1,4 @@
+import { SessionBootstrap } from "@/features/auth/session-bootstrap";
 import { MockApiProvider } from "@/mocks/mock-api-provider";
 import { fontVariables } from "@/shared/theme/fonts";
 import { themeInitScript } from "@/shared/theme/theme-preference";
@@ -30,7 +31,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
-        <MockApiProvider>{children}</MockApiProvider>
+        <MockApiProvider>
+          <SessionBootstrap />
+          {children}
+        </MockApiProvider>
         <Toaster />
       </body>
     </html>
