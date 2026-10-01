@@ -1,11 +1,12 @@
 /**
- * Turns docs/design/design-tokens.json (Kifiya UI spec v3) into
- * src/shared/theme/tokens.css: CSS custom properties for both themes plus a
- * Tailwind v4 `@theme` block, so components use `bg-surface`, `text-ink-muted`,
- * `rounded-card`, `h-control`… and never hard-coded values.
+ * Turns docs/design/design-tokens.json (Kifiya UI spec v3) into:
+ * - src/shared/theme/tokens.css: CSS custom properties for both themes plus a
+ *   Tailwind v4 `@theme` block, so components use `bg-surface`, `text-ink-muted`,
+ *   `rounded-card`, `h-control`… and never hard-coded values
+ * - src/shared/theme/token-names.ts: the same names as data, for `cn()`
  *
- *   pnpm tokens          regenerate the CSS
- *   pnpm tokens:check    fail if the CSS is out of date (used in CI)
+ *   pnpm tokens          regenerate both files
+ *   pnpm tokens:check    fail if a generated file is out of date (used in CI)
  *
  * Runs directly on Node 24 (type stripping), so only erasable TypeScript is used here.
  */
@@ -122,8 +123,39 @@ function themeVariables(tokens: DesignTokens, theme: Theme, indent: string): str
   ];
 }
 
+/** Spacing and size utilities (`p-card`, `h-control`…) as [name, px], shared by both outputs. */
+function spacingScale(tokens: DesignTokens): {
+  spacing: [string, number][];
+  sizes: [string, number][];
+} {
+  const [rowY = 0, rowX = 0] = tokens.spacing.rowPadding
+    .split(" ")
+    .map((value) => Number.parseInt(value));
+  return {
+    spacing: [
+      ["page", tokens.spacing.pagePaddingMobile],
+      ["card", tokens.spacing.cardPadding],
+      ["row-y", rowY],
+      ["row-x", rowX],
+      ["section", tokens.spacing.sectionGap],
+      ["related", tokens.spacing.relatedGap],
+    ],
+    sizes: [
+      ["control", tokens.sizes.control],
+      ["control-compact", tokens.sizes.compactControl],
+      ["button", tokens.sizes.button],
+      ["button-compact", tokens.sizes.compactButton],
+      ["hit", tokens.sizes.minHitTarget],
+      ["row", tokens.sizes.rowMinHeight],
+      ["icon", tokens.sizes.icon],
+      ["disc", tokens.sizes.disc],
+      ["sidebar", tokens.sizes.sidebarWidth],
+    ],
+  };
+}
+
 export function renderTokensCss(tokens: DesignTokens): string {
-  const [rowY, rowX] = tokens.spacing.rowPadding.split(" ").map((value) => Number.parseInt(value));
+  const { spacing, sizes } = spacingScale(tokens);
   const familyVar = (family: string) =>
     family === tokens.typography.display ? "var(--font-display)" : "var(--font-text)";
 
@@ -167,23 +199,10 @@ export function renderTokensCss(tokens: DesignTokens): string {
     ...Object.entries(tokens.shadow).map(([name, value]) => `  --shadow-${kebab(name)}: ${value};`),
     "",
     "  /* Spacing (the 4px grid is Tailwind's default step: p-1 = 4px). */",
-    `  --spacing-page: ${rem(tokens.spacing.pagePaddingMobile)};`,
-    `  --spacing-card: ${rem(tokens.spacing.cardPadding)};`,
-    `  --spacing-row-y: ${rem(rowY ?? 0)};`,
-    `  --spacing-row-x: ${rem(rowX ?? 0)};`,
-    `  --spacing-section: ${rem(tokens.spacing.sectionGap)};`,
-    `  --spacing-related: ${rem(tokens.spacing.relatedGap)};`,
+    ...spacing.map(([name, px]) => `  --spacing-${name}: ${rem(px)};`),
     "",
     "  /* Sizes: h-control, h-button-compact, min-h-row, size-icon, w-sidebar, max-w-content… */",
-    `  --spacing-control: ${rem(tokens.sizes.control)};`,
-    `  --spacing-control-compact: ${rem(tokens.sizes.compactControl)};`,
-    `  --spacing-button: ${rem(tokens.sizes.button)};`,
-    `  --spacing-button-compact: ${rem(tokens.sizes.compactButton)};`,
-    `  --spacing-hit: ${rem(tokens.sizes.minHitTarget)};`,
-    `  --spacing-row: ${rem(tokens.sizes.rowMinHeight)};`,
-    `  --spacing-icon: ${rem(tokens.sizes.icon)};`,
-    `  --spacing-disc: ${rem(tokens.sizes.disc)};`,
-    `  --spacing-sidebar: ${rem(tokens.sizes.sidebarWidth)};`,
+    ...sizes.map(([name, px]) => `  --spacing-${name}: ${rem(px)};`),
     `  --container-content: ${rem(tokens.sizes.contentMaxWidth)};`,
     "}",
     "",
@@ -206,25 +225,60 @@ export function renderTokensCss(tokens: DesignTokens): string {
   return lines.join("\n");
 }
 
+/**
+ * The token names behind each utility family, for code that has to understand
+ * class names, such as `cn()` deciding that `text-title` (a size) and `text-ink`
+ * (a colour) don't conflict.
+ */
+export function renderTokenNamesTs(tokens: DesignTokens): string {
+  const { spacing, sizes } = spacingScale(tokens);
+  const names = {
+    color: [
+      ...colorRoles.map(kebab),
+      ...Object.keys(tokens.brand).map((name) => `brand-${kebab(name)}`),
+    ],
+    text: tokens.typography.scale.map((step) => kebab(step.name)),
+    spacing: [...spacing, ...sizes].map(([name]) => name),
+    radius: Object.keys(tokens.radius).map(kebab),
+    shadow: Object.keys(tokens.shadow).map(kebab),
+    container: ["content"],
+  };
+  return [
+    "// GENERATED FILE: do not edit. Source: docs/design/design-tokens.json",
+    "// Regenerate with `pnpm tokens`; CI fails if this file is out of date.",
+    "",
+    `export const tokenNames = ${JSON.stringify(names, null, 2)} as const;`,
+    "",
+  ].join("\n");
+}
+
 const source = new URL("../docs/design/design-tokens.json", import.meta.url);
-const target = new URL("../src/shared/theme/tokens.css", import.meta.url);
+const outputs = [
+  { file: "src/shared/theme/tokens.css", render: renderTokensCss },
+  { file: "src/shared/theme/token-names.ts", render: renderTokenNamesTs },
+];
 
 async function main(check: boolean): Promise<void> {
   const tokens = tokensSchema.parse(JSON.parse(await readFile(source, "utf8")));
-  const css = renderTokensCss(tokens);
 
-  if (check) {
-    const current = await readFile(target, "utf8").catch(() => "");
-    if (current !== css) {
-      console.error("src/shared/theme/tokens.css is out of date. Run `pnpm tokens`.");
-      process.exit(1);
+  let stale = false;
+  for (const { file, render } of outputs) {
+    const target = new URL(`../${file}`, import.meta.url);
+    const content = render(tokens);
+    if (check) {
+      const current = await readFile(target, "utf8").catch(() => "");
+      if (current !== content) {
+        console.error(`${file} is out of date. Run \`pnpm tokens\`.`);
+        stale = true;
+      }
+    } else {
+      await writeFile(target, content);
+      console.log(`Wrote ${file}`);
     }
-    console.log("src/shared/theme/tokens.css is up to date.");
-    return;
   }
 
-  await writeFile(target, css);
-  console.log("Wrote src/shared/theme/tokens.css");
+  if (stale) process.exit(1);
+  if (check) console.log("Generated token files are up to date.");
 }
 
 if (import.meta.main) await main(process.argv.includes("--check"));

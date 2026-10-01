@@ -28,3 +28,4 @@ public/mockServiceWorker.js
 
 # Generated from docs/design/design-tokens.json by `pnpm tokens`
 src/shared/theme/tokens.css
+src/shared/theme/token-names.ts
