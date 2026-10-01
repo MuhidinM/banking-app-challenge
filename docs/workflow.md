@@ -17,9 +17,19 @@ How work moves from the backlog to `main`.
 4. Push and open a pull request using the template. The description links the issue with `Closes #<number>`.
 5. On the branch, mark the task `done` in [backlog.md](backlog.md) and tick the [requirements.md](requirements.md) rows it covers, with evidence.
 6. Tick every item in the issue's _What to do_ and _Done when_ lists that was delivered. Anything not delivered stays unticked and is explained in the PR (or moved to a new issue).
-7. CI must be green. Review the diff as if someone else wrote it.
+7. CI must be green — GitHub enforces this (see _Protected `main`_ below). Review the diff as if someone else wrote it.
 8. Merge with a **merge commit** so every detailed commit stays visible on `main`. The branch is deleted automatically.
 9. Spec gaps or conflicts go into [spec-notes.md](spec-notes.md). Any choice someone could reasonably question gets an ADR in [decisions/](decisions/README.md).
+
+## Protected `main`
+
+`main` only changes through pull requests. Branch protection requires:
+
+- the CI check **Lint, type-check, test and build** to pass ([ci.yml](../.github/workflows/ci.yml)),
+- the branch to be up to date with `main` before merging,
+- all review conversations to be resolved.
+
+The rules apply to administrators too. Force-pushes to `main` and deleting it are blocked.
 
 ## Commits
 
