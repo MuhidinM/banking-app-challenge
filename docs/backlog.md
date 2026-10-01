@@ -10,11 +10,12 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-001 | [#1](https://github.com/MuhidinM/banking-app-challenge/issues/1) | Confirm TS strict, React 19, Next 16; move `app/` to `src/app`, `@/*` → `src/*` | R-TS-01/02 | S | done |
 | T-002 | [#2](https://github.com/MuhidinM/banking-app-challenge/issues/2) | Create the folder structure from architecture.md (only folders that get files) | R-CQ-01 | S | todo |
 | T-003 | [#3](https://github.com/MuhidinM/banking-app-challenge/issues/3) | ESLint rules (`no-explicit-any`, no `fetch` outside `shared/api`, react-hooks, jsx-a11y), Prettier, `typecheck` script, lint-staged + husky pre-commit | R-CQ-05, R-API-03 | M | done |
-| T-004 | [#4](https://github.com/MuhidinM/banking-app-challenge/issues/4) | `env.ts` validated with zod; `.env.example` (`NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_MOCKING`, `NEXT_PUBLIC_DEV_TOOLS`) | R-API-01, R-CQ-10 | S | todo |
+| T-004 | [#4](https://github.com/MuhidinM/banking-app-challenge/issues/4) | `env.ts` validated with zod; `.env.example` (`NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_MOCKING`, `NEXT_PUBLIC_DEV_TOOLS`) | R-API-01, R-CQ-10 | S | done |
 | T-005 | [#5](https://github.com/MuhidinM/banking-app-challenge/issues/5) | MSW setup (browser + node), fixtures modelled on demo users, error scenarios | X-06 | M | todo |
 | T-006 | [#6](https://github.com/MuhidinM/banking-app-challenge/issues/6) | GitHub Actions CI: install, typecheck, lint, format, unit; later E2E | R-CQ-05 | M | todo |
 | T-007 | [#7](https://github.com/MuhidinM/banking-app-challenge/issues/7) | Pull request and issue templates (task, bug); issues, labels, milestones and project board created from this file | — | S | done |
 | T-008 | [#8](https://github.com/MuhidinM/banking-app-challenge/issues/8) | Generate API types from `docs/api/openapi.json` (`openapi-typescript`), script `api:types` | R-CQ-02 | S | todo |
+| T-009 | [#58](https://github.com/MuhidinM/banking-app-challenge/issues/58) | Vitest + React Testing Library + jest-dom setup, `test` scripts, first tests for env parsing (added while working on #4: no task set up the test runner) | R-CQ-06/07/08 | S | todo |
 
 ## M1 — Foundation
 
