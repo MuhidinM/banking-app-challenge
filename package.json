@@ -17,7 +17,9 @@
     "test:coverage": "vitest run --coverage",
     "api:snapshot": "node scripts/update-openapi-snapshot.mjs",
     "api:types": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts",
-    "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check"
+    "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check",
+    "tokens": "node scripts/generate-tokens.mts",
+    "tokens:check": "node scripts/generate-tokens.mts --check"
   },
   "dependencies": {
     "next": "16.3.7",
