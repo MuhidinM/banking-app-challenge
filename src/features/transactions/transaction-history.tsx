@@ -1,6 +1,6 @@
 "use client";
 
-import { ScrollText } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, ScrollText } from "lucide-react";
 import { useRef } from "react";
 
 import { isNetworkError } from "@/shared/api/api-error";
@@ -11,6 +11,7 @@ import { RowList } from "@/shared/ui/list-row";
 import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
+import { type DirectionFilterValue } from "./direction-filter";
 import { flattenHistory, useTransactionHistory } from "./queries";
 import { TransactionDetails } from "./transaction-details";
 import { groupTransactionsByDay } from "./transaction-format";
@@ -28,6 +29,13 @@ import type { MouseEvent } from "react";
  */
 interface TransactionHistoryProps {
   accountId: number;
+  /**
+   * Show only money in or money out. The API can't filter by direction, so
+   * this filters the rows loaded so far; "Load more" brings in more (N-029).
+   */
+  direction?: DirectionFilterValue;
+  /** "Checking •••• 8057", for the Account row in the details. */
+  accountLabel?: string;
   /** Level of the day headings: h3 when the history sits under its own h2 (account details). */
   dayHeading?: "h2" | "h3";
 }
@@ -40,6 +48,7 @@ export function TransactionHistory(props: TransactionHistoryProps) {
       <HistoryList {...props} onSelect={details.open} />
       <TransactionDetails
         accountId={props.accountId}
+        {...(props.accountLabel ? { accountLabel: props.accountLabel } : {})}
         transactionId={details.transactionId}
         onClose={details.close}
         onCloseAutoFocus={details.onCloseAutoFocus}
@@ -50,6 +59,7 @@ export function TransactionHistory(props: TransactionHistoryProps) {
 
 function HistoryList({
   accountId,
+  direction = "all",
   dayHeading: DayHeading = "h2",
   onSelect,
 }: TransactionHistoryProps & {
@@ -112,9 +122,27 @@ function HistoryList({
     );
   }
 
+  const shown =
+    direction === "all"
+      ? transactions
+      : transactions.filter((transaction) => transaction.direction === direction);
+
   return (
     <div className="flex flex-col gap-4">
-      {groupTransactionsByDay(transactions).map((group) => (
+      {shown.length === 0 && (
+        <Card>
+          <EmptyState
+            icon={direction === "CREDIT" ? ArrowDownLeft : ArrowUpRight}
+            title={direction === "CREDIT" ? "No money in" : "No money out"}
+            description={
+              history.hasNextPage
+                ? `None of the ${transactions.length} transactions loaded so far. Load more to look further back.`
+                : "None in this account's history."
+            }
+          />
+        </Card>
+      )}
+      {groupTransactionsByDay(shown).map((group) => (
         <section
           key={group.key}
           aria-labelledby={`day-${group.key}`}
