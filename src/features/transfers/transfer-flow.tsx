@@ -38,9 +38,10 @@ function FallbackReceipt({ transfer }: { transfer: CheckedTransfer }) {
   return (
     <TransferReceiptView
       details={{
+        direction: "DEBIT",
         amount: transfer.amountCents,
-        toAccountNumber: transfer.toAccountNumber,
-        from,
+        counterpart: transfer.toAccountNumber,
+        account: from,
         date: new Date(),
         newBalance: accounts.isFetching ? undefined : toCents(from.balance),
       }}

@@ -7,6 +7,7 @@ import { formatMoney, ZERO } from "@/shared/lib/money";
 import { Button } from "@/shared/ui/button";
 import { Dialog } from "@/shared/ui/dialog";
 import { InlineMessage } from "@/shared/ui/feedback";
+import { fitAmountStyle } from "@/shared/ui/fit-amount";
 
 import type { CheckedTransfer } from "./transfer-details";
 
@@ -69,9 +70,15 @@ export function TransferReview({
     >
       {transfer ? (
         <div className="flex flex-col gap-5">
-          <p className="text-center type-display amount text-ink">
-            {formatMoney(transfer.amountCents)}
-          </p>
+          {/* A huge amount shrinks to fit instead of widening the dialog (amount-fit). */}
+          <div className="@container">
+            <p
+              className="text-center type-display amount-fit amount text-ink [--amount-size:2rem]"
+              style={fitAmountStyle(formatMoney(transfer.amountCents))}
+            >
+              {formatMoney(transfer.amountCents)}
+            </p>
+          </div>
 
           <dl className="divide-y divide-border rounded-card border border-border">
             {rows.map(([term, value]) => (

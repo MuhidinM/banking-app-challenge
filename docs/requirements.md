@@ -62,7 +62,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-15 | Filter All / Money in (CREDIT) / Money out (DEBIT) | T-053 | `DirectionFilter` (All / Money in / Money out) and the account select on `/activity`, both in the URL (`?account=1&direction=DEBIT`); reload and Back/Forward keep them (#36) | ☑ |
 | R-FLOW-16 | Rows grouped by day: Today, Yesterday, date | T-051 | `groupTransactionsByDay` by local day (Today, Yesterday, "Monday, 28 Sep"); tested across local midnight in Africa/Addis_Ababa (#34) | ☑ |
 | R-FLOW-17 | Row → detail: type, direction, reference, counterparty, balanceAfter if present | T-052 | `TransactionDetails` via `?tx=` (dialog on web, sheet on phones): type, direction, From/To account, reference `TX-000117`, balance after; reload reopens, Back closes (#35) | ☑ |
-| R-FLOW-18 | After transfer / bill / new account, balances and history refresh automatically | T-064 |  | ☐ |
+| R-FLOW-18 | After transfer / bill / new account, balances and history refresh automatically | T-064 | Transfers: `refreshAfterMoneyMoves` refetches every balance, the source history and, for a transfer to another own account, its history too; test: between own accounts both balances and the recipient's history change on the same screen (#41). New accounts appear at once (#31). Bill payment uses the same helper in T-070 (lane B) | ◐ |
 
 ## E. UX, accessibility, errors (Req 4)
 

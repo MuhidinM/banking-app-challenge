@@ -31,23 +31,33 @@ export const transferKeys = {
 };
 
 interface ReceiptDetails {
+  /** Money in (a transfer received) or out (sent). */
+  direction: "CREDIT" | "DEBIT";
   amount: Cents;
-  toAccountNumber: string;
-  from: Account | undefined;
+  /** The other account: the recipient of money sent, the sender of money received. */
+  counterpart: string;
+  /** The user's own account involved. */
+  account: Account | undefined;
   date: Date;
   /** "TX-000123"; missing on the fallback receipt. */
   reference?: string | undefined;
   newBalance: Cents | undefined;
 }
 
-const fromLabel = (from: Account | undefined) =>
-  from ? accountChoiceLabel(from).replace(" · ", " ") : "Your account";
+const accountLabel = (account: Account | undefined) =>
+  account ? accountChoiceLabel(account).replace(" · ", " ") : "Your account";
+
+const sent = (details: ReceiptDetails) => details.direction === "DEBIT";
+
+/** "ETB 250.00 to 2899010846" / "ETB 300.00 from 9402179920". */
+const summary = (details: ReceiptDetails, counterpart: string) =>
+  `${formatMoney(details.amount)} ${sent(details) ? "to" : "from"} ${counterpart}`;
 
 function receiptText(details: ReceiptDetails): string {
   return [
     "Kifiya Bank transfer receipt",
-    `${formatMoney(details.amount)} to ${formatAccountNumber(details.toAccountNumber)}`,
-    `From: ${fromLabel(details.from)}`,
+    summary(details, formatAccountNumber(details.counterpart)),
+    `${sent(details) ? "From" : "To"}: ${accountLabel(details.account)}`,
     `Date: ${formatFullDateTime(details.date)}`,
     ...(details.reference ? [`Reference: ${details.reference}`] : []),
     ...(details.newBalance === undefined
@@ -72,10 +82,10 @@ export function TransferReceiptView({
 }) {
   return (
     <Receipt
-      title="Transfer sent"
-      summary={`${formatMoney(details.amount)} to ${details.toAccountNumber}`}
+      title={sent(details) ? "Transfer sent" : "Transfer received"}
+      summary={summary(details, details.counterpart)}
       rows={[
-        ["From", fromLabel(details.from)],
+        [sent(details) ? "From" : "To", accountLabel(details.account)],
         ["Date", formatFullDateTime(details.date)],
         ...(details.reference ? ([["Reference", details.reference]] as [string, string][]) : []),
         ...(details.newBalance === undefined
@@ -155,18 +165,19 @@ export function TransferReceipt({ transactionId }: { transactionId: number }) {
   }
 
   const transaction = receipt.data;
-  const from = accounts.data?.find((account) => account.id === transaction.accountId);
+  const account = accounts.data?.find((candidate) => candidate.id === transaction.accountId);
   return (
     <TransferReceiptView
       details={{
+        direction: transaction.direction,
         amount: toCents(transaction.amount),
-        toAccountNumber: transaction.relatedAccount ?? "",
-        from,
+        counterpart: transaction.relatedAccount ?? "",
+        account,
         date: parseApiDate(transaction.timestamp),
         reference: transactionReference(transaction),
         newBalance:
           transaction.balanceAfter === null || transaction.balanceAfter === undefined
-            ? from && toCents(from.balance)
+            ? account && toCents(account.balance)
             : toCents(transaction.balanceAfter),
       }}
     />
