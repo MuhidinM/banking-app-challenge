@@ -10,6 +10,7 @@ import { Card } from "@/shared/ui/card";
 import { LoadingRegion, Skeleton } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
+import { RecentRecipients } from "./recent-recipients";
 import { type ServerFieldError, TransferForm } from "./transfer-form";
 
 import type { CheckedTransfer } from "./transfer-details";
@@ -74,6 +75,9 @@ export function TransferScreen({
       initialFromId={initialFromId}
       onContinue={onContinue}
       serverError={serverError}
+      recipientShortcuts={(fromAccountId, pick) => (
+        <RecentRecipients fromAccountId={fromAccountId} onPick={pick} />
+      )}
     />
   );
 }
