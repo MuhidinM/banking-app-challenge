@@ -91,7 +91,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 
 | ID | Issue | Task | Reqs | Size | Status |
 |---|---|---|---|---|---|
-| T-080 | [#44](https://github.com/MuhidinM/banking-app-challenge/issues/44) | Profile: user card, total across accounts, theme setting, change password (disabled, see N-004), logout | R-AUTH-09 | S | todo |
+| T-080 | [#44](https://github.com/MuhidinM/banking-app-challenge/issues/44) | Profile: user card, total across accounts, theme setting, change password (disabled, see N-004), logout | R-AUTH-09 | S | done |
 
 ## M9 — Quality
 

@@ -17,6 +17,8 @@ const options: { value: ThemePreference; label: string; Icon: LucideIcon }[] = [
 interface ThemeToggleProps {
   /** "labels" shows icon and text (profile); "icons" shows icons only (sidebar). */
   variant?: "labels" | "icons";
+  /** Shares the full width between the options, e.g. in a narrow card on a phone. */
+  fullWidth?: boolean;
   className?: string;
 }
 
@@ -25,7 +27,11 @@ interface ThemeToggleProps {
  * arrow keys move between options and screen readers announce "Theme, radio
  * group, 1 of 3". Styled like the spec's filter pills.
  */
-export function ThemeToggle({ variant = "labels", className }: ThemeToggleProps) {
+export function ThemeToggle({
+  variant = "labels",
+  fullWidth = false,
+  className,
+}: ThemeToggleProps) {
   const { preference, setPreference } = useTheme();
   const name = useId();
 
@@ -34,7 +40,12 @@ export function ThemeToggle({ variant = "labels", className }: ThemeToggleProps)
       <legend className={variant === "icons" ? "sr-only" : "mb-2 type-label text-ink-muted"}>
         Theme
       </legend>
-      <div className="inline-flex gap-1 rounded-pill border border-border bg-surface p-1">
+      <div
+        className={cn(
+          "inline-flex gap-1 rounded-pill border border-border bg-surface p-1",
+          fullWidth && "flex w-full",
+        )}
+      >
         {options.map(({ value, label, Icon }) => (
           <label
             key={value}
@@ -45,6 +56,7 @@ export function ThemeToggle({ variant = "labels", className }: ThemeToggleProps)
               "has-checked:bg-primary has-checked:text-on-primary",
               "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent",
               variant === "icons" && "px-0",
+              fullWidth && "flex-1 gap-1.5 px-2",
             )}
           >
             <input

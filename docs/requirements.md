@@ -39,7 +39,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-AUTH-06 | Protected pages unreachable without a session | T-025 | `proxy.ts` redirects signed-out visitors from protected pages to `/login?next=…`; `RequireSession` renders protected pages only with a session; tested, and the proxy redirect checked in the browser (#21) | ☑ |
 | R-AUTH-07 | Valid session skips the login page | T-025 | Signed in, `/login` and `/register` go to `next` or `/` (proxy on the cookie, `RedirectWhenSignedIn` after a restore); external `next` ignored; tested (#21) | ☑ |
 | R-AUTH-08 | Session survives page reload | T-022 | Restore on load with one refresh; integration tests simulate a reload (#18); confirmed in Chrome with mock mode: sign in, reload, still signed in (#20, after #80 kept the mock across reloads) | ☑ |
-| R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 | `signOut()` clears the tokens, storage and cookie; `onSessionEnded` clears the query cache and toasts; other tabs log out through a BroadcastChannel; tested (#23) | ☑ |
+| R-AUTH-09 | Logout clears the session (tokens + query cache) | T-027 | `signOut()` clears the tokens, storage and cookie; `onSessionEnded` clears the query cache and toasts; other tabs log out through a BroadcastChannel; tested (#23); Log out also on the profile page (#44) | ☑ |
 
 ## D. Main flow (Req 3)
 
@@ -69,7 +69,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | ID | Requirement | Task | Evidence | ✓ |
 |---|---|---|---|---|
 | R-UX-01 | Follows the design spec (layout, hierarchy, spacing, colour, type) | all UI | Theme generated from `design-tokens.json` (colours, type scale, radii, shadows, spacing, sizes, gradients; both themes) by `pnpm tokens`, checked in CI (#9). Screen-by-screen fidelity follows with each UI task | ◐ |
-| R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser | ☑ |
+| R-UX-02 | Light + dark theme; follows OS; user override | T-012 | Both themes from the tokens (#9); follows the OS by default including live changes; System / Light / Dark switch stored per device and synced across tabs (#11). Tests in `theme-preference.test.ts` and `theme-toggle.test.tsx`; checked in the browser; the full switch sits on the profile page (#44) | ☑ |
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 | `AppShell`: 260 px sidebar from 768 px, bottom nav with the raised Transfer disc below it; measured against the redlines at 1440×900 and 390×844 (#26) | ☑ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 | Skeletons matching row geometry (identical heights measured) inside a `LoadingRegion` status, reduced-motion aware (#13); route-level `loading.tsx` in the app shell: a header and card of row skeletons, announced as "Loading the page" (#28). Each screen uses them as it is built | ◐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
