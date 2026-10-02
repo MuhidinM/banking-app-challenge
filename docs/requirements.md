@@ -57,7 +57,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-10 | Confirmation screen with receipt: amount, recipient, new balance, reference (not just a toast) | T-062 |  | ☐ |
 | R-FLOW-11 | Specific errors: "Insufficient funds", "Cannot transfer to the same account", "Account not found" | T-063 |  | ☐ |
 | R-FLOW-12 | Bill payment: from account, biller, amount → `POST /api/accounts/pay-bill` | T-070 |  | ☐ |
-| R-FLOW-13 | History per account `GET /api/transactions/{accountId}`, Load more or infinite scroll | T-050 | `useTransactionHistory` infinite query on `GET /api/transactions/{accountId}`, Load more with "Showing x of y" on `/activity?account=` (#33) | ☑ |
+| R-FLOW-13 | History per account `GET /api/transactions/{accountId}`, Load more or infinite scroll | T-050 | `useTransactionHistory` infinite query on `GET /api/transactions/{accountId}`, Load more with "Showing x of y" on `/activity?account=` (#33) and on each account page `/accounts/<id>` with the direction filter (#32) | ☑ |
 | R-FLOW-14 | Row shows amount, type, direction, timestamp, description | T-051 | `TransactionRow`: type icon, description or a fallback from type and other account, "Type · time", signed amount; direction by sign, colour and the spoken "Money in/out" (#34) | ☑ |
 | R-FLOW-15 | Filter All / Money in (CREDIT) / Money out (DEBIT) | T-053 | `DirectionFilter` (All / Money in / Money out) and the account select on `/activity`, both in the URL (`?account=1&direction=DEBIT`); reload and Back/Forward keep them (#36) | ☑ |
 | R-FLOW-16 | Rows grouped by day: Today, Yesterday, date | T-051 | `groupTransactionsByDay` by local day (Today, Yesterday, "Monday, 28 Sep"); tested across local midnight in Africa/Addis_Ababa (#34) | ☑ |
