@@ -50,3 +50,40 @@ test("an unknown recipient comes back on the recipient field", async ({ page }) 
   await expect(recipient).toBeFocused();
   await expect(recipient).toHaveValue("1234 5678 90");
 });
+
+test("more than the balance says Insufficient funds and doesn't open the review", async ({
+  page,
+}) => {
+  await page.goto("/login?next=%2Ftransfer");
+  await signIn(page);
+
+  await page.getByLabel("To account number").fill("2899010846");
+  const amount = page.getByLabel("Amount in ETB");
+  await amount.fill("9000");
+  await expect(page.getByText("Insufficient funds. Available: ETB 8,640.00.")).toBeVisible();
+
+  await page
+    .getByRole("button", { name: /^Send ETB 9,000\.00$/ })
+    .first()
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(amount).toBeFocused();
+});
+
+test("sending to the same account says so on the recipient field", async ({ page }) => {
+  await page.goto("/login?next=%2Ftransfer");
+  await signIn(page);
+
+  // Jane's Checking is the default From account.
+  const recipient = page.getByLabel("To account number");
+  await recipient.fill("8751138057");
+  await page.getByLabel("Amount in ETB").fill("100");
+  await page
+    .getByRole("button", { name: /^Send ETB 100\.00$/ })
+    .first()
+    .click();
+
+  await expect(page.getByText("Cannot transfer to the same account.")).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(recipient).toBeFocused();
+});
