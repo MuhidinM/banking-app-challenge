@@ -20,6 +20,7 @@
     "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check",
     "tokens": "node scripts/generate-tokens.mts",
     "tokens:check": "node scripts/generate-tokens.mts --check",
+    "fidelity": "playwright test -c playwright.fidelity.config.ts",
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse.mts"
   },

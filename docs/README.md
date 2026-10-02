@@ -7,6 +7,7 @@
 | [requirements.md](requirements.md) | Every requirement from the brief with an ID, the task that delivers it, and the evidence it works |
 | [backlog.md](backlog.md)           | Milestones and tasks, each linked to the requirements it covers                                   |
 | [spec-notes.md](spec-notes.md)     | Where the design, brief and API disagree or leave gaps, and what we decided                       |
+| [fidelity.md](fidelity.md)         | Screenshots of every spec frame, light and dark, and how each differs from the design             |
 | [api-notes.md](api-notes.md)       | Endpoints, models, error codes → user messages, integration notes                                 |
 | [design-notes.md](design-notes.md) | Screen inventory, layout rules, tokens, components, formatting                                    |
 | [performance.md](performance.md)   | Lighthouse scores per page (mobile and desktop), how to run them, what was fixed                  |

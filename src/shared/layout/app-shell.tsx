@@ -25,7 +25,7 @@ export function AppShell({
     <div className="min-h-dvh bg-surface-muted md:pl-sidebar">
       <a
         href={`#${MAIN_ID}`}
-        className="fixed top-3 left-3 z-50 -translate-y-20 rounded-button bg-primary px-5 py-3 type-body-strong text-on-primary shadow-float focus-visible:translate-y-0"
+        className="fixed top-3 left-3 z-50 -translate-y-20 rounded-button bg-primary px-5 py-3 type-body-strong text-on-primary focus-visible:translate-y-0 focus-visible:shadow-float"
       >
         Skip to content
       </a>

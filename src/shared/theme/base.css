@@ -175,3 +175,21 @@
     }
   }
 }
+
+/*
+ * Behind dialogs and sheets. The tokens have no scrim (spec note N-036): light
+ * is ink at 45 %, as drawn; the dark screens darken the page too, so dark is
+ * black at 55 % (ink is near white there and would wash the page out).
+ */
+@utility bg-scrim {
+  background-color: rgb(11 31 38 / 0.45);
+
+  :root[data-theme="dark"] & {
+    background-color: rgb(0 0 0 / 0.55);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) & {
+      background-color: rgb(0 0 0 / 0.55);
+    }
+  }
+}
