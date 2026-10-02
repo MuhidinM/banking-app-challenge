@@ -12,6 +12,8 @@ const CI = Boolean(process.env.CI);
 
 export default defineConfig({
   testDir: "./e2e",
+  // The fidelity screenshots run on their own: `pnpm fidelity`.
+  testIgnore: "fidelity/**",
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 1 : 0,
