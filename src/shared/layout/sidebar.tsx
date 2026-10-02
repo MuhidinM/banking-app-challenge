@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 
 /**
  * Desktop navigation, 768 px and up (UI spec, WebDashboard): logo, the five
- * sections, and `footer` at the bottom (theme switch, user card with logout).
+ * sections, and `footer` at the bottom (the user card with logout, as drawn).
  */
 export function Sidebar({ footer }: { footer?: ReactNode }) {
   const pathname = usePathname();

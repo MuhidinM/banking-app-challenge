@@ -51,7 +51,7 @@ Setting each screenshot beside its frame found seven differences, fixed in the s
 
 ### Dashboard
 
-`/`. The sidebar has the theme switch above the user ([N-018](spec-notes.md)). Recent activity is headed by its account ([N-027](spec-notes.md)). Times differ: the mock's seed is relative to now.
+`/`. Recent activity is headed by its account ([N-027](spec-notes.md)). Times differ: the mock's seed is relative to now.
 
 | WebDashboard                                                 | WebDashboardDark                                                 |
 | ------------------------------------------------------------ | ---------------------------------------------------------------- |
