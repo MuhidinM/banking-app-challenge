@@ -6,7 +6,8 @@ import { cn } from "@/shared/lib/cn";
 import type { ReactNode } from "react";
 
 interface PageHeaderProps {
-  title: string;
+  /** Usually text; a node allows a part that only some screen sizes show. */
+  title: ReactNode;
   /** One line under the title, e.g. "Send money to any Kifiya Bank account." */
   description?: ReactNode;
   /** A back button to this page, e.g. the account for its activity. */

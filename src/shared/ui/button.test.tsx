@@ -46,11 +46,11 @@ describe("Button", () => {
   it("renders a link with button styles when used asChild", () => {
     render(
       <Button asChild variant="outline">
-        <a href="/accounts/new">New account</a>
+        <a href="/example">New account</a>
       </Button>,
     );
     const link = screen.getByRole("link", { name: "New account" });
-    expect(link).toHaveAttribute("href", "/accounts/new");
+    expect(link).toHaveAttribute("href", "/example");
     expect(link).toHaveClass("h-button", "rounded-button");
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
@@ -65,7 +65,7 @@ describe("Button", () => {
   it("keeps the icon when rendering a link (asChild)", () => {
     render(
       <Button asChild icon={ArrowLeftRight}>
-        <a href="/transfer">Transfer</a>
+        <a href="/example">Transfer</a>
       </Button>,
     );
     const link = screen.getByRole("link", { name: "Transfer" });
