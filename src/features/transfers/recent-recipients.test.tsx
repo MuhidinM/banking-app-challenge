@@ -89,8 +89,10 @@ describe("recent recipients on the transfer form", () => {
 
   it("shows no shortcuts when the account hasn't sent money yet", async () => {
     const client = renderScreen();
-    await vi.waitFor(() =>
-      expect(client.getQueryState(transactionKeys.list(1))?.status).toBe("success"),
+    // A busy machine can take longer than waitFor's default second.
+    await vi.waitFor(
+      () => expect(client.getQueryState(transactionKeys.list(1))?.status).toBe("success"),
+      { timeout: 5000 },
     );
     expect(screen.queryByRole("group", { name: "Recent" })).toBeNull();
   });

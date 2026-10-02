@@ -4,6 +4,8 @@
 
 A responsive banking web client for the Kifiya Web Developer Challenge, built with Next.js 16, React 19 and TypeScript against the [challenge banking API](https://challenge-api.qena.dev/scalar). Customers sign in, see their accounts and history, open accounts, send transfers and pay bills, on a phone or a desktop, in light or dark.
 
+**Live:** <https://banking-app-challenge-beta.vercel.app>, deployed on Vercel from `main` against the real API. Sign up there, or sign in with a demo user from the API's documentation. Every pull request also gets its own preview deployment.
+
 The Kifiya name and logo belong to Kifiya and are used here only because the challenge's design uses them. The site asks search engines not to index it, and its footer says it is a reference client for the challenge.
 
 ## Contents

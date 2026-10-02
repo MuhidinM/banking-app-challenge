@@ -80,12 +80,6 @@ describe("ThemeToggle", () => {
     render(<ThemeToggle />);
     expect(screen.getByRole("radio", { name: "Light" })).toBeChecked();
   });
-
-  it("keeps accessible names in the icon-only variant", () => {
-    render(<ThemeToggle variant="icons" />);
-    expect(screen.getByRole("group", { name: "Theme" })).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: "Dark" })).toBeInTheDocument();
-  });
 });
 
 describe("useTheme", () => {

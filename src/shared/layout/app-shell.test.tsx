@@ -83,6 +83,42 @@ describe("AppShell keyboard support", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Accounts" })).toHaveFocus();
   });
 
+  it("moves focus to a heading that appears after the data loads", async () => {
+    const page = (title: string | null) => (
+      <AppShell>{title ? <PageHeader title={title} /> : <p>Loading the receipt</p>}</AppShell>
+    );
+    pathname = "/transfer";
+    const { rerender } = render(page("Transfer"));
+
+    pathname = "/transfer/receipt/1";
+    rerender(page(null));
+    expect(screen.getByRole("main")).toHaveFocus();
+
+    rerender(page("Transfer sent"));
+    await vi.waitFor(() =>
+      expect(screen.getByRole("heading", { level: 1, name: "Transfer sent" })).toHaveFocus(),
+    );
+  });
+
+  it("leaves focus alone if the user moved it before the heading appeared", async () => {
+    const page = (title: string | null) => (
+      <AppShell>
+        <button type="button">Elsewhere</button>
+        {title ? <PageHeader title={title} /> : null}
+      </AppShell>
+    );
+    pathname = "/";
+    const { rerender } = render(page("Home"));
+
+    pathname = "/accounts/1";
+    rerender(page(null));
+    screen.getByRole("button", { name: "Elsewhere" }).focus();
+    rerender(page("Checking"));
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(screen.getByRole("button", { name: "Elsewhere" })).toHaveFocus();
+  });
+
   it("falls back to the main region when the page has no heading", () => {
     pathname = "/";
     const { rerender } = render(<AppShell>Home</AppShell>);
