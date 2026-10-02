@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+// Zod probes for eval support (`Function("")`) on its first object parse, to
+// compile faster validators. The CSP blocks eval (ADR-0010), so the probe only
+// logs a violation; jitless skips it. This module parses at import, before any
+// other schema runs, so the setting is in place for the whole app.
+z.config({ jitless: true });
+
 const flag = z
   .enum(["on", "off"], { error: 'must be "on" or "off"' })
   .default("off")
