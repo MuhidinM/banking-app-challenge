@@ -1,11 +1,13 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { useAccounts } from "@/features/accounts/queries";
+import { accountKeys, useAccounts } from "@/features/accounts/queries";
 import { getAppSession } from "@/features/auth/session";
-import { describeError } from "@/shared/api/error-messages";
+import { isApiError } from "@/shared/api/api-error";
+import { type FieldsByContext, describeError } from "@/shared/api/error-messages";
 import { formatMoney, toCents } from "@/shared/lib/money";
 import { toast } from "@/shared/ui/toast";
 
@@ -15,7 +17,16 @@ import { TransferReceiptView } from "./transfer-receipt";
 import { TransferReview } from "./transfer-review";
 import { TransferScreen } from "./transfer-screen";
 
-import type { CheckedTransfer } from "./transfer-details";
+import type { CheckedTransfer, TransferField } from "./transfer-details";
+import type { ServerFieldError } from "./transfer-form";
+
+/** The API names fields after the request; the form names the From field by account id. */
+const formField: Record<FieldsByContext["transfer"], TransferField> = {
+  fromAccountNumber: "fromAccountId",
+  toAccountNumber: "toAccountNumber",
+  amount: "amount",
+  note: "note",
+};
 
 /**
  * The receipt shown when the new transaction can't be found in the history
@@ -46,6 +57,8 @@ function FallbackReceipt({ transfer }: { transfer: CheckedTransfer }) {
 export function TransferFlow({ initialFromId }: { initialFromId?: number | undefined }) {
   const router = useRouter();
   const send = useSendTransfer();
+  const queryClient = useQueryClient();
+  const [serverError, setServerError] = useState<ServerFieldError | null>(null);
   const [review, setReview] = useState<CheckedTransfer | null>(null);
   const [error, setError] = useState<string | null>(null);
   // Sent, but looking for the new transaction (the button stays busy).
@@ -76,7 +89,21 @@ export function TransferFlow({ initialFromId }: { initialFromId?: number | undef
       },
       onError: (failure) => {
         inFlight.current = false;
-        setError(describeError(failure, "transfer", { availableCents: undefined }).message);
+        const { message, field } = describeError(failure, "transfer", {
+          availableCents: toCents(review.from.balance),
+        });
+        // The balance the server checked is newer than the one on screen.
+        if (isApiError(failure) && failure.code === "ACC_002") {
+          void queryClient.invalidateQueries({ queryKey: accountKeys.all });
+        }
+        if (field) {
+          // A field's error: back to the form, on that field (R-FLOW-11).
+          setReview(null);
+          setServerError({ field: formField[field], message, id: Date.now() });
+        } else {
+          // Offline, a server error: stay in the review and let the user try again.
+          setError(message);
+        }
       },
     });
   }
@@ -87,6 +114,7 @@ export function TransferFlow({ initialFromId }: { initialFromId?: number | undef
     <>
       <TransferScreen
         initialFromId={initialFromId}
+        serverError={serverError}
         onContinue={(transfer) => {
           setError(null);
           setReview(transfer);
