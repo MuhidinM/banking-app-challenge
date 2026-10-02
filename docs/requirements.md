@@ -50,8 +50,8 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-03 | Accounts list (`GET /api/accounts`, paginated): number, type, balance | T-041 | `/accounts` lists every account across all pages of `GET /api/accounts`: type, •••• last four, balance, with the count and total under the title; tested with 60 accounts (#30) | ☑ |
 | R-FLOW-04 | Recent transactions of one account on dashboard | T-040 | The latest 3 transactions of the first account, named above the rows, with "View all" to its history; tested against the mock (#29) | ☑ |
 | R-FLOW-05 | Navigation to all other screens | T-030 | Sidebar and bottom nav link Home, Accounts, Activity, Transfer and Profile, with the current section marked (`aria-current`); the screens behind them are built in M4–M8, Pay bill is reached from the dashboard (#29) (#26) | ◐ |
-| R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 |  | ☐ |
-| R-FLOW-07 | New account appears without full reload | T-042 |  | ☐ |
+| R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 | `/accounts/new`: six types (three plus "More account types"), optional deposit sent as 0 when empty, `POST /api/accounts`; amount errors on the field; tested (#31) | ☑ |
+| R-FLOW-07 | New account appears without full reload | T-042 | The created account is added to the cached list, then the list is refetched; test: "2 accounts" becomes "3 accounts · ETB 11,000.00 total" on the same screen (#31) | ☑ |
 | R-FLOW-08 | Transfer: from (own accounts), recipient number, amount, optional note | T-060 |  | ☐ |
 | R-FLOW-09 | Review step showing details + "cannot be reversed" warning before calling API | T-061 |  | ☐ |
 | R-FLOW-10 | Confirmation screen with receipt: amount, recipient, new balance, reference (not just a toast) | T-062 |  | ☐ |

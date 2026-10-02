@@ -1,9 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getAppSession } from "@/features/auth/session";
 import type { Account } from "@/shared/api/types";
+import type { AccountType } from "@/shared/api/types";
 import { type Cents, ZERO, addCents, toCents } from "@/shared/lib/money";
 
 import { createAccountsApi } from "./api";
@@ -28,4 +29,28 @@ export function useAccounts() {
 /** The sum of every balance, in cents so it never drifts (ADR-0007). */
 export function totalBalance(accounts: readonly Account[]): Cents {
   return accounts.reduce((sum, account) => addCents(sum, toCents(account.balance)), ZERO);
+}
+
+/**
+ * Opens an account. The new account goes into the cached list at once, so the
+ * list and the total show it without a reload, then the list is refetched to
+ * match the server.
+ */
+export function useOpenAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      accountType,
+      initialDeposit,
+    }: {
+      accountType: AccountType;
+      initialDeposit: Cents;
+    }) => createAccountsApi(getAppSession().client).open(accountType, initialDeposit),
+    onSuccess: (account) => {
+      queryClient.setQueryData<Account[]>(accountKeys.list(), (accounts) =>
+        accounts ? [...accounts, account] : accounts,
+      );
+      void queryClient.invalidateQueries({ queryKey: accountKeys.all });
+    },
+  });
 }
