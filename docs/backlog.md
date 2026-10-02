@@ -105,7 +105,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-094 | [#49](https://github.com/MuhidinM/banking-app-challenge/issues/49) | Security headers + CSP in `next.config.ts`, `robots: noindex`, `?next=` validation review | X-10 | S | done |
 | T-095 | [#50](https://github.com/MuhidinM/banking-app-challenge/issues/50) | Fidelity report `docs/fidelity.md` (screenshots vs spec, both themes) | X-11 | M | done |
 | T-096 | [#51](https://github.com/MuhidinM/banking-app-challenge/issues/51) | Lighthouse check, fix findings | X-12 | S | done |
-| T-105 | [#116](https://github.com/MuhidinM/banking-app-challenge/issues/116) | Switch schemas to `zod/mini` so phones parse less JavaScript; mobile Lighthouse ≥ 90 on every page | X-12 | M | todo |
+| T-105 | [#116](https://github.com/MuhidinM/banking-app-challenge/issues/116) | Switch schemas to `zod/mini` so phones parse less JavaScript; mobile Lighthouse ≥ 90 on every page | X-12 | M | done |
 
 ## M10 — Release
 

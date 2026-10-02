@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { HttpClient } from "@/shared/api/http-client";
 import type { TokenPair } from "@/shared/api/token-refresh";
@@ -14,11 +14,11 @@ import type {
 // Sessions depend on these responses, so their shape is checked at the boundary:
 // a response without tokens fails here, not later as a confusing 401 loop.
 const tokenPairSchema = z.object({
-  accessToken: z.string().min(1),
-  refreshToken: z.string().min(1),
+  accessToken: z.string().check(z.minLength(1)),
+  refreshToken: z.string().check(z.minLength(1)),
 });
 
-const loginResponseSchema = tokenPairSchema.extend({
+const loginResponseSchema = z.extend(tokenPairSchema, {
   username: z.string(),
   userId: z.number(),
   message: z.string(),

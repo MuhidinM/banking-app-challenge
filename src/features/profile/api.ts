@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { HttpClient } from "@/shared/api/http-client";
 import type { User } from "@/shared/api/types";
@@ -10,9 +10,9 @@ const userSchema = z.object({
   username: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  email: z.string().nullish(),
+  email: z.nullish(z.string()),
   phoneNumber: z.string(),
-}) satisfies z.ZodType<User>;
+}) satisfies z.ZodMiniType<User>;
 
 export function createProfileApi(client: HttpClient) {
   return {

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 // Zod probes for eval support (`Function("")`) on its first object parse, to
 // compile faster validators. The CSP blocks eval (ADR-0010), so the probe only
@@ -6,21 +6,22 @@ import { z } from "zod";
 // other schema runs, so the setting is in place for the whole app.
 z.config({ jitless: true });
 
-const flag = z
-  .enum(["on", "off"], { error: 'must be "on" or "off"' })
-  .default("off")
-  .transform((value) => value === "on");
+const flag = z.pipe(
+  z._default(z.enum(["on", "off"], { error: 'must be "on" or "off"' }), "off"),
+  z.transform((value) => value === "on"),
+);
 
 const envSchema = z.object({
-  NEXT_PUBLIC_API_BASE_URL: z
-    .url({
+  NEXT_PUBLIC_API_BASE_URL: z.pipe(
+    z.url({
       protocol: /^https?$/,
       error: (issue) =>
         issue.input === undefined
           ? "is required, e.g. https://challenge-api.qena.dev"
           : "must be an http(s) URL, e.g. https://challenge-api.qena.dev",
-    })
-    .transform((url) => url.replace(/\/+$/, "")),
+    }),
+    z.transform((url) => url.replace(/\/+$/, "")),
+  ),
   NEXT_PUBLIC_API_MOCKING: flag,
   NEXT_PUBLIC_DEV_TOOLS: flag,
 });

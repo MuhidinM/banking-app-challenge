@@ -4,7 +4,7 @@ import type { ApiErrorCode } from "@/shared/api/error-codes";
 import type { ApiErrorBody, Page } from "@/shared/api/types";
 import { env } from "@/shared/config/env";
 
-import type { z } from "zod";
+import type * as z from "zod/mini";
 
 /** Full URL for an API path on the configured origin, e.g. `apiUrl("/api/accounts")`. */
 export function apiUrl(path: `/api/${string}`): string {
@@ -83,7 +83,7 @@ export async function readJson(request: Request): Promise<unknown> {
 }
 
 /** Validates a request body against a schema, or throws VAL_001 naming the invalid fields. */
-export function parseBody<T>(schema: z.ZodType<T>, body: unknown): T {
+export function parseBody<T>(schema: z.ZodMiniType<T>, body: unknown): T {
   const result = schema.safeParse(body);
   if (!result.success) {
     const fields = result.error.issues.map((issue) => issue.path.join(".") || "body").join(", ");

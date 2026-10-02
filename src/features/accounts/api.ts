@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { HttpClient } from "@/shared/api/http-client";
 import { pageSchema } from "@/shared/api/page-schema";
@@ -17,7 +17,7 @@ const accountSchema = z.object({
   balance: z.number(),
   userId: z.number(),
   accountType: z.enum(accountTypes),
-}) satisfies z.ZodType<Account>;
+}) satisfies z.ZodMiniType<Account>;
 
 const accountPageSchema = pageSchema(accountSchema);
 

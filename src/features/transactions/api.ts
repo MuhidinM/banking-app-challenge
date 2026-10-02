@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { HttpClient } from "@/shared/api/http-client";
 import { pageSchema } from "@/shared/api/page-schema";
@@ -20,11 +20,11 @@ export const transactionSchema = z.object({
   type: z.enum(transactionTypes),
   direction: z.enum(transactionDirections),
   timestamp: z.string(),
-  description: z.string().nullish(),
-  relatedAccount: z.string().nullish(),
+  description: z.nullish(z.string()),
+  relatedAccount: z.nullish(z.string()),
   accountId: z.number(),
-  balanceAfter: z.number().nullish(),
-}) satisfies z.ZodType<Transaction>;
+  balanceAfter: z.nullish(z.number()),
+}) satisfies z.ZodMiniType<Transaction>;
 
 const historyPageSchema = pageSchema(transactionSchema);
 

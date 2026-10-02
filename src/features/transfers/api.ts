@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import { transactionSchema } from "@/features/transactions/api";
 import type { HttpClient } from "@/shared/api/http-client";
@@ -9,7 +9,7 @@ const transferResponseSchema = z.object({
   amount: z.number(),
   fromAccountNumber: z.string(),
   toAccountNumber: z.string(),
-}) satisfies z.ZodType<TransferResponse>;
+}) satisfies z.ZodMiniType<TransferResponse>;
 
 export function createTransfersApi(client: HttpClient) {
   return {
