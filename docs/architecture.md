@@ -38,7 +38,7 @@ UI component ─► feature hook (useAccounts, useTransfer…) ─► TanStack Q
 
 - Types are generated from [api/openapi.json](api/openapi.json) with `openapi-typescript` into `src/shared/api/schema.ts` (`pnpm api:types`; CI checks it is current with `pnpm api:types:check`). `src/shared/api/types.ts` gives them readable names (`Account`, `Transaction`, `Page<T>` …) and is the only module that imports the generated file. `pnpm api:snapshot` refreshes the OpenAPI copy from the live API.
 - Failures are one of two classes (`src/shared/api/api-error.ts`): `ApiError` (non-2xx: `status`, `code` from the API or `"UNKNOWN"`, and `serverMessage` kept for logs only) and `NetworkError` (no response: `offline`, `timeout` or `unreachable`). A cancellation by the caller is rethrown untouched so TanStack Query treats it as cancelled. `getErrorMessage(error, context)` maps codes to user copy ([api-notes.md](api-notes.md)); unknown codes get a generic message. The server's `message` field is never rendered.
-- Responses for auth and money are validated with zod at the boundary, so malformed data fails in one place.
+- Responses for auth and money are validated with `zod/mini` at the boundary, so malformed data fails in one place. `zod/mini` keeps the same checks as full Zod at a fraction of the bundle size ([performance.md](performance.md)).
 - A lint rule forbids `fetch` outside `shared/api`.
 
 ## Authentication and token refresh
@@ -94,7 +94,7 @@ Logout (`signOut()`) forgets the tokens and the cookie; the API has no logout en
 | URL state    | search params                  | Activity `account` + `direction`, open transaction `?tx=`, preselected `from` account |
 | Session      | small external store + context | tokens, status `unknown / authenticated / anonymous`                                  |
 | Preferences  | `localStorage` behind a hook   | theme override, hide balances                                                         |
-| Forms        | react-hook-form + zod          | every form                                                                            |
+| Forms        | React state + check functions  | every form; register uses a `zod/mini` schema, money forms plain check functions      |
 
 Cache updates after mutations:
 
@@ -198,15 +198,15 @@ Unit and component tests sit next to their source as `*.test.ts(x)`. A folder on
 
 ## Tech stack
 
-| Concern                | Choice                                                           | Runner-up           |
-| ---------------------- | ---------------------------------------------------------------- | ------------------- |
-| Framework              | Next.js 16 App Router, React 19, TypeScript strict               | Vite + React Router |
-| Styling                | Tailwind v4, `@theme` fed by generated token CSS                 | CSS Modules         |
-| Accessible primitives  | Radix UI (Dialog, Select, RadioGroup, Toast), styled to the spec | shadcn/ui           |
-| Server state           | TanStack Query v5                                                | SWR                 |
-| Forms                  | react-hook-form + zod                                            | —                   |
-| Icons                  | lucide-react (outline)                                           | Heroicons           |
-| Unit / component tests | Vitest, React Testing Library, MSW                               | Jest                |
-| E2E + accessibility    | Playwright + @axe-core/playwright                                | Cypress             |
-| Lint / format          | ESLint (Next config) + Prettier, `tsc --noEmit`                  | Biome               |
-| CI / hosting           | GitHub Actions, Vercel                                           | Netlify             |
+| Concern                | Choice                                                            | Runner-up           |
+| ---------------------- | ----------------------------------------------------------------- | ------------------- |
+| Framework              | Next.js 16 App Router, React 19, TypeScript strict                | Vite + React Router |
+| Styling                | Tailwind v4, `@theme` fed by generated token CSS                  | CSS Modules         |
+| Accessible primitives  | Radix UI (Dialog, Select, RadioGroup, Toast), styled to the spec  | shadcn/ui           |
+| Server state           | TanStack Query v5                                                 | SWR                 |
+| Forms                  | React state; `zod/mini` for the register schema and API responses | react-hook-form     |
+| Icons                  | lucide-react (outline)                                            | Heroicons           |
+| Unit / component tests | Vitest, React Testing Library, MSW                                | Jest                |
+| E2E + accessibility    | Playwright + @axe-core/playwright                                 | Cypress             |
+| Lint / format          | ESLint (Next config) + Prettier, `tsc --noEmit`                   | Biome               |
+| CI / hosting           | GitHub Actions, Vercel                                            | Netlify             |
