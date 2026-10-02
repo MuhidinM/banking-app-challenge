@@ -26,6 +26,7 @@ interface RadioCardsProps {
 
 /**
  * One choice from a short list, shown as cards (UI spec, "Open an account":
+ * redline: 40 px icon disc, 23 px check, 12/14 px padding, 10 px between cards;
  * Savings / Checking / Money market). Native radio buttons in a fieldset, so the
  * browser provides the radio group, a single tab stop and arrow-key selection.
  */
@@ -52,7 +53,7 @@ export function RadioCards({
     >
       <legend className="mb-1.5 type-label text-ink">{label}</legend>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         {options.map(({ value: optionValue, label: optionLabel, description, icon: Icon }) => (
           <label
             key={optionValue}
@@ -73,8 +74,8 @@ export function RadioCards({
               className="sr-only"
             />
             {Icon && (
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-pill bg-surface-muted text-ink group-has-checked:bg-primary-soft group-has-checked:text-primary">
-                <Icon aria-hidden="true" className="size-4.5" strokeWidth={1.75} />
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-pill bg-surface-muted text-ink group-has-checked:bg-primary-soft group-has-checked:text-primary">
+                <Icon aria-hidden="true" className="size-icon" strokeWidth={1.75} />
               </span>
             )}
             <span className="flex min-w-0 flex-1 flex-col">
@@ -84,11 +85,11 @@ export function RadioCards({
             {/* Empty circle when unselected, check when selected, like the spec. */}
             <span
               aria-hidden="true"
-              className="size-5 shrink-0 rounded-pill border-[1.5px] border-border group-has-checked:hidden"
+              className="size-[1.4375rem] shrink-0 rounded-pill border-[1.5px] border-border group-has-checked:hidden"
             />
             <CircleCheck
               aria-hidden="true"
-              className="hidden size-5 shrink-0 text-primary group-has-checked:block"
+              className="hidden size-[1.4375rem] shrink-0 text-primary group-has-checked:block"
               strokeWidth={2}
             />
           </label>

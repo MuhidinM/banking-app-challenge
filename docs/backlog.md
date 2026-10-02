@@ -58,7 +58,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 |---|---|---|---|---|---|
 | T-040 | [#29](https://github.com/MuhidinM/banking-app-challenge/issues/29) | Dashboard: greeting (time of day + first name), total balance card (gradient, hide toggle), quick actions, my accounts, recent activity of first account | R-FLOW-01/02/04, X-04 | L | done |
 | T-041 | [#30](https://github.com/MuhidinM/banking-app-challenge/issues/30) | Accounts page: list with count + total, "Open another account" row, empty state | R-FLOW-03, R-UX-06 | M | done |
-| T-042 | [#31](https://github.com/MuhidinM/banking-app-challenge/issues/31) | Open account: radio cards (3 + "more types"), optional deposit, cancel, success → account detail; invalidate accounts | R-FLOW-06/07 | M | todo |
+| T-042 | [#31](https://github.com/MuhidinM/banking-app-challenge/issues/31) | Open account: radio cards (3 + "more types"), optional deposit, cancel, success → account detail; invalidate accounts | R-FLOW-06/07 | M | done |
 | T-043 | [#32](https://github.com/MuhidinM/banking-app-challenge/issues/32) | Account detail: gradient card with full grouped number, Transfer / Pay bill shortcuts (pre-select account), activity list | R-FLOW-13 | M | todo |
 
 ## M5 — Transactions
