@@ -34,7 +34,7 @@ export function BalanceCard() {
       >
         {hidden ? (
           <>
-            <span aria-hidden="true">ETB ••••••</span>
+            <span aria-hidden="true">ETB ******</span>
             <span className="sr-only">Hidden</span>
           </>
         ) : (
