@@ -12,8 +12,14 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: { staleTime: 30_000, retry: shouldRetry },
-      // A retried transfer could send the money twice.
-      mutations: { retry: false },
+      mutations: {
+        // A retried transfer could send the money twice.
+        retry: false,
+        // Offline, fail at once with the offline message. By default TanStack
+        // Query would hold the transfer and send it when the connection
+        // returns, maybe long after the user gave up on it.
+        networkMode: "always",
+      },
     },
   });
 }

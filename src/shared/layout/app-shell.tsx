@@ -1,4 +1,5 @@
 import { BottomNav } from "./bottom-nav";
+import { OfflineBanner } from "./offline-banner";
 import { RouteFocus } from "./route-focus";
 import { Sidebar } from "./sidebar";
 
@@ -34,6 +35,7 @@ export function AppShell({
         tabIndex={-1}
         className="mx-auto w-full max-w-content px-page pt-14 pb-30 outline-none md:px-10 md:pt-10 md:pb-12"
       >
+        <OfflineBanner />
         {children}
       </main>
       <BottomNav />
