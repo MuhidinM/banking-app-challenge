@@ -19,7 +19,7 @@ export function Sidebar({ footer }: { footer?: ReactNode }) {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-sidebar flex-col border-r border-border bg-surface md:flex">
-      <Link href="/" className="mx-4 mt-6 mb-7 self-start rounded-control px-3 py-1">
+      <Link href="/" className="hit-area mx-4 mt-6 mb-7 self-start rounded-control px-3 py-1">
         <Logo className="h-8 text-primary" label="Kifiya, home" />
       </Link>
 

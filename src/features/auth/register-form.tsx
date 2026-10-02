@@ -227,7 +227,7 @@ export function RegisterForm() {
         Already have an account?
         <Link
           href={LOGIN_PATH}
-          className="rounded-sm font-semibold text-primary underline-offset-4 hover:underline"
+          className="hit-area rounded-sm font-semibold text-primary underline-offset-4 hover:underline"
         >
           Login
         </Link>

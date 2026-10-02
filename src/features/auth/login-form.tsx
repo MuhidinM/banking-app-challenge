@@ -131,7 +131,7 @@ export function LoginForm({ returnTo, expired }: LoginFormProps) {
         Don&apos;t have an account?
         <Link
           href="/register"
-          className="rounded-sm font-semibold text-primary underline-offset-4 hover:underline"
+          className="hit-area rounded-sm font-semibold text-primary underline-offset-4 hover:underline"
         >
           Register
         </Link>

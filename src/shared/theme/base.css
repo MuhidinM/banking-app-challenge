@@ -123,6 +123,37 @@
 }
 
 /*
+ * A large amount that stays on one line and shrinks to fit its container
+ * instead of pushing the page sideways (ETB 99,999,999,999.99 on a 360 px
+ * phone). Set `--amount-size` to the designed size and `--amount-chars` to the
+ * text's length, and put `@container` on the parent: the size is the designed
+ * one, or whatever lets that many characters fit (measured 0.51-0.52 em each
+ * in Raleway 600 with tabular figures).
+ */
+/*
+ * Makes a small control's tap area at least 44 x 44 px (UI spec: min hit 44,
+ * N-019) without changing how it looks: an invisible box centred on it. Taps
+ * on a pseudo-element go to its element.
+ */
+@utility hit-area {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--spacing-hit));
+    height: max(100%, var(--spacing-hit));
+    transform: translate(-50%, -50%);
+  }
+}
+
+@utility amount-fit {
+  font-size: min(var(--amount-size), calc(100cqi / var(--amount-chars) / 0.52));
+}
+
+/*
  * Sign-in and register: the brand panel on the left (web only). The tokens have
  * no gradient for it (spec note N-022), so these are sampled from the screens:
  * light matches the balance-card gradient; dark (WebLoginDark) stays flat
