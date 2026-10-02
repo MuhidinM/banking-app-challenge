@@ -14,7 +14,7 @@ export const HISTORY_PAGE_SIZE = 10;
 
 // Money rows: a malformed amount or direction must fail here, not show a wrong
 // sign or balance further down.
-const transactionSchema = z.object({
+export const transactionSchema = z.object({
   id: z.number(),
   amount: z.number(),
   type: z.enum(transactionTypes),

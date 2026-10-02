@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { http } from "msw";
+import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getAppSession } from "@/features/auth/session";
@@ -75,7 +75,8 @@ describe("TransferFlow", () => {
 
     await user.dblClick(review().getByRole("button", { name: "Confirm and send" }));
 
-    await vi.waitFor(() => expect(fakeNavigation.href).toBe("/accounts/1"));
+    // Then to the receipt of the transaction it created (ADR-0008).
+    await vi.waitFor(() => expect(fakeNavigation.href).toMatch(/^\/transfer\/receipt\/\d+$/));
     expect(bodies).toEqual([
       {
         fromAccountNumber: "8751138057",
@@ -85,6 +86,37 @@ describe("TransferFlow", () => {
       },
     ]);
     expect(await screen.findByText("Sent ETB 250.00 to 2899010846.")).toBeInTheDocument();
+  });
+
+  it("shows a receipt without a reference when the new transaction can't be found", async () => {
+    // The history doesn't show the new row (e.g. it isn't listed yet).
+    server.use(
+      http.get(apiUrl("/api/transactions/:accountId"), () =>
+        HttpResponse.json({
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          size: 10,
+          number: 0,
+          numberOfElements: 0,
+          first: true,
+          last: true,
+          empty: true,
+        }),
+      ),
+    );
+    const { user, review } = await renderAndFill();
+
+    await user.click(review().getByRole("button", { name: "Confirm and send" }));
+
+    expect(await screen.findByRole("heading", { name: "Transfer sent" })).toBeInTheDocument();
+    expect(screen.getByText("ETB 250.00 to 2899010846")).toBeInTheDocument();
+    expect(screen.queryByText("Reference")).toBeNull();
+    expect(
+      screen.getByText("The reference will show in this account's activity."),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("ETB 8,390.00")).toBeInTheDocument();
+    expect(fakeNavigation.href).toBe("/transfer");
   });
 
   it("goes back to the form with everything kept on Edit details", async () => {
