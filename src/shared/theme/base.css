@@ -60,8 +60,10 @@
 
 /*
  * Enter and exit animations for dialogs, sheets and toasts. Radix waits for
- * the exit animation before unmounting. Components drop them under
- * `motion-reduce:` so nothing slides for users who asked for less motion.
+ * the exit animation before unmounting. Components apply them only under
+ * `motion-safe:`, so nothing slides for users who asked for less motion. (A
+ * `motion-reduce:animate-none` would lose to `data-[state=open]:animate-…`,
+ * whose attribute selector is more specific.)
  * Centring uses Tailwind's `translate` property, so these only nudge via `transform`.
  */
 @theme {
