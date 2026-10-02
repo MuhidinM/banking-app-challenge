@@ -20,7 +20,9 @@
     "api:types:check": "openapi-typescript docs/api/openapi.json --enum-values -o src/shared/api/schema.ts --check",
     "tokens": "node scripts/generate-tokens.mts",
     "tokens:check": "node scripts/generate-tokens.mts --check",
-    "e2e": "playwright test"
+    "fidelity": "playwright test -c playwright.fidelity.config.ts",
+    "e2e": "playwright test",
+    "lighthouse": "node scripts/lighthouse.mts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -55,6 +57,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "husky": "^9.1.7",
     "jsdom": "^30.1.1",
+    "lighthouse": "^13.5.0",
     "lint-staged": "^17.6.0",
     "msw": "^2.15.0",
     "openapi-typescript": "^7.13.0",

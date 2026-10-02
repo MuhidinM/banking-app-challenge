@@ -23,7 +23,7 @@ export function QuickActions() {
           <li key={href}>
             <Link
               href={href}
-              className="group flex flex-col items-center gap-3 rounded-card px-1 py-2 text-center type-body text-ink md:py-4"
+              className="group flex flex-col items-center gap-2 rounded-card px-1 text-center type-body text-ink md:gap-3 md:py-4"
             >
               <span className="flex size-15 items-center justify-center rounded-pill bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary md:size-14">
                 <Icon aria-hidden="true" className="size-6.5" strokeWidth={1.75} />

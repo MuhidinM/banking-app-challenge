@@ -37,17 +37,32 @@ const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frida
 // September, older "Sep", so browsers would disagree. The spec writes "Sep".
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+// Building an Intl.DateTimeFormat is far slower than using one, and every
+// transaction row needs several dates: one formatter per time zone, reused.
+// (Profiled: on a throttled phone CPU, rebuilding it was the most expensive
+// function on the Activity page, #51.)
+const zonedFormatters = new Map<string | undefined, Intl.DateTimeFormat>();
+
+function zonedFormatter(timeZone: string | undefined): Intl.DateTimeFormat {
+  let formatter = zonedFormatters.get(timeZone);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hourCycle: "h23",
+    });
+    zonedFormatters.set(timeZone, formatter);
+  }
+  return formatter;
+}
+
 /** The date's calendar fields in the zone. Intl does the time-zone conversion; only numbers come out. */
 function zonedParts(date: Date, { timeZone }: DateOptions): ZonedParts {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hourCycle: "h23",
-  }).formatToParts(date);
+  const parts = zonedFormatter(timeZone).formatToParts(date);
   const value = (type: Intl.DateTimeFormatPartTypes) =>
     Number(parts.find((part) => part.type === type)?.value);
 

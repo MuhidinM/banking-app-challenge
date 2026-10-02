@@ -25,7 +25,7 @@ export function DashboardHeader() {
         <h1
           tabIndex={-1}
           data-page-heading=""
-          className="truncate type-display text-ink outline-none"
+          className="truncate type-title text-ink outline-none"
         >
           {user ? (
             `${user.firstName} ${user.lastName}`
@@ -50,7 +50,7 @@ export function DashboardHeader() {
       <Link
         href="/profile"
         aria-label="Your profile"
-        className="flex size-14 shrink-0 items-center justify-center rounded-pill bg-primary type-heading text-on-primary md:hidden"
+        className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-primary type-body-strong text-on-primary md:hidden"
       >
         {user ? initials(user.firstName, user.lastName) : null}
       </Link>
