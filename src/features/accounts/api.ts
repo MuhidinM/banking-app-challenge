@@ -2,7 +2,13 @@ import { z } from "zod";
 
 import type { HttpClient } from "@/shared/api/http-client";
 import { pageSchema } from "@/shared/api/page-schema";
-import { type Account, type Page, accountTypes } from "@/shared/api/types";
+import {
+  type Account,
+  type CreateAccountRequest,
+  type Page,
+  accountTypes,
+} from "@/shared/api/types";
+import { type Cents, fromCents } from "@/shared/lib/money";
 
 // Balances drive every total on screen, so a malformed account fails here.
 const accountSchema = z.object({
@@ -45,6 +51,16 @@ export function createAccountsApi(client: HttpClient) {
         ),
       );
       return [first, ...rest].flatMap((page) => page.content);
+    },
+
+    /**
+     * POST /api/accounts. The schema requires `initialBalance` (the docs say
+     * it defaults to 0), so it is always sent (docs/api-notes.md).
+     */
+    async open(accountType: Account["accountType"], initialDeposit: Cents): Promise<Account> {
+      const body: CreateAccountRequest = { accountType, initialBalance: fromCents(initialDeposit) };
+      const response = await client.request<unknown>("/api/accounts", { method: "POST", body });
+      return accountSchema.parse(response);
     },
   };
 }
