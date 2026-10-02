@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 
 import { parseEnv } from "./env";
 
@@ -70,5 +71,11 @@ describe("parseEnv", () => {
     expect(() => parseEnv({ ...base, NEXT_PUBLIC_DEV_TOOLS: "true" })).toThrow(
       /NEXT_PUBLIC_DEV_TOOLS[\s\S]*Copy \.env\.example to \.env\.local/,
     );
+  });
+});
+
+describe("zod", () => {
+  it("runs without eval, which the CSP blocks", () => {
+    expect(z.config().jitless).toBe(true);
   });
 });

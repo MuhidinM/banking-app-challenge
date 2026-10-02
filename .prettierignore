@@ -32,3 +32,4 @@ src/shared/theme/token-names.ts
 
 # Worktrees created by Claude Code sessions (full checkouts, checked from their own root)
 .claude/worktrees/
+lighthouse-reports/
