@@ -57,7 +57,7 @@ The target is WCAG 2.2 level AA, on a keyboard, with a screen reader, on a phone
   - Amounts carry a sign: "+ETB" or "−ETB".
   - Rows and details say "Money in" or "Money out".
   - The filter pills use words and an icon.
-- **Hidden balance:** with the eye button on, the amount is replaced by dots hidden from screen readers and read as "Hidden". The button says "Hide balance" and reports its state with `aria-pressed`.
+- **Hidden balance:** with the eye button on, the amount is replaced by "ETB ******", hidden from screen readers, and read as "Hidden". The button says "Hide balance" and reports its state with `aria-pressed`.
 - **Icon-only buttons have names:** for example "Copy account number", "Share account number", "Dismiss notification", the back buttons ("Back to …") and "Your profile".
 - **Decorative icons** are `aria-hidden`.
 

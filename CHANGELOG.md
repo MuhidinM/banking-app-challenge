@@ -16,7 +16,7 @@ The first release: a complete web client for the Kifiya challenge banking API, l
   - The access token is kept in memory and the refresh token in storage.
   - One shared refresh after a 401, retried once, with a lock across tabs and new tokens shared with the other tabs.
   - The session restores on reload, and logging out signs out every tab.
-- **Dashboard:** the total balance across accounts (which can be hidden), quick actions, accounts, and the latest activity.
+- **Dashboard:** the total balance across accounts (which can be hidden), quick actions, accounts, and the newest activity across all accounts.
 - **Accounts:**
   - The list and each account's page, with copy and share for the account number.
   - Open an account of any of the API's six types, with an optional deposit.
@@ -26,6 +26,7 @@ The first release: a complete web client for the Kifiya challenge banking API, l
   - Transaction details as a dialog or sheet, also from a link.
 - **Transfer:**
   - Live checks, including insufficient funds as the amount is typed, quick amounts, and a review before sending.
+  - Amounts get thousands separators as they are typed, in every money field.
   - A single send however fast Confirm is clicked.
   - A receipt with its own URL, found in the new history ([ADR-0008](docs/decisions/0008-receipt-resolution.md)).
 - **Pay a bill:** six billers or any other, Pay disabled with the reason until the payment is valid, and a receipt page.

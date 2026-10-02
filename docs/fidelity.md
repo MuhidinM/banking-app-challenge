@@ -51,7 +51,7 @@ Setting each screenshot beside its frame found seven differences, fixed in the s
 
 ### Dashboard
 
-`/`. Recent activity is headed by its account ([N-027](spec-notes.md)). Times differ: the mock's seed is relative to now.
+`/`. Recent activity mixes all accounts, so each row starts with its account where the frame has a heading for one account ([N-027](spec-notes.md)). Times differ: the mock's seed is relative to now.
 
 | WebDashboard                                                 | WebDashboardDark                                                 |
 | ------------------------------------------------------------ | ---------------------------------------------------------------- |
