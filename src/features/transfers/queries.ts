@@ -2,17 +2,17 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { accountKeys } from "@/features/accounts/queries";
+import { refreshAfterMoneyMoves } from "@/features/accounts/refresh-after-money-moves";
 import { getAppSession } from "@/features/auth/session";
-import { transactionKeys } from "@/features/transactions/queries";
 
 import { createTransfersApi } from "./api";
 
 import type { CheckedTransfer } from "./transfer-details";
 
 /**
- * Sends a checked transfer. Afterwards the balances and the source account's
- * history are refetched (architecture.md, "Cache updates after mutations").
+ * Sends a checked transfer. Afterwards the balances, the source account's
+ * history, and the recipient's when it is one of the user's own accounts, are
+ * refetched (refreshAfterMoneyMoves, R-FLOW-18).
  */
 export function useSendTransfer() {
   const queryClient = useQueryClient();
@@ -20,8 +20,10 @@ export function useSendTransfer() {
     mutationFn: (transfer: CheckedTransfer) =>
       createTransfersApi(getAppSession().client).send(transfer.request),
     onSuccess: (_response, transfer) => {
-      void queryClient.invalidateQueries({ queryKey: accountKeys.all });
-      void queryClient.invalidateQueries({ queryKey: transactionKeys.list(transfer.from.id) });
+      void refreshAfterMoneyMoves(queryClient, {
+        fromAccountId: transfer.from.id,
+        toAccountNumber: transfer.toAccountNumber,
+      });
     },
   });
 }
