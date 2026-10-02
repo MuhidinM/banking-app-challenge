@@ -73,7 +73,10 @@ test("the history works with the keyboard alone", async ({ page }) => {
   await expect(page.getByRole("link", { name: /skip to/i })).toBeFocused();
   await page.keyboard.press("Enter");
 
-  // Account select: open with Enter, choose with the arrows.
+  // Account select: open with Enter, choose with the arrows. The mouse is moved
+  // out of the way first: Radix highlights whatever option opens under a resting
+  // pointer, which a keyboard-only user doesn't have.
+  await page.mouse.move(0, 0);
   const account = page.getByRole("combobox", { name: "Account" });
   await account.focus();
   await page.keyboard.press("Enter");
