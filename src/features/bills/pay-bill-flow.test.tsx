@@ -2,15 +2,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getAppSession } from "@/features/auth/session";
+import { TransactionHistory } from "@/features/transactions/transaction-history";
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
 import { Toaster } from "@/shared/ui/toast";
 
 import { PayBillFlow } from "./pay-bill-flow";
+
+vi.mock("next/navigation", async () => (await import("@/test/fake-navigation")).navigationModule);
 
 /** Every POST /api/accounts/pay-bill body; falls through to the mock. */
 function recordPayments() {
@@ -25,12 +28,13 @@ function recordPayments() {
 }
 
 // Seed: Jane's Checking 8751138057 (id 1, ETB 8,640.00) and Savings (id 2, ETB 2,200.00).
-async function renderFlow(initialFromId?: number) {
+async function renderFlow(initialFromId?: number, { withHistory = false } = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const user = userEvent.setup();
   render(
     <QueryClientProvider client={client}>
       <PayBillFlow initialFromId={initialFromId} />
+      {withHistory ? <TransactionHistory accountId={1} /> : null}
       <Toaster />
     </QueryClientProvider>,
   );
@@ -96,6 +100,22 @@ describe("Pay a bill", () => {
     // The balances were refetched and the form is fresh.
     expect(await screen.findByText("Available ETB 8,000.00")).toBeInTheDocument();
     expect(screen.getByLabelText("Amount in ETB")).toHaveValue("");
+  });
+
+  it("refreshes the paying account's history on the same screen (R-FLOW-18)", async () => {
+    const { user, amount, pay, chooseBiller } = await renderFlow(undefined, { withHistory: true });
+    await screen.findByText("Showing 10 of 13");
+    await chooseBiller("DStv Ethiopia");
+    await user.type(amount, "99");
+
+    await user.click(pay());
+
+    expect(await screen.findByText("Showing 10 of 14")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /^Bill Payment to DStv Ethiopia\. Money out, ETB 99\.00/,
+      }),
+    ).toBeInTheDocument();
   });
 
   it("pays a biller that isn't in the list", async () => {
