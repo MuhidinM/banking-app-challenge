@@ -3,12 +3,14 @@
 import {
   type InfiniteData,
   useInfiniteQuery,
+  useQueries,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 
 import { getAppSession } from "@/features/auth/session";
 import type { Page, Transaction } from "@/shared/api/types";
+import { parseApiDate } from "@/shared/lib/dates";
 
 import { createTransactionsApi } from "./api";
 
@@ -21,6 +23,12 @@ export const transactionKeys = {
   all: ["transactions"] as const,
   lists: () => [...transactionKeys.all, "list"] as const,
   list: (accountId: number) => [...transactionKeys.lists(), accountId] as const,
+  /**
+   * The newest few of one account, for the dashboard. Under `list(accountId)`,
+   * so invalidating an account's history after money moves refreshes it too.
+   */
+  latest: (accountId: number, count: number) =>
+    [...transactionKeys.list(accountId), "latest", count] as const,
   detail: (accountId: number, transactionId: number) =>
     [...transactionKeys.all, "detail", accountId, transactionId] as const,
 };
@@ -85,4 +93,51 @@ export function flattenHistory(pages: readonly Page<Transaction>[]): LoadedHisto
     }
   }
   return { transactions, total: pages.at(-1)?.totalElements ?? 0 };
+}
+
+export interface LatestTransactions {
+  /** Newest first across the accounts, at most `count`. */
+  transactions: Transaction[];
+  isPending: boolean;
+  /** Every account's request failed: there is nothing to show. */
+  isError: boolean;
+  refetch: () => void;
+  isRefetching: boolean;
+}
+
+/**
+ * The newest `count` transactions across several accounts (the dashboard's
+ * Recent activity). The API lists one account at a time, so this asks each
+ * account for its newest `count` and merges them by time; that is enough to
+ * find the newest `count` overall. An account whose request fails is left
+ * out, so one bad account doesn't hide the others' activity.
+ */
+export function useLatestTransactions(
+  accountIds: readonly number[],
+  count: number,
+): LatestTransactions {
+  const results = useQueries({
+    queries: accountIds.map((accountId) => ({
+      queryKey: transactionKeys.latest(accountId, count),
+      queryFn: ({ signal }: { signal: AbortSignal }) =>
+        createTransactionsApi(getAppSession().client).listPage(accountId, {
+          page: 0,
+          size: count,
+          signal,
+        }),
+    })),
+  });
+
+  const transactions = results
+    .flatMap((result) => result.data?.content ?? [])
+    .sort((a, b) => parseApiDate(b.timestamp).getTime() - parseApiDate(a.timestamp).getTime())
+    .slice(0, count);
+
+  return {
+    transactions,
+    isPending: results.some((result) => result.isPending),
+    isError: results.length > 0 && results.every((result) => result.isError),
+    refetch: () => results.forEach((result) => void result.refetch()),
+    isRefetching: results.some((result) => result.isRefetching),
+  };
 }

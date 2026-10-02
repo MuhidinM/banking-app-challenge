@@ -5,6 +5,7 @@ import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { getAppSession } from "@/features/auth/session";
+import { createTransfersApi } from "@/features/transfers/api";
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiError, apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
@@ -43,12 +44,29 @@ describe("Dashboard", () => {
     expect(accounts.getByText("ETB 2,200.00")).toBeInTheDocument();
 
     const activity = within(screen.getByRole("region", { name: "Recent activity" }));
-    expect(await activity.findByText("Checking •••• 8057")).toBeInTheDocument();
     expect(await activity.findAllByRole("listitem")).toHaveLength(3);
-    expect(activity.getByRole("link", { name: "View all" })).toHaveAttribute(
-      "href",
-      "/activity?account=1",
-    );
+    expect(activity.getByRole("link", { name: "View all" })).toHaveAttribute("href", "/activity");
+  });
+
+  it("shows the newest activity across every account, each row naming its account", async () => {
+    // Seed: Checking's newest is an hour old, Savings' five days. Money out of
+    // Savings now makes Savings the newest.
+    await createTransfersApi(getAppSession().client).send({
+      fromAccountNumber: "4410298911",
+      toAccountNumber: "2899010846",
+      amount: 40,
+      note: "From savings",
+    });
+    renderDashboard();
+
+    const activity = within(screen.getByRole("region", { name: "Recent activity" }));
+    const rows = await activity.findAllByRole("listitem");
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent("From savings");
+    expect(rows[0]).toHaveTextContent("•••• 8911 · ");
+    expect(rows[1]).toHaveTextContent("•••• 8057 · ");
+    // Screen readers hear the account in full.
+    expect(rows[0]).toHaveTextContent("Savings •••• 8911.");
   });
 
   it("totals every account, not only the first page (more than 10 accounts)", async () => {

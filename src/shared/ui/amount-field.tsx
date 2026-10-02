@@ -1,3 +1,5 @@
+import { type ChangeEvent, useLayoutEffect, useRef } from "react";
+
 import { cn } from "@/shared/lib/cn";
 
 import { ControlFrame, FormField } from "./form-field";
@@ -12,7 +14,7 @@ export interface QuickAmount {
 
 interface AmountFieldProps {
   label: ReactNode;
-  /** The amount as typed, e.g. "250" or "250.5". The form converts it to cents. */
+  /** The amount as shown, e.g. "250" or "1,250.5". The form converts it to cents. */
   value: string;
   onChange: (value: string) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
@@ -40,6 +42,29 @@ export function sanitizeAmountInput(raw: string): string {
   return `${whole}.${rest.join("").slice(0, 2)}`;
 }
 
+/**
+ * Adds thousands separators as the amount is typed: "1250.5" → "1,250.5".
+ * The decimals stay as typed, and leading zeros go ("007" → "7"). Expects
+ * sanitized input; the forms parse the commas away (parseAmountInput).
+ */
+export function groupAmountInput(sanitized: string): string {
+  const [whole = "", fraction] = sanitized.split(".");
+  const digits = whole.replace(/^0+(?=\d)/, "");
+  const grouped = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return fraction === undefined ? grouped : `${grouped}.${fraction}`;
+}
+
+/** Where the caret goes in `formatted` to sit after the same `count` digits and points. */
+function caretAfter(formatted: string, count: number): number {
+  if (count === 0) return 0;
+  let seen = 0;
+  for (let index = 0; index < formatted.length; index++) {
+    if (formatted[index] !== ",") seen++;
+    if (seen === count) return index + 1;
+  }
+  return formatted.length;
+}
+
 /** The large amount input with the currency prefix and optional quick-amount chips. */
 export function AmountField({
   label,
@@ -56,6 +81,26 @@ export function AmountField({
   autoFocus,
   className,
 }: AmountFieldProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Adding or removing a comma would otherwise throw the caret to the end.
+  const caret = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    if (caret.current === null || document.activeElement !== inputRef.current) return;
+    inputRef.current?.setSelectionRange(caret.current, caret.current);
+    caret.current = null;
+  }, [value]);
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { value: raw, selectionStart } = event.target;
+    const next = groupAmountInput(sanitizeAmountInput(raw));
+    if (selectionStart !== null) {
+      // Count what sits before the caret, ignoring commas, and put it back after that much.
+      const kept = sanitizeAmountInput(raw.slice(0, selectionStart)).replace(/^0+(?=\d)/, "");
+      caret.current = caretAfter(next, kept.length);
+    }
+    onChange(next);
+  }
+
   return (
     <FormField
       label={label}
@@ -94,7 +139,8 @@ export function AmountField({
             autoComplete="off"
             placeholder="0.00"
             value={value}
-            onChange={(event) => onChange(sanitizeAmountInput(event.target.value))}
+            ref={inputRef}
+            onChange={handleChange}
             onBlur={onBlur}
             disabled={disabled}
             // The visible "ETB" prefix is decorative; this keeps the currency in the accessible name.

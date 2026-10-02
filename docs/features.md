@@ -59,10 +59,10 @@ What every screen does, in detail: what it shows, where the data comes from, eve
 [src/features/dashboard/](../src/features/dashboard)
 
 - **Header:** "Good morning", "Good afternoon" (from 12:00) or "Good evening" (from 17:00) by the device's clock, and the user's full name (`GET /api/users/profile`). On web, Transfer and Pay bill buttons sit on the right. On phones, an initials disc that opens the profile.
-- **Total balance:** the sum of every account (all pages of `GET /api/accounts`), with "Across N accounts". The eye button hides it ("Hidden" to screen readers), and the choice is remembered on this device. A very large total shrinks to fit instead of overflowing ([N-035](spec-notes.md)).
+- **Total balance:** the sum of every account (all pages of `GET /api/accounts`), with "Across N accounts". The eye button hides it as "ETB ******" ("Hidden" to screen readers), here and on the profile page, and the choice is remembered on this device. A very large total shrinks to fit instead of overflowing ([N-035](spec-notes.md)).
 - **Quick actions:** Transfer, Pay bill, New account, Accounts.
 - **My accounts:** up to three accounts (type, masked number, balance), each opening its page, with View all.
-- **Recent activity:** the latest three transactions of the first account, headed by that account ("Checking •••• 8057"), with View all to Activity ([N-027](spec-notes.md)). Each row opens its details.
+- **Recent activity:** the newest three transactions across all the user's accounts, newest first. With more than one account, each row starts with its account ("•••• 8911 · Transfer · 15:04"), and screen readers hear it in full ("Savings •••• 8911"). View all opens Activity ([N-027](spec-notes.md)). Each account is asked for its newest three and the results are merged by time; an account whose request fails is left out, so it can't hide the others.
 - **Empty:** with no accounts, "Open an account to start banking." With no transactions, "Money in and out of this account will show here."
 
 ## My accounts · `/accounts`
@@ -137,7 +137,7 @@ What every screen does, in detail: what it shows, where the data comes from, eve
 - **To account number:** digits only, grouped as typed ("2899 0108 46"). Hint: "Kifiya Bank account numbers have 10 digits."
   - **Recent** chips below fill in up to three accounts the chosen account sent money to lately, taken from its history (Extras, below).
 - **Amount:**
-  - "ETB" prefix. Up to two decimals; "9000" becomes "9,000.00" when you leave the field.
+  - "ETB" prefix. Thousands separators appear as you type ("1234567" shows as "1,234,567"), and the caret stays where you are typing. Up to two decimals; "9000" becomes "9,000.00" when you leave the field. The same field is used for bills and the opening deposit.
   - +100, +500 and +1,000 add to the amount, in cents. Max fills in the balance.
 - **Note (optional):** up to 140 characters, with a counter ("0/140").
 - **Summary** (from 1024 px): From, To, Amount, Fee ETB 0.00 and Total, beside the form. The send button is in it ("Send ETB 250.00"). Below 1024 px the button follows the fields. The API charges no fee ([N-012](spec-notes.md)).
