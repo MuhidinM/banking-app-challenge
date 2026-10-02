@@ -58,7 +58,7 @@ export function Dialog({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           className={cn(
-            "fixed inset-0 z-50 bg-ink/45",
+            "fixed inset-0 z-50 bg-scrim",
             "motion-safe:data-[state=closed]:animate-overlay-out motion-safe:data-[state=open]:animate-overlay-in",
           )}
         />

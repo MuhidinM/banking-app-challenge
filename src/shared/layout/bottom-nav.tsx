@@ -31,7 +31,8 @@ export function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 px-1 pt-2.5 pb-2 type-caption transition-colors",
-                  active ? "font-medium text-ink" : "text-ink-muted hover:text-ink",
+                  // Transfer, under its raised disc, is always in ink (mobile Main).
+                  active || raised ? "font-medium text-ink" : "text-ink-muted hover:text-ink",
                 )}
               >
                 {raised ? (
