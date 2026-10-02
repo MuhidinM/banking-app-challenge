@@ -40,7 +40,7 @@ export function SectionHeader({
       {action && (
         <Link
           href={action.href}
-          className="type-label text-primary underline-offset-4 hover:underline"
+          className="hit-area type-label text-primary underline-offset-4 hover:underline"
         >
           {action.label}
         </Link>

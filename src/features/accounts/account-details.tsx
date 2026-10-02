@@ -18,6 +18,7 @@ import { formatAccountNumber, maskAccountNumber } from "@/shared/lib/account-num
 import { formatMoney, toCents } from "@/shared/lib/money";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
+import { fitAmountStyle } from "@/shared/ui/fit-amount";
 import { LoadingRegion, Skeleton } from "@/shared/ui/skeleton";
 import { ErrorState } from "@/shared/ui/states";
 import { toast } from "@/shared/ui/toast";
@@ -81,9 +82,12 @@ function BalanceCard({ account }: { account: Account }) {
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="@container flex flex-col gap-1">
         <p className="type-body opacity-80">Available balance</p>
-        <p className="type-display text-[2.25rem] leading-[1.1] amount md:text-[2.5rem]">
+        <p
+          className="type-display amount-fit leading-[1.1] amount [--amount-size:2.25rem] md:[--amount-size:2.5rem]"
+          style={fitAmountStyle(formatMoney(toCents(account.balance)))}
+        >
           {formatMoney(toCents(account.balance))}
         </p>
       </div>
