@@ -1,7 +1,7 @@
 "use client";
 
 import { Hash, ReceiptText } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 
 import { AccountSelect, accountChoiceLabel } from "@/features/accounts/account-select";
 import type { Account } from "@/shared/api/types";
@@ -78,14 +78,35 @@ interface TransferFormProps {
   initialFromId?: number | undefined;
   /** Called with the checked details; the review step (#38) takes it from there. */
   onContinue: (transfer: CheckedTransfer) => void;
+  /**
+   * An error the API returned for one field (e.g. ACC_001 on the recipient).
+   * Shown on that field, which gets focus; a new `id` shows it again.
+   */
+  serverError?: ServerFieldError | null;
 }
+
+export interface ServerFieldError {
+  field: TransferField;
+  message: string;
+  id: number;
+}
+
+/** The control to focus for a field (the From picker is a combobox button). */
+const fieldSelector = (field: TransferField) =>
+  field === "fromAccountId" ? "button[role=combobox]" : `input[name="${field}"]`;
 
 /**
  * The transfer form (UI spec, WebTransfer and mobile Transfer): from, to,
  * amount with quick chips, optional note. Everything is checked before the
  * review step; "Insufficient funds" shows as soon as the amount is too high.
  */
-export function TransferForm({ accounts, initialFromId, onContinue }: TransferFormProps) {
+export function TransferForm({
+  accounts,
+  initialFromId,
+  onContinue,
+  serverError,
+}: TransferFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [input, setInput] = useState<TransferInput>(() => ({
     fromAccountId: accounts.find((account) => account.id === initialFromId)?.id ?? accounts[0]?.id,
     toAccountNumber: "",
@@ -95,6 +116,18 @@ export function TransferForm({ accounts, initialFromId, onContinue }: TransferFo
   // Errors show after the first Continue; the balance check shows at once.
   const [checked, setChecked] = useState(false);
   const [errors, setErrors] = useState<TransferErrors>({});
+  // The API's error shows until the user changes that field (which dismisses it).
+  const [dismissedServerError, setDismissedServerError] = useState<number | null>(null);
+  const serverErrors: TransferErrors =
+    serverError && serverError.id !== dismissedServerError
+      ? { [serverError.field]: serverError.message }
+      : {};
+
+  useEffect(() => {
+    if (serverError) {
+      formRef.current?.querySelector<HTMLElement>(fieldSelector(serverError.field))?.focus();
+    }
+  }, [serverError]);
 
   const from = accounts.find((account) => account.id === input.fromAccountId);
   const amountCents = parseAmountInput(input.amount);
@@ -103,14 +136,17 @@ export function TransferForm({ accounts, initialFromId, onContinue }: TransferFo
   function update(changes: Partial<TransferInput>) {
     const next = { ...input, ...changes };
     setInput(next);
+    if (serverError && serverError.field in changes) setDismissedServerError(serverError.id);
     if (checked) {
       const result = checkTransfer(next, accounts);
       setErrors(result.ok ? {} : result.errors);
     }
   }
 
+  // The form's own checks first; for the amount, the live balance check (it
+  // uses the freshest balance) before what the API said.
   const errorFor = (field: TransferField) =>
-    field === "amount" ? (errors.amount ?? liveAmountError) : errors[field];
+    errors[field] ?? (field === "amount" ? liveAmountError : undefined) ?? serverErrors[field];
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -121,10 +157,7 @@ export function TransferForm({ accounts, initialFromId, onContinue }: TransferFo
       const first = (["fromAccountId", "toAccountNumber", "amount", "note"] as const).find(
         (field) => result.errors[field],
       );
-      const target = event.currentTarget.querySelector<HTMLElement>(
-        first === "fromAccountId" ? "button[role=combobox]" : `input[name="${first}"]`,
-      );
-      target?.focus();
+      if (first) event.currentTarget.querySelector<HTMLElement>(fieldSelector(first))?.focus();
       return;
     }
     setErrors({});
@@ -136,6 +169,7 @@ export function TransferForm({ accounts, initialFromId, onContinue }: TransferFo
 
   return (
     <form
+      ref={formRef}
       noValidate
       onSubmit={handleSubmit}
       className="grid grid-cols-1 items-start gap-[1.375rem] lg:grid-cols-[minmax(0,1fr)_19.75rem] lg:gap-6"

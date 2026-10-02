@@ -10,7 +10,7 @@ import { Card } from "@/shared/ui/card";
 import { LoadingRegion, Skeleton } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
-import { TransferForm } from "./transfer-form";
+import { type ServerFieldError, TransferForm } from "./transfer-form";
 
 import type { CheckedTransfer } from "./transfer-details";
 
@@ -22,9 +22,11 @@ import type { CheckedTransfer } from "./transfer-details";
 export function TransferScreen({
   initialFromId,
   onContinue,
+  serverError,
 }: {
   initialFromId?: number | undefined;
   onContinue: (transfer: CheckedTransfer) => void;
+  serverError?: ServerFieldError | null;
 }) {
   const accounts = useAccounts();
 
@@ -67,6 +69,11 @@ export function TransferScreen({
     );
   }
   return (
-    <TransferForm accounts={accounts.data} initialFromId={initialFromId} onContinue={onContinue} />
+    <TransferForm
+      accounts={accounts.data}
+      initialFromId={initialFromId}
+      onContinue={onContinue}
+      serverError={serverError}
+    />
   );
 }
