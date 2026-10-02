@@ -43,7 +43,7 @@ describe("TextField", () => {
     expect(screen.getByRole("textbox", { name: "First name" })).not.toHaveAttribute("aria-invalid");
   });
 
-  it("passes input props through, as react-hook-form's register() needs", async () => {
+  it("passes input props through to the <input>", async () => {
     const onChange = vi.fn();
     render(<TextField label="Email (optional)" name="email" type="email" onChange={onChange} />);
     const input = screen.getByRole("textbox", { name: "Email (optional)" });

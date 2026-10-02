@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import { transactionSchema } from "@/features/transactions/api";
 import type { HttpClient } from "@/shared/api/http-client";
@@ -9,7 +9,7 @@ const billPaymentResponseSchema = z.object({
   amount: z.number(),
   accountNumber: z.string(),
   biller: z.string(),
-}) satisfies z.ZodType<BillPaymentResponse>;
+}) satisfies z.ZodMiniType<BillPaymentResponse>;
 
 export function createBillsApi(client: HttpClient) {
   return {

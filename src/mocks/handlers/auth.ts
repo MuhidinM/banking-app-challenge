@@ -1,5 +1,5 @@
 import { http, HttpResponse, delay } from "msw";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { LoginResponse, RefreshTokenResponse, RegisterResponse } from "@/shared/api/types";
 
@@ -10,16 +10,19 @@ import { issueTokens, rotateTokens } from "../tokens";
 
 // Mirrors the constraints in docs/api/openapi.json.
 const registerSchema = z.object({
-  username: z.string().min(3).max(50),
-  passwordHash: z.string().min(6),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.email().nullish(),
-  phoneNumber: z.string().regex(/^\+?[0-9. ()-]{7,25}$/),
+  username: z.string().check(z.minLength(3), z.maxLength(50)),
+  passwordHash: z.string().check(z.minLength(6)),
+  firstName: z.string().check(z.minLength(1)),
+  lastName: z.string().check(z.minLength(1)),
+  email: z.nullish(z.email()),
+  phoneNumber: z.string().check(z.regex(/^\+?[0-9. ()-]{7,25}$/)),
 });
 
-const loginSchema = z.object({ username: z.string().min(1), passwordHash: z.string().min(1) });
-const refreshSchema = z.object({ refreshToken: z.string().min(1) });
+const loginSchema = z.object({
+  username: z.string().check(z.minLength(1)),
+  passwordHash: z.string().check(z.minLength(1)),
+});
+const refreshSchema = z.object({ refreshToken: z.string().check(z.minLength(1)) });
 
 export const authHandlers = [
   http.post(apiUrl("/api/auth/register"), ({ request }) =>
