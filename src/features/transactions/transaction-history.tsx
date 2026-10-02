@@ -1,21 +1,24 @@
 "use client";
 
-import { ArrowDownLeft, ArrowUpRight, ScrollText } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Download, ScrollText } from "lucide-react";
 import { useRef } from "react";
 
 import { isNetworkError } from "@/shared/api/api-error";
 import { describeError } from "@/shared/api/error-messages";
+import { downloadText } from "@/shared/lib/csv";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
 import { RowList } from "@/shared/ui/list-row";
 import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
+import { toast } from "@/shared/ui/toast";
 
 import { type DirectionFilterValue } from "./direction-filter";
 import { flattenHistory, useTransactionHistory } from "./queries";
 import { TransactionDetails } from "./transaction-details";
 import { groupTransactionsByDay } from "./transaction-format";
 import { TransactionRow } from "./transaction-row";
+import { transactionsCsv, transactionsFileName } from "./transactions-csv";
 import { useTransactionParam } from "./use-transaction-param";
 
 import type { MouseEvent } from "react";
@@ -60,6 +63,7 @@ export function TransactionHistory(props: TransactionHistoryProps) {
 function HistoryList({
   accountId,
   direction = "all",
+  accountLabel,
   dayHeading: DayHeading = "h2",
   onSelect,
 }: TransactionHistoryProps & {
@@ -127,6 +131,15 @@ function HistoryList({
       ? transactions
       : transactions.filter((transaction) => transaction.direction === direction);
 
+  // What is on screen: the rows loaded so far, with the filter applied.
+  function download() {
+    downloadText(transactionsFileName(accountLabel), transactionsCsv(shown));
+    toast({
+      title: `Downloaded ${shown.length} ${shown.length === 1 ? "transaction" : "transactions"}.`,
+      tone: "info",
+    });
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {shown.length === 0 && (
@@ -190,6 +203,11 @@ function HistoryList({
         >
           Showing {transactions.length} of {Math.max(total, transactions.length)}
         </p>
+        {shown.length > 0 && (
+          <Button variant="ghost" size="compact" icon={Download} onClick={download}>
+            Download CSV
+          </Button>
+        )}
       </div>
     </div>
   );
