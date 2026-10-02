@@ -106,7 +106,9 @@ function DetailsBody({
       {/* A long title or a very large amount moves the amount to its own line. */}
       <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2">
         <IconDisc icon={icon} tone={credit ? "credit" : "neutral"} className="size-14" />
-        <div className="flex min-w-[10rem] flex-1 flex-col gap-0.5">
+        {/* An 8rem basis keeps the amount beside the title on a phone, the title
+            wrapping as drawn (mobile TransactionDetail); a huge amount still wraps. */}
+        <div className="flex min-w-32 flex-[1_1_8rem] flex-col gap-0.5">
           <p className="type-body-strong text-[1.0625rem] [overflow-wrap:anywhere] text-ink">
             {transactionTitle(transaction)}
           </p>

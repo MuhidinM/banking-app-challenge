@@ -56,7 +56,10 @@ export function PageHeader({ title, description, back, actions, className }: Pag
           >
             {title}
           </h1>
-          {description ? <p className="type-body text-ink-muted">{description}</p> : null}
+          {/* Web only: the phone screens (mobile Transfer, PayBill, NewAccount) have none. */}
+          {description ? (
+            <p className="type-body text-ink-muted max-md:hidden">{description}</p>
+          ) : null}
         </div>
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap gap-3">{actions}</div> : null}
