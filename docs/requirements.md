@@ -47,7 +47,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 |---|---|---|---|---|
 | R-FLOW-01 | Dashboard greeting from `GET /api/users/me` | T-040 | "Good morning / afternoon / evening" by local time with the full name from `GET /api/users/me` (`useCurrentUser`); tested (#29) | ☑ |
 | R-FLOW-02 | Total balance across **all** accounts | T-040 | `listAll()` loads every page of `GET /api/accounts`; `totalBalance()` adds in cents; tested with 13 and 120 accounts (#29) | ☑ |
-| R-FLOW-03 | Accounts list (`GET /api/accounts`, paginated): number, type, balance | T-041 |  | ☐ |
+| R-FLOW-03 | Accounts list (`GET /api/accounts`, paginated): number, type, balance | T-041 | `/accounts` lists every account across all pages of `GET /api/accounts`: type, •••• last four, balance, with the count and total under the title; tested with 60 accounts (#30) | ☑ |
 | R-FLOW-04 | Recent transactions of one account on dashboard | T-040 | The latest 3 transactions of the first account, named above the rows, with "View all" to its history; tested against the mock (#29) | ☑ |
 | R-FLOW-05 | Navigation to all other screens | T-030 | Sidebar and bottom nav link Home, Accounts, Activity, Transfer and Profile, with the current section marked (`aria-current`); the screens behind them are built in M4–M8, Pay bill is reached from the dashboard (#29) (#26) | ◐ |
 | R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 |  | ☐ |
@@ -73,7 +73,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-UX-03 | Desktop layout (sidebar) + mobile layout (bottom nav) below 768 px | T-030 | `AppShell`: 260 px sidebar from 768 px, bottom nav with the raised Transfer disc below it; measured against the redlines at 1440×900 and 390×844 (#26) | ☑ |
 | R-UX-04 | Skeletons/spinners while loading | T-014 | Skeletons matching row geometry (identical heights measured) inside a `LoadingRegion` status, reduced-motion aware (#13); route-level `loading.tsx` in the app shell: a header and card of row skeletons, announced as "Loading the page" (#28). Each screen uses them as it is built | ◐ |
 | R-UX-05 | Submit buttons disabled while submitting; no double submit | T-013 | `Button loading` disables the button with aria-busy and ignores clicks; tested (#12). Each form uses it while submitting (T-024 on) | ◐ |
-| R-UX-06 | Empty states: no accounts, no transactions | T-014 | `EmptyState` with an action (#13); no transactions on the Activity page (#33); the no-accounts screen uses it in T-041 | ◐ |
+| R-UX-06 | Empty states: no accounts, no transactions | T-014 | `EmptyState` with an action (#13); no transactions on the Activity page (#33); no accounts on the dashboard (#29) and the accounts page, with "Open an account" (#30) | ◐ |
 | R-UX-07 | Errors from API code + generic network message; **never raw backend text** | T-023 | Copy from the API code plus offline / timeout / unreachable messages; the server text is never used and ESLint forbids reading it outside src/shared/api (#19). Route error pages use the same copy, with a no-connection icon when offline (#28). Each screen shows it as it is built | ◐ |
 | R-UX-08 | Validation before send: positive amounts, 10-digit account numbers, required fields | T-060, T-070 |  | ☐ |
 | R-UX-09 | Labelled fields | T-013 | Every field component is labelled through FormField (label `for` the control) and described by its hint/error; tested by role and accessible name (#12). Applied in each form from T-024 on | ◐ |

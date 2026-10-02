@@ -18,7 +18,7 @@ interface PageHeaderProps {
 
 /**
  * A page's heading (UI spec, WebTransfer and mobile Transfer): optional back
- * button (46 px disc), the title (22 px on phones, 24 on web), a description
+ * button (46 px disc), the title (24 px; 22 on phones beside a back button), a description
  * and actions. The <h1> takes focus after a client-side navigation
  * (RouteFocus), so keyboard and screen reader users start on the new page.
  */
@@ -47,8 +47,10 @@ export function PageHeader({ title, description, back, actions, className }: Pag
             tabIndex={-1}
             data-page-heading=""
             className={cn(
-              "type-title text-ink outline-none max-md:text-[1.375rem]",
-              back && "flex min-h-[2.875rem] items-center",
+              "type-title text-ink outline-none",
+              // Beside a back button the phone title is 22 px (mobile Transfer);
+              // top-level pages keep 24 (mobile Accounts).
+              back && "flex min-h-[2.875rem] items-center max-md:text-[1.375rem]",
             )}
           >
             {title}

@@ -1,10 +1,10 @@
-import { PageHeader } from "@/shared/layout/page-header";
+import { AccountsList } from "@/features/accounts/accounts-list";
 
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Accounts" };
+export const metadata: Metadata = { title: "My accounts" };
 
-// Placeholder so the navigation works end to end; the screen is built in #30.
+/** `/accounts`: every account of the signed-in user (UI spec, mobile Accounts). */
 export default function AccountsPage() {
-  return <PageHeader title="Accounts" />;
+  return <AccountsList />;
 }
