@@ -25,7 +25,7 @@ for (const path of ["/login", "/register"]) {
 test("the signed-in pages have no accessibility violations", async ({ page }) => {
   await page.goto("/login");
   await signIn(page);
-  for (const path of ["/", "/accounts", "/activity", "/profile"]) {
+  for (const path of ["/", "/accounts", "/accounts/new", "/activity", "/profile"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.waitForLoadState("networkidle");
