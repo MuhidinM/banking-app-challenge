@@ -111,6 +111,8 @@ for (const width of WIDTHS) {
       "/profile",
       "/transfer",
       "/pay-bill",
+      // Receipts: Jane's seed has transfer 11 coming in (John's ETB 300.00).
+      "/transfer/receipt/11",
     ];
     for (const path of pages) {
       await page.goto(path);

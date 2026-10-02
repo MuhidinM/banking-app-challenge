@@ -97,6 +97,18 @@ describe("TransferReceipt", () => {
     expect(await screen.findByText("Receipt copied.")).toBeInTheDocument();
   });
 
+  it("says received and from for a transfer that came in", async () => {
+    // Seed: transaction 11 is John's ETB 300.00 into Jane's Checking.
+    renderReceipt(11);
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Transfer received" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("ETB 300.00 from 9402179920")).toBeInTheDocument();
+    expect(await screen.findByText("To")).toBeInTheDocument();
+    expect(screen.queryByText("From")).toBeNull();
+  });
+
   it("says so when the receipt doesn't exist", async () => {
     renderReceipt(999_999);
     expect(await screen.findByText("We couldn't find this receipt")).toBeInTheDocument();
