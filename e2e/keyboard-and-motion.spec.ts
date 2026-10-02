@@ -1,6 +1,6 @@
 import { expect, expectSignedIn, signIn, test } from "./support";
 
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 /**
  * Tabs through the page and returns every stop that shows no focus indicator:
@@ -140,3 +140,93 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
     expect(animationName).toBe(reducedMotion === "reduce" ? "none" : "kb-dialog-in");
   });
 }
+
+/** Presses Tab until `target` has focus, as a keyboard user would. */
+async function tabTo(page: Page, target: Locator, maxStops = 50) {
+  for (let stop = 0; stop < maxStops; stop++) {
+    if (await target.evaluate((element) => element === document.activeElement)) return;
+    await page.keyboard.press("Tab");
+  }
+  throw new Error(`Tab never reached ${target.toString()}`);
+}
+
+async function signInWithKeyboard(page: Page, next: string) {
+  await page.goto(`/login?next=${encodeURIComponent(next)}`);
+  await tabTo(page, page.getByLabel("Username"));
+  await page.keyboard.type("demo.jane");
+  await page.keyboard.press("Tab");
+  await page.keyboard.type("Password123!");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(next);
+}
+
+test("login → transfer → receipt → logout with the keyboard alone", async ({ page }) => {
+  test.slow();
+  await signInWithKeyboard(page, "/transfer");
+
+  await tabTo(page, page.getByLabel("To account number"));
+  await page.keyboard.type("2899010846");
+  await tabTo(page, page.getByLabel("Amount in ETB"));
+  await page.keyboard.type("250");
+  await tabTo(
+    page,
+    page.getByRole("button", { name: /^Send ETB 250\.00$/ }).locator("visible=true"),
+  );
+  await page.keyboard.press("Enter");
+
+  const review = page.getByRole("dialog", { name: "Review transfer" });
+  await expect(review).toBeVisible();
+  await tabTo(page, review.getByRole("button", { name: "Confirm and send" }));
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveURL(/\/transfer\/receipt\/\d+$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Transfer sent" })).toBeFocused();
+  await tabTo(page, page.getByRole("link", { name: "Done" }));
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveURL("/");
+  await tabTo(page, page.getByRole("button", { name: "Log out" }).locator("visible=true"));
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL("/login");
+});
+
+test("paying a bill with the keyboard alone", async ({ page }) => {
+  test.slow();
+  await signInWithKeyboard(page, "/pay-bill");
+  await page.mouse.move(0, 0);
+
+  // Biller: open with Enter, the first biller has focus, Enter picks it.
+  await tabTo(page, page.getByRole("combobox", { name: "Biller" }));
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("option", { name: "Ethio Telecom" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("combobox", { name: "Biller" })).toHaveText(/Ethio Telecom/);
+
+  await tabTo(page, page.getByLabel("Amount in ETB"));
+  await page.keyboard.type("120");
+  await tabTo(
+    page,
+    page.getByRole("button", { name: /^Pay ETB 120\.00$/ }).locator("visible=true"),
+  );
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveURL(/\/pay-bill\/receipt\/\d+$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Bill paid" })).toBeFocused();
+});
+
+test("opening an account with the keyboard alone", async ({ page }) => {
+  test.slow();
+  await signInWithKeyboard(page, "/accounts/new");
+
+  // Account type is one radio group (Savings, Checking, Money market): Tab lands
+  // on the chosen type, arrows move.
+  await tabTo(page, page.getByRole("radio", { name: /Savings/ }));
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("radio", { name: /Checking/ })).toBeChecked();
+
+  await tabTo(page, page.getByLabel("Initial deposit (optional)"));
+  await page.keyboard.type("50");
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveURL(/\/accounts\/\d+$/);
+});
