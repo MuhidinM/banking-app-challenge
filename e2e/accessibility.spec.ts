@@ -33,6 +33,8 @@ for (const colorScheme of ["light", "dark"] as const) {
     test(`the signed-in pages have no accessibility violations (${colorScheme}, ${device})`, async ({
       page,
     }) => {
+      // Six pages, each loaded and scanned: more than the default 30 s on a busy machine.
+      test.slow();
       await page.emulateMedia({ colorScheme });
       await page.setViewportSize({ width, height: 900 });
       await page.goto("/login");

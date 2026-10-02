@@ -86,6 +86,8 @@ async function layoutProblems(page: Page) {
 
 for (const width of WIDTHS) {
   test(`fits ${width} px with long values, and every tap area is 44 px`, async ({ page }) => {
+    // Eleven views, each loaded and measured: more than the default 30 s on a busy machine.
+    test.slow();
     await page.setViewportSize({ width, height: 900 });
 
     for (const path of ["/login", "/register"]) {

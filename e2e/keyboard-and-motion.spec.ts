@@ -42,6 +42,8 @@ async function stopsWithoutFocusIndicator(page: Page, maxStops = 60) {
 }
 
 test("every tab stop shows where focus is", async ({ page }) => {
+  // Up to 60 Tab presses on each of seven pages.
+  test.slow();
   await page.goto("/login");
   const login = await stopsWithoutFocusIndicator(page);
   expect(login.missing, "/login").toEqual([]);
