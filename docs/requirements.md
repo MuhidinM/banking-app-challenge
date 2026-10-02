@@ -104,8 +104,8 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 |---|---|---|---|---|
 | R-SUB-01 | Public repo on personal GitHub | T-100 |  | ☐ |
 | R-SUB-02 | Live deployment URL in README (plus) | T-101 |  | ☐ |
-| R-SUB-03 | README: setup, env vars, features, architecture (esp. auth/refresh), assumptions, trade-offs | T-102 |  | ☐ |
-| R-SUB-04 | README shows security trade-offs (httpOnly cookies via BFF) | T-102 |  | ☐ |
+| R-SUB-03 | README: setup, env vars, features, architecture (esp. auth/refresh), assumptions, trade-offs | T-102 | README: setup, environment variables, features and extras, architecture with the refresh sequence, assumptions and known limitations (#53) | ☑ |
+| R-SUB-04 | README shows security trade-offs (httpOnly cookies via BFF) | T-102 | README, Security: token storage and the XSS trade-off, the mitigations, and the backend-for-frontend with HttpOnly cookies for production (#53) | ☑ |
 | R-SUB-05 | Submitted within 3 days | T-103 |  | ☐ |
 
 ## H. Additional quality criteria (beyond the brief)
