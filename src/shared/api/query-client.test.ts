@@ -28,4 +28,8 @@ describe("query client", () => {
   it("never retries a mutation: a retried transfer could send money twice", () => {
     expect(getQueryClient().getDefaultOptions().mutations?.retry).toBe(false);
   });
+
+  it("doesn't hold a mutation until the connection returns: it fails with the offline message", () => {
+    expect(getQueryClient().getDefaultOptions().mutations?.networkMode).toBe("always");
+  });
 });

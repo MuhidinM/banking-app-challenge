@@ -9,22 +9,30 @@ import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
 import type { Page, Transaction } from "@/shared/api/types";
+import { downloadText } from "@/shared/lib/csv";
 import { fakeNavigation } from "@/test/fake-navigation";
 
 import { flattenHistory } from "./queries";
 import { TransactionHistory } from "./transaction-history";
 
 vi.mock("next/navigation", async () => (await import("@/test/fake-navigation")).navigationModule);
+vi.mock("@/shared/lib/csv", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  downloadText: vi.fn(),
+}));
 
 // Seed: account 1 is Jane's checking (13 rows), account 5 is demo.empty's.
 const JANE_CHECKING = 1;
 const EMPTY_ACCOUNT = 5;
 
-function renderHistory(accountId: number) {
+function renderHistory(
+  accountId: number,
+  props: Partial<Parameters<typeof TransactionHistory>[0]> = {},
+) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <TransactionHistory accountId={accountId} />
+      <TransactionHistory accountId={accountId} {...props} />
     </QueryClientProvider>,
   );
 }
@@ -124,6 +132,23 @@ describe("TransactionHistory", () => {
       "This account isn't linked to your profile.",
     );
     expect(screen.queryByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+  });
+
+  it("downloads the rows on screen as CSV, with the filter applied", async () => {
+    const user = userEvent.setup();
+    renderHistory(JANE_CHECKING, { direction: "CREDIT", accountLabel: "Checking •••• 8057" });
+    await screen.findByText("Showing 10 of 13");
+    const moneyIn = rows().length;
+
+    await user.click(screen.getByRole("button", { name: "Download CSV" }));
+
+    expect(downloadText).toHaveBeenCalledOnce();
+    const [fileName, csv] = vi.mocked(downloadText).mock.calls[0]!;
+    expect(fileName).toMatch(/^kifiya-checking-8057-\d{4}-\d{2}-\d{2}\.csv$/);
+    const lines = csv.trim().split(/\r\n/);
+    expect(lines[0]).toMatch(/^Date,Reference,/);
+    expect(lines).toHaveLength(moneyIn + 1);
+    expect(lines.slice(1).every((line) => line.includes(",Money in,"))).toBe(true);
   });
 
   it("says when an account has no transactions", async () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Hash, ReceiptText } from "lucide-react";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
 
 import { AccountSelect, accountChoiceLabel } from "@/features/accounts/account-select";
 import type { Account } from "@/shared/api/types";
@@ -83,6 +83,11 @@ interface TransferFormProps {
    * Shown on that field, which gets focus; a new `id` shows it again.
    */
   serverError?: ServerFieldError | null;
+  /**
+   * Shortcuts under the recipient field for the chosen From account (the
+   * transfer screen passes RecentRecipients); `pick` fills the field in.
+   */
+  recipientShortcuts?: (fromAccountId: number, pick: (accountNumber: string) => void) => ReactNode;
 }
 
 export interface ServerFieldError {
@@ -105,6 +110,7 @@ export function TransferForm({
   initialFromId,
   onContinue,
   serverError,
+  recipientShortcuts,
 }: TransferFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [input, setInput] = useState<TransferInput>(() => ({
@@ -195,6 +201,10 @@ export function TransferForm({
           hint="Kifiya Bank account numbers have 10 digits."
           error={errorFor("toAccountNumber")}
         />
+        {input.fromAccountId !== undefined &&
+          recipientShortcuts?.(input.fromAccountId, (accountNumber) =>
+            update({ toAccountNumber: formatAccountNumber(accountNumber) }),
+          )}
         <AmountField
           label="Amount"
           name="amount"

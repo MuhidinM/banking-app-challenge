@@ -43,6 +43,17 @@ Access tokens last 10 minutes. Set `NEXT_PUBLIC_DEV_TOOLS=on` and restart to get
 
 Git hooks run lint and format on staged files before each commit, and the type-check and tests before each push. CI runs all checks plus a production build on every pull request, and the end-to-end tests in a second job.
 
+## Extras
+
+Small additions beyond the brief, all in the existing design language:
+
+- **Hide balances**: the eye button on the dashboard masks the total balance, and the choice is remembered on this device.
+- **Copy account number**: on each account's page, with a confirmation toast; Share sends it through the device's share sheet.
+- **Share receipt**: transfer, bill and transaction receipts can be shared, or copied as text where sharing isn't available.
+- **Recent recipients**: on Transfer, chips under the account number fill in an account the chosen account sent money to lately, read from its history.
+- **Offline banner**: a warning above every page while the connection is down; when it returns, a toast says so and what's on screen refreshes. A transfer confirmed offline fails at once instead of being sent later.
+- **CSV export**: Download CSV under an account's history saves the rows loaded so far, with the filter applied, as `kifiya-<account>-<date>.csv`.
+
 ## Documentation
 
 Architecture, decisions, requirements traceability and the backlog are in [`docs/`](docs/README.md).
