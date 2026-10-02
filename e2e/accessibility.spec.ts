@@ -25,10 +25,17 @@ for (const path of ["/login", "/register"]) {
 test("the signed-in pages have no accessibility violations", async ({ page }) => {
   await page.goto("/login");
   await signIn(page);
-  for (const path of ["/", "/accounts", "/activity", "/profile"]) {
+  for (const path of ["/", "/accounts", "/accounts/new", "/activity", "/profile"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.waitForLoadState("networkidle");
     expect(await violations(page), path).toEqual([]);
   }
+});
+
+test("the transaction details dialog has no accessibility violations", async ({ page }) => {
+  await page.goto("/login?next=%2Factivity%3Faccount%3D1%26tx%3D13");
+  await signIn(page);
+  await expect(page.getByRole("dialog", { name: "Transaction" })).toContainText("TX-000013");
+  expect(await violations(page)).toEqual([]);
 });
