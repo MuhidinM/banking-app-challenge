@@ -113,6 +113,8 @@ for (const width of WIDTHS) {
       "/pay-bill",
       // Receipts: Jane's seed has transfer 11 coming in (John's ETB 300.00).
       "/transfer/receipt/11",
+      // Jane's seed has bill payment 9 (Ethio Telecom, ETB 235.00).
+      "/pay-bill/receipt/9",
     ];
     for (const path of pages) {
       await page.goto(path);
