@@ -11,6 +11,9 @@ test("an expired access token is refreshed once and the request retried", async 
   await page.goto("/login");
   await signIn(page);
   await expectSignedIn(page);
+  // Let the dashboard finish loading, so no request from before the clock
+  // jump is still on its way and gets recorded.
+  await expect(page.getByRole("main").getByRole("status")).toHaveCount(0);
 
   // The mock answers inside the page, where Playwright's network events
   // don't see it, so record the app's own fetch calls instead.
