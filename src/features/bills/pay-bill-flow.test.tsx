@@ -10,6 +10,7 @@ import { DEMO_PASSWORD } from "@/mocks/fixtures";
 import { apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
 import { Toaster } from "@/shared/ui/toast";
+import { fakeNavigation } from "@/test/fake-navigation";
 
 import { PayBillFlow } from "./pay-bill-flow";
 
@@ -29,6 +30,7 @@ function recordPayments() {
 
 // Seed: Jane's Checking 8751138057 (id 1, ETB 8,640.00) and Savings (id 2, ETB 2,200.00).
 async function renderFlow(initialFromId?: number, { withHistory = false } = {}) {
+  fakeNavigation.reset("/pay-bill");
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const user = userEvent.setup();
   render(
@@ -83,7 +85,7 @@ describe("Pay a bill", () => {
     expect(summaryAmount).not.toHaveClass("text-ink");
   });
 
-  it("pays once, even when Pay is double-clicked, and starts again with the new balance", async () => {
+  it("pays once, even when Pay is double-clicked, then opens the payment's receipt", async () => {
     const bodies = recordPayments();
     const { user, amount, pay, chooseBiller } = await renderFlow();
     await chooseBiller("Ethiopian Electric Utility");
@@ -94,12 +96,43 @@ describe("Pay a bill", () => {
     expect(
       await screen.findByText("Paid ETB 640.00 to Ethiopian Electric Utility."),
     ).toBeInTheDocument();
+    // The receipt of the transaction it created (ADR-0008).
+    await vi.waitFor(() => expect(fakeNavigation.href).toMatch(/^\/pay-bill\/receipt\/\d+$/));
     expect(bodies).toEqual([
       { accountNumber: "8751138057", biller: "Ethiopian Electric Utility", amount: 640 },
     ]);
-    // The balances were refetched and the form is fresh.
-    expect(await screen.findByText("Available ETB 8,000.00")).toBeInTheDocument();
-    expect(screen.getByLabelText("Amount in ETB")).toHaveValue("");
+  });
+
+  it("shows a receipt without a reference when the new transaction can't be found", async () => {
+    const { user, amount, pay, chooseBiller } = await renderFlow();
+    await chooseBiller("Ethio Telecom");
+    await user.type(amount, "100");
+    // The history doesn't have it (yet).
+    server.use(
+      http.get(apiUrl("/api/transactions/:accountId"), () =>
+        HttpResponse.json({
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          size: 10,
+          number: 0,
+          numberOfElements: 0,
+          first: true,
+          last: true,
+          empty: true,
+        }),
+      ),
+    );
+
+    await user.click(pay());
+
+    expect(await screen.findByRole("heading", { name: "Bill paid" })).toBeInTheDocument();
+    expect(screen.getByText("ETB 100.00 to Ethio Telecom")).toBeInTheDocument();
+    expect(
+      screen.getByText("The reference will show in this account's activity."),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("ETB 8,540.00")).toBeInTheDocument();
+    expect(fakeNavigation.href).toBe("/pay-bill");
   });
 
   it("refreshes the paying account's history on the same screen (R-FLOW-18)", async () => {

@@ -85,7 +85,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | ID | Issue | Task | Reqs | Size | Status |
 |---|---|---|---|---|---|
 | T-070 | [#42](https://github.com/MuhidinM/banking-app-challenge/issues/42) | Pay bill form: from, biller select (list + Other), amount + chips, live insufficient-funds check, summary card | R-FLOW-12, R-UX-08 | M | done |
-| T-071 | [#43](https://github.com/MuhidinM/banking-app-challenge/issues/43) | Bill receipt `/pay-bill/receipt/[txId]` + invalidation | R-FLOW-18 | S | todo |
+| T-071 | [#43](https://github.com/MuhidinM/banking-app-challenge/issues/43) | Bill receipt `/pay-bill/receipt/[txId]` + invalidation | R-FLOW-18 | S | done |
 
 ## M8 — Profile
 
