@@ -16,7 +16,8 @@ const variants = {
 } as const;
 
 const sizes = {
-  default: "h-button type-body-strong",
+  // Redlines (Login, Transfer, NewAccount): button labels are Montserrat 16/500.
+  default: "h-button text-base leading-[1.4] font-medium",
   compact: "h-button-compact type-body font-medium",
 } as const;
 
