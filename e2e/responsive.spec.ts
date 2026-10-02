@@ -149,3 +149,74 @@ test("a normal balance keeps the designed size; a huge one shrinks to fit", asyn
   expect(size).toBeLessThan(36);
   expect(size).toBeGreaterThan(16);
 });
+
+// The longest values the forms accept, going through every screen that shows
+// them: a 140-character note (the API's limit; it becomes the transaction's
+// description) and an 80-character biller name typed under "Other".
+const LONG_NOTE =
+  "Rent-and-utilities-for-September-2026-apartment-4B-Bole-sub-city-Addis-Ababa-paid-in-full-including-water-electricity-and-internet-thanks";
+const LONG_BILLER =
+  "Addis Ababa City Administration Housing Development and Administration Bureau 07";
+
+for (const width of [360, 1440]) {
+  test(`a ${LONG_NOTE.length}-character note fits at ${width} px from review to history`, async ({
+    page,
+  }) => {
+    test.slow();
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/login?next=%2Ftransfer");
+    await signIn(page);
+
+    await page.getByLabel("To account number").fill("2899010846");
+    await page.getByLabel("Amount in ETB").fill("25");
+    await page.getByLabel("Note (optional)").fill(LONG_NOTE);
+    await page
+      .getByRole("button", { name: /^Send ETB 25\.00$/ })
+      .first()
+      .click();
+    const review = page.getByRole("dialog", { name: "Review transfer" });
+    await expect(review).toContainText("Note");
+    expect(await layoutProblems(page), "review").toEqual([]);
+
+    await review.getByRole("button", { name: "Confirm and send" }).click();
+    await expect(page).toHaveURL(/\/transfer\/receipt\/(\d+)$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    expect(await layoutProblems(page), "receipt").toEqual([]);
+    const id = /(\d+)$/.exec(page.url())?.[1];
+
+    await page.goto(`/activity?account=1&tx=${id}`);
+    await expect(page.getByRole("dialog")).toContainText(LONG_NOTE.slice(0, 20));
+    expect(await layoutProblems(page), "details").toEqual([]);
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(await layoutProblems(page), "history").toEqual([]);
+  });
+
+  test(`an ${LONG_BILLER.length}-character biller fits at ${width} px from the form to the receipt`, async ({
+    page,
+  }) => {
+    test.slow();
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/login?next=%2Fpay-bill");
+    await signIn(page);
+
+    await page.mouse.move(0, 0);
+    await page.getByRole("combobox", { name: "Biller" }).click();
+    await page.getByRole("option", { name: "Other" }).click();
+    await page.getByLabel("Biller name").fill(LONG_BILLER);
+    await page.getByLabel("Amount in ETB").fill("45");
+    expect(await layoutProblems(page), "form and summary").toEqual([]);
+
+    await page
+      .getByRole("button", { name: /^Pay ETB 45\.00$/ })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/pay-bill\/receipt\/\d+$/);
+    await expect(page.getByRole("main")).toContainText(LONG_BILLER);
+    expect(await layoutProblems(page), "receipt").toEqual([]);
+
+    await page.goto("/activity?account=1");
+    await expect(page.getByText(/^Showing \d+ of \d+$/)).toBeVisible();
+    expect(await layoutProblems(page), "history").toEqual([]);
+  });
+}

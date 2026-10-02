@@ -117,7 +117,7 @@ export function Toaster() {
             </div>
             <ToastPrimitive.Close
               aria-label="Dismiss notification"
-              className="-my-1 -mr-1 flex size-7 shrink-0 items-center justify-center rounded-pill text-ink-muted hover:bg-surface-muted hover:text-ink"
+              className="hit-area -my-1 -mr-1 flex size-7 shrink-0 items-center justify-center rounded-pill text-ink-muted hover:bg-surface-muted hover:text-ink"
             >
               <X aria-hidden="true" className="size-4" strokeWidth={2} />
             </ToastPrimitive.Close>
