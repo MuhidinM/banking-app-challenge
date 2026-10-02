@@ -184,4 +184,4 @@ One thing that changed after review: my own test with a duplicated tab showed th
 
 ## Documentation
 
-[`docs/`](docs/README.md) has every detail: the features screen by screen, architecture, decision records, security, testing, accessibility, performance, design fidelity, API notes, spec notes, requirements traceability, the backlog and the workflow. Work is tracked as issues and milestones on the [project board](https://github.com/users/MuhidinM/projects/2).
+[`docs/`](docs/README.md) has every detail: the features screen by screen, architecture, decision records, security, testing, accessibility, performance, design fidelity, API notes, spec notes, requirements traceability, the backlog and the workflow. Work is tracked as issues and milestones on the [project board](https://github.com/users/MuhidinM/projects/2). Releases are listed in [CHANGELOG.md](CHANGELOG.md).
