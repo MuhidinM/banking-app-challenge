@@ -112,7 +112,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Item | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | The receipt loads `GET /api/accounts/transfer/{id}` by id, so a reload shows the same receipt; checked in a browser after a real transfer against the mock (#39) | ☑ |
+| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | The receipt loads `GET /api/accounts/transfer/{id}` by id, so a reload shows the same receipt; checked in a browser after a real transfer against the mock (#39); bill receipts the same way: `/pay-bill/receipt/<id>` loads `GET /api/accounts/pay-bill/{id}`, e2e reloads it after a real payment (#43) | ☑ |
 | X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | T-016 | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
 | X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | Web Locks around the refresh; new access tokens, logout and expiry shared over a BroadcastChannel; test: two tabs needing a refresh make one call and both stay signed in, and without Web Locks both still stay signed in; checked in a browser: signing in in one tab signs in the other (#24) | ☑ |
 | X-04 | Total balance correct with >10 accounts | T-040 | Dashboard test with 13 accounts: total ETB 11,945.50 "Across 13 accounts"; API test with 120 accounts over three pages (#29) | ☑ |
