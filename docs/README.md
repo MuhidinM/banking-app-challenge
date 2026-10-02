@@ -9,6 +9,7 @@
 | [spec-notes.md](spec-notes.md)     | Where the design, brief and API disagree or leave gaps, and what we decided                       |
 | [api-notes.md](api-notes.md)       | Endpoints, models, error codes → user messages, integration notes                                 |
 | [design-notes.md](design-notes.md) | Screen inventory, layout rules, tokens, components, formatting                                    |
+| [performance.md](performance.md)   | Lighthouse scores per page (mobile and desktop), how to run them, what was fixed                  |
 | [workflow.md](workflow.md)         | Branches, commits, pull requests, Definition of Done                                              |
 | `api/openapi.json`                 | Snapshot of the API's OpenAPI document (v1.1, 2026-10-01); source for generated types             |
 | `design/design-tokens.json`        | Kifiya design tokens (v3); source for generated CSS variables                                     |
