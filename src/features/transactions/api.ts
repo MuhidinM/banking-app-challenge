@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { HttpClient } from "@/shared/api/http-client";
+import { pageSchema } from "@/shared/api/page-schema";
 import {
   type Page,
   type Transaction,
@@ -25,17 +26,7 @@ const transactionSchema = z.object({
   balanceAfter: z.number().nullish(),
 }) satisfies z.ZodType<Transaction>;
 
-const pageSchema = z.object({
-  content: z.array(transactionSchema),
-  totalElements: z.number(),
-  totalPages: z.number(),
-  size: z.number(),
-  number: z.number(),
-  numberOfElements: z.number(),
-  first: z.boolean(),
-  last: z.boolean(),
-  empty: z.boolean(),
-}) satisfies z.ZodType<Page<Transaction>>;
+const historyPageSchema = pageSchema(transactionSchema);
 
 /** Rows per request while looking for one transaction, and how many pages to try. */
 const FIND_PAGE_SIZE = 50;
@@ -62,7 +53,7 @@ export function createTransactionsApi(client: HttpClient) {
         query: { page, size, sort: "timestamp,DESC" },
         signal,
       });
-      return pageSchema.parse(response);
+      return historyPageSchema.parse(response);
     },
 
     /**
