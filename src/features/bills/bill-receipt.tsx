@@ -24,6 +24,8 @@ import { toast } from "@/shared/ui/toast";
 import { createBillsApi } from "./api";
 import { billerFromDescription } from "./find-paid-bill";
 
+import type { ReactNode } from "react";
+
 /** Query keys for bill receipts (ADR-0004). */
 export const billKeys = {
   receipt: (transactionId: number) => ["bills", "receipt", transactionId] as const,
@@ -70,8 +72,14 @@ export function BillReceiptView({
   details: BillReceiptDetails;
   note?: string | undefined;
 }) {
-  const rows: [string, string][] = [
-    ["Biller", details.biller],
+  const rows: [string, ReactNode][] = [
+    // A typed biller name can be long (up to 80 characters): it wraps, unlike the amounts.
+    [
+      "Biller",
+      <span key="biller" className="[overflow-wrap:anywhere] whitespace-normal">
+        {details.biller}
+      </span>,
+    ],
     ["From", fromLabel(details.from)],
     ["Date", formatFullDateTime(details.date)],
   ];
