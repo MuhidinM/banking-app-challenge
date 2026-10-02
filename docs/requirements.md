@@ -54,7 +54,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-07 | New account appears without full reload | T-042 | The created account is added to the cached list, then the list is refetched; test: "2 accounts" becomes "3 accounts · ETB 11,000.00 total" on the same screen (#31) | ☑ |
 | R-FLOW-08 | Transfer: from (own accounts), recipient number, amount, optional note | T-060 | `/transfer`: from one of the user's accounts (with available balance), recipient formatted `2899 0108 46`, amount with +100 / +500 / +1,000 / Max, optional note; `?from=<id>` preselects; tested (#37) | ☑ |
 | R-FLOW-09 | Review step showing details + "cannot be reversed" warning before calling API | T-061 | Review dialog (web) / sheet (mobile): amount, from, to, fee, note and "Transfers are instant and cannot be reversed. Check the account number."; the API is called only from Confirm and once per transfer even on a double click; tested and checked in a browser (#38) | ☑ |
-| R-FLOW-10 | Confirmation screen with receipt: amount, recipient, new balance, reference (not just a toast) | T-062 |  | ☐ |
+| R-FLOW-10 | Confirmation screen with receipt: amount, recipient, new balance, reference (not just a toast) | T-062 | `/transfer/receipt/<id>` after every transfer (plus the web toast): amount, recipient, from, date, reference `TX-000123`, new balance from `balanceAfter`; Share receipt and Done; the fallback receipt keeps the amount and refreshed balance when the transaction can't be found (ADR-0008); tested and checked in a browser (#39) | ☑ |
 | R-FLOW-11 | Specific errors: "Insufficient funds", "Cannot transfer to the same account", "Account not found" | T-063 |  | ☐ |
 | R-FLOW-12 | Bill payment: from account, biller, amount → `POST /api/accounts/pay-bill` | T-070 |  | ☐ |
 | R-FLOW-13 | History per account `GET /api/transactions/{accountId}`, Load more or infinite scroll | T-050 | `useTransactionHistory` infinite query on `GET /api/transactions/{accountId}`, Load more with "Showing x of y" on `/activity?account=` (#33) and on each account page `/accounts/<id>` with the direction filter (#32) | ☑ |
@@ -112,7 +112,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 
 | ID | Item | Task | Evidence | ✓ |
 |---|---|---|---|---|
-| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 |  | ☐ |
+| X-01 | Receipt route survives reload (`/transfer/receipt/[txId]`) | T-062 | The receipt loads `GET /api/accounts/transfer/{id}` by id, so a reload shows the same receipt; checked in a browser after a real transfer against the mock (#39) | ☑ |
 | X-02 | UTC timestamps parsed correctly; day grouping test at midnight boundary | T-016 | `parseApiDate()` reads offset-free API timestamps as UTC; day grouping in the local zone; tests pin Africa/Addis_Ababa and cover the midnight boundary both ways (#15) | ☑ |
 | X-03 | Cross-tab refresh: two tabs, one refresh, both stay signed in | T-028 | Web Locks around the refresh; new access tokens, logout and expiry shared over a BroadcastChannel; test: two tabs needing a refresh make one call and both stay signed in, and without Web Locks both still stay signed in; checked in a browser: signing in in one tab signs in the other (#24) | ☑ |
 | X-04 | Total balance correct with >10 accounts | T-040 | Dashboard test with 13 accounts: total ETB 11,945.50 "Across 13 accounts"; API test with 120 accounts over three pages (#29) | ☑ |
