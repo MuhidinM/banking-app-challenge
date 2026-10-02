@@ -12,7 +12,7 @@ The brief evaluates a clear split between server state (accounts, transactions) 
 - URL state: activity filter, selected account, selected transaction (`?tx=`), preselected `from` account.
 - Session: small external store + React context.
 - Preferences (theme, hide balances): `localStorage` behind a hook.
-- Forms: react-hook-form + zod.
+- Forms: React state with check functions; the register form validates with a `zod/mini` schema. (Amended 2026-10-02: react-hook-form was planned but never needed. The forms are small, and the money forms re-check against the live balance on every change, which plain state does directly.)
 - No Redux or Zustand — nothing needs them.
 
 ## Consequences
