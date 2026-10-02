@@ -68,7 +68,7 @@ Tab A request ──401──┘          │
 | Access (10 min) | Memory only    | Not persisted, not readable after reload      |
 | Refresh (24 h)  | `localStorage` | Must survive reload and be shared across tabs |
 
-Trade-off: a successful XSS could read the refresh token. Mitigations: a nonce-based CSP that also limits where the page can connect (ADR-0010), no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations.
+Trade-off: a successful XSS could read the refresh token. Mitigations: a nonce-based CSP that also limits where the page can connect (ADR-0010), no `dangerouslySetInnerHTML`, no third-party scripts, React escaping, token rotation. For production we would put a backend-for-frontend (Next route handlers) in front of the API and keep both tokens in `HttpOnly; Secure; SameSite=Strict` cookies, with CSRF protection on mutations. The full threat model, every header and the residual risks are in [security.md](security.md).
 
 ### Session wiring
 

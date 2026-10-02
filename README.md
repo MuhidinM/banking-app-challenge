@@ -134,13 +134,15 @@ request ──401──┘        │
 
 ## Quality
 
+Each has its own document with every detail: [testing.md](docs/testing.md), [accessibility.md](docs/accessibility.md), [security.md](docs/security.md), [performance.md](docs/performance.md) and [fidelity.md](docs/fidelity.md). What every screen does, down to each message, is in [features.md](docs/features.md).
+
 - **Tests**:
   - Vitest and Testing Library cover units and components, against the same MSW mock the app uses offline.
   - Playwright runs end-to-end tests on a production build: sign-in, register, route protection, session restore, token refresh, logout across tabs, transfers and their errors, bills, history, responsive layouts, keyboard use, and axe on every page.
   - Every e2e test also fails if the page breaks the CSP or calls any host but the mock.
 - **CI**: every pull request runs type-check, lint, format check, unit tests and a production build, then the end-to-end tests. Git hooks run the fast checks before each commit and push.
-- **Accessibility**: WCAG AA targets with keyboard-only use throughout. After navigation, focus moves to the page heading. Dialogs trap and restore focus, and reduced motion is respected. Money in and out never rest on colour alone: rows carry a sign and are read out as "Money in" or "Money out".
-- **Performance**: Lighthouse on every page, desktop 99–100 for performance ([docs/performance.md](docs/performance.md)).
+- **Accessibility**: WCAG 2.2 AA, checked with axe on every page in both themes, keyboard-only e2e runs of whole tasks, and an NVDA pass by hand. After navigation, focus moves to the page heading. Dialogs trap and restore focus, and reduced motion is respected. Money in and out never rest on colour alone: rows carry a sign and are read out as "Money in" or "Money out". The exception is a few colour pairs from the design's own tokens (below).
+- **Performance**: Lighthouse on every page: performance 98–100 on a simulated slow phone and 100 on desktop, best practices 100. Moving to `zod/mini` cut about 320 KB of script from every page.
 - **Design fidelity**: a screenshot of every spec frame, light and dark, with each known difference explained ([docs/fidelity.md](docs/fidelity.md)).
 - **Traceability**: every requirement in the brief is mapped to the work and the evidence for it in [docs/requirements.md](docs/requirements.md).
 
@@ -154,6 +156,7 @@ Where the brief, design and API disagree or leave gaps, the decision is recorded
 - **There is no search, change password or forgot password**: the design shows them, but the API has no endpoints for them. Change password is shown as "Not available yet".
 - **The receipt reference comes from the history**: if the new transaction can't be found there, the receipt shows without a reference and says where to find it.
 - **English only**: dates and money are formatted with `Intl`, so other languages would mainly need the text translated.
+- **Some colour pairs from the design's tokens are below WCAG AA contrast**: the money-in green on white (3.49:1), money out (4.28:1), the warning text, placeholders, the focus ring, and dark-mode links. The tokens are used exactly as given, by decision; the measurements and the nearest passing shades are in [accessibility.md](docs/accessibility.md#contrast).
 - **Dark mode colours follow the design tokens** where the dark screens draw slightly different ones.
 
 ## How AI was used
@@ -181,4 +184,4 @@ One thing that changed after review: my own test with a duplicated tab showed th
 
 ## Documentation
 
-[`docs/`](docs/README.md) has the architecture, decision records, API notes, spec notes, requirements traceability, the backlog and the workflow. Work is tracked as issues and milestones on the [project board](https://github.com/users/MuhidinM/projects/2).
+[`docs/`](docs/README.md) has every detail: the features screen by screen, architecture, decision records, security, testing, accessibility, performance, design fidelity, API notes, spec notes, requirements traceability, the backlog and the workflow. Work is tracked as issues and milestones on the [project board](https://github.com/users/MuhidinM/projects/2).
