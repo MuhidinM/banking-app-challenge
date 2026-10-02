@@ -102,7 +102,7 @@ export function OpenAccountForm() {
             <button
               type="button"
               onClick={() => setShowMore(true)}
-              className="flex items-center gap-1.5 self-start rounded-control py-1 type-label text-primary underline-offset-4 hover:underline"
+              className="hit-area flex items-center gap-1.5 self-start rounded-control py-1 type-label text-primary underline-offset-4 hover:underline"
             >
               More account types
               <ChevronDown aria-hidden="true" className="size-4" strokeWidth={2} />

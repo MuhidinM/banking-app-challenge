@@ -88,7 +88,7 @@ export function Dialog({
             <DialogPrimitive.Title className="type-heading text-ink">{title}</DialogPrimitive.Title>
             <DialogPrimitive.Close
               aria-label="Close"
-              className="-my-1 flex size-9 shrink-0 items-center justify-center rounded-pill bg-surface-muted text-ink transition-colors hover:bg-border"
+              className="hit-area -my-1 flex size-9 shrink-0 items-center justify-center rounded-pill bg-surface-muted text-ink transition-colors hover:bg-border"
             >
               <X aria-hidden="true" className="size-icon" strokeWidth={1.75} />
             </DialogPrimitive.Close>
