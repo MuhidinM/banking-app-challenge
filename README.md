@@ -4,6 +4,8 @@
 
 A responsive banking web client for the Kifiya Web Developer Challenge, built with Next.js 16, React 19 and TypeScript against the [challenge banking API](https://challenge-api.qena.dev/scalar).
 
+**Live:** <https://banking-app-challenge-beta.vercel.app> — deployed on Vercel from `main`, against the real API (sign up, or use a demo user from the API's documentation). Pull requests get preview deployments.
+
 > **Work in progress.** This README covers setup only. The full README (features, architecture, the token refresh flow, trade-offs) is tracked in [#53](https://github.com/MuhidinM/banking-app-challenge/issues/53). Progress is on the [project board](https://github.com/users/MuhidinM/projects/2).
 
 ## Getting started

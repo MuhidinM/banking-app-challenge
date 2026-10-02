@@ -142,6 +142,10 @@ In tests, `src/test/setup.ts` fails any request the mock doesn't handle and rese
 
 In the browser the mock lives in the page's memory, so `browser.ts` saves the bank and its issued tokens after every mocked response and loads them on the next page load. A reload keeps the user signed in and keeps their transfers, as with the real API (#80). Clearing the site's data starts again from the seed.
 
+## Deployment
+
+Vercel project `banking-app-challenge`, connected to the GitHub repo: `main` deploys to <https://banking-app-challenge-beta.vercel.app>, and every pull request gets a preview deployment. Production and preview set `NEXT_PUBLIC_API_BASE_URL=https://challenge-api.qena.dev`, mock mode and dev tools off, and `ENABLE_EXPERIMENTAL_COREPACK=1` so the build uses the pnpm version in `package.json`. The API's CORS allows `*.vercel.app` origins. Pages render per request (the CSP nonce, [ADR-0010](decisions/0010-content-security-policy.md)), so each is a Vercel Function; static assets come from the CDN.
+
 ## Folder structure
 
 Feature (domain) folders. `app/` only holds routes; route files compose feature components.
