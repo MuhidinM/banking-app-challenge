@@ -32,6 +32,8 @@ import type { ReactNode } from "react";
 
 interface TransactionDetailsProps {
   accountId: number;
+  /** "Checking •••• 8057"; the Account row is left out without it. */
+  accountLabel?: string;
   /** The transaction in `?tx=`; null keeps the dialog closed. */
   transactionId: number | null;
   onClose: () => void;
@@ -47,6 +49,7 @@ interface TransactionDetailsProps {
  */
 export function TransactionDetails({
   accountId,
+  accountLabel,
   transactionId,
   onClose,
   onCloseAutoFocus,
@@ -65,7 +68,7 @@ export function TransactionDetails({
       footer={transaction ? <ShareReceiptButton transaction={transaction} /> : undefined}
     >
       {transaction ? (
-        <DetailsBody transaction={transaction} />
+        <DetailsBody transaction={transaction} {...(accountLabel ? { accountLabel } : {})} />
       ) : query.isPending ? (
         <DetailsSkeleton />
       ) : query.isError ? (
@@ -88,7 +91,13 @@ export function TransactionDetails({
   );
 }
 
-function DetailsBody({ transaction }: { transaction: Transaction }) {
+function DetailsBody({
+  transaction,
+  accountLabel,
+}: {
+  transaction: Transaction;
+  accountLabel?: string;
+}) {
   const credit = isCredit(transaction);
   const { icon, label } = transactionTypeInfo[transaction.type];
 
@@ -116,6 +125,7 @@ function DetailsBody({ transaction }: { transaction: Transaction }) {
           <Badge tone={credit ? "credit" : "neutral"}>{label}</Badge>
         </DetailRow>
         <DetailRow term="Direction">{directionLabel(transaction)}</DetailRow>
+        {accountLabel && <DetailRow term="Account">{accountLabel}</DetailRow>}
         {transaction.relatedAccount && (
           <DetailRow term={counterpartyLabel(transaction)}>
             <span className="amount">{formatAccountNumber(transaction.relatedAccount)}</span>
