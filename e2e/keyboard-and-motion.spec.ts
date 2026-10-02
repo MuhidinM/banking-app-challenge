@@ -87,7 +87,11 @@ test("the history works with the keyboard alone", async ({ page }) => {
   const account = page.getByRole("combobox", { name: "Account" });
   await account.focus();
   await page.keyboard.press("Enter");
+  // Each key waits for the list to be ready for it: an ArrowDown sent while
+  // the list is still opening is lost (it failed about 1 run in 5).
+  await expect(page.getByRole("option", { name: /Checking/ })).toBeFocused();
   await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("option", { name: /Savings/ })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/account=2/);
   await expect(account).toBeFocused();

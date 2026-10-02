@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getAppSession } from "@/features/auth/session";
 import { DEMO_PASSWORD } from "@/mocks/fixtures";
-import { apiUrl } from "@/mocks/http";
+import { apiError, apiUrl } from "@/mocks/http";
 import { server } from "@/mocks/node";
 import { Toaster } from "@/shared/ui/toast";
 import { fakeNavigation } from "@/test/fake-navigation";
@@ -132,18 +132,91 @@ describe("TransferFlow", () => {
     expect(bodies).toEqual([]);
   });
 
-  it("explains a refusal in the review and lets the user try again", async () => {
-    // No account has this number: the API answers 404 ACC_001.
-    const bodies = recordTransfers();
-    const { user, review } = await renderAndFill({ to: "1234567890", note: "" });
+  it("explains a server error in the review and lets the user try again", async () => {
+    let fail = true;
+    server.use(
+      http.post(apiUrl("/api/accounts/transfer"), ({ request }) =>
+        fail ? apiError(500, "GEN_001", "Internal error", request) : undefined,
+      ),
+    );
+    const { user, review } = await renderAndFill({ note: "" });
 
     await user.click(review().getByRole("button", { name: "Confirm and send" }));
 
     expect(await review().findByRole("alert")).toHaveTextContent(
-      "Account not found. Check the number.",
+      "Something went wrong on our side. Please try again.",
     );
-    expect(fakeNavigation.href).toBe("/transfer");
+    fail = false;
     await user.click(review().getByRole("button", { name: "Confirm and send" }));
-    await vi.waitFor(() => expect(bodies).toHaveLength(2));
+    await vi.waitFor(() => expect(fakeNavigation.href).toMatch(/^\/transfer\/receipt\/\d+$/));
+  });
+
+  it("explains a lost connection in the review", async () => {
+    server.use(http.post(apiUrl("/api/accounts/transfer"), () => HttpResponse.error()));
+    const { user, review } = await renderAndFill({ note: "" });
+
+    await user.click(review().getByRole("button", { name: "Confirm and send" }));
+
+    expect(await review().findByRole("alert")).toHaveTextContent(
+      "Can't reach the bank right now. Check your connection and try again.",
+    );
+  });
+});
+
+describe("TransferFlow: the API's errors on their fields (R-FLOW-11)", () => {
+  /** Sends, and returns the form field the error should land on. */
+  async function sendExpectingFieldError(changes: Parameters<typeof renderAndFill>[0] = {}) {
+    const { user, review } = await renderAndFill({ note: "", ...changes });
+    await user.click(review().getByRole("button", { name: "Confirm and send" }));
+    // The review closes and the form is shown again, with what was typed.
+    await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    return user;
+  }
+
+  it("Account not found (ACC_001, from the mock) goes on the recipient", async () => {
+    await sendExpectingFieldError({ to: "1234567890" });
+
+    const recipient = screen.getByLabelText("To account number");
+    expect(screen.getByText("Account not found. Check the number.")).toBeInTheDocument();
+    expect(recipient).toHaveAttribute("aria-invalid", "true");
+    expect(recipient).toHaveFocus();
+    expect(recipient).toHaveValue("1234 5678 90");
+  });
+
+  it("the error clears once the recipient is changed", async () => {
+    const user = await sendExpectingFieldError({ to: "1234567890" });
+
+    await user.type(screen.getByLabelText("To account number"), "{Backspace}");
+
+    expect(screen.queryByText("Account not found. Check the number.")).toBeNull();
+  });
+
+  it.each([
+    ["ACC_003", 400, "Cannot transfer to the same account.", "To account number"],
+    ["ACC_002", 400, "Insufficient funds. Available: ETB 8,640.00.", "Amount in ETB"],
+    ["TXN_001", 400, "Enter an amount greater than ETB 0.00.", "Amount in ETB"],
+  ] as const)("%s → %j on %s", async (code, status, message, label) => {
+    server.use(
+      http.post(apiUrl("/api/accounts/transfer"), ({ request }) =>
+        apiError(status, code, "raw server text", request),
+      ),
+    );
+    await sendExpectingFieldError();
+
+    expect(screen.getByText(message)).toBeInTheDocument();
+    expect(screen.getByLabelText(label)).toHaveFocus();
+    expect(screen.queryByText("raw server text")).toBeNull();
+  });
+
+  it("ACC_004 (not your account) goes on the From picker", async () => {
+    server.use(
+      http.post(apiUrl("/api/accounts/transfer"), ({ request }) =>
+        apiError(403, "ACC_004", "raw server text", request),
+      ),
+    );
+    await sendExpectingFieldError();
+
+    expect(screen.getByText("This account isn't linked to your profile.")).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "From" })).toHaveFocus();
   });
 });

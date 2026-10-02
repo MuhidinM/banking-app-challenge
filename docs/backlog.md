@@ -77,7 +77,7 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-060 | [#37](https://github.com/MuhidinM/banking-app-challenge/issues/37) | Transfer form: from select (with available balance), recipient (format `2899 0108 46`, 10 digits), amount + chips + Max, note ≤140 with counter; summary card on web | R-FLOW-08, R-API-09, R-UX-08 | L | done |
 | T-061 | [#38](https://github.com/MuhidinM/banking-app-challenge/issues/38) | Review dialog/sheet with irreversible warning, Confirm and send, Edit details | R-FLOW-09 | M | done |
 | T-062 | [#39](https://github.com/MuhidinM/banking-app-challenge/issues/39) | Receipt route `/transfer/receipt/[txId]`: resolve tx after transfer, show amount, recipient, date, reference, new balance; share + Done | R-FLOW-10, X-01 | M | done |
-| T-063 | [#40](https://github.com/MuhidinM/banking-app-challenge/issues/40) | Error mapping: ACC_002 on amount, ACC_003 + ACC_001 on recipient, ACC_004, TXN_001, network | R-FLOW-11 | S | todo |
+| T-063 | [#40](https://github.com/MuhidinM/banking-app-challenge/issues/40) | Error mapping: ACC_002 on amount, ACC_003 + ACC_001 on recipient, ACC_004, TXN_001, network | R-FLOW-11 | S | done |
 | T-064 | [#41](https://github.com/MuhidinM/banking-app-challenge/issues/41) | Invalidation after mutations (accounts, both accounts' transactions) + test | R-FLOW-18 | S | todo |
 
 ## M7 — Bills
