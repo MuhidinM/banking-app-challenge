@@ -106,7 +106,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-SUB-02 | Live deployment URL in README (plus) | T-101 | Live on Vercel at https://banking-app-challenge-beta.vercel.app, deployed from main with PR previews; security headers, robots, CORS from the live origin and protected-route redirects checked on the live site (#52). Signed-in flow checked by hand in #54 | ☑ |
 | R-SUB-03 | README: setup, env vars, features, architecture (esp. auth/refresh), assumptions, trade-offs | T-102 | README: setup, environment variables, features and extras, architecture with the refresh sequence, assumptions and known limitations (#53) | ☑ |
 | R-SUB-04 | README shows security trade-offs (httpOnly cookies via BFF) | T-102 | README, Security: token storage and the XSS trade-off, the mitigations, and the backend-for-frontend with HttpOnly cookies for production (#53) | ☑ |
-| R-SUB-05 | Submitted within 3 days | T-103 |  | ☐ |
+| R-SUB-05 | Submitted within 3 days | T-103 | v1.0.0 released on 2026-10-02, before the deadline of 5 October 2026, 17:00 EAT | ☑ |
 
 ## H. Additional quality criteria (beyond the brief)
 
@@ -135,7 +135,7 @@ Run top to bottom on the final build. Anything unticked goes into the README's "
 **Works**
 
 - ☑ Every R-row above ticked with evidence — except R-UX-12 (the N-016 contrast pairs, a known limitation in the README) and R-SUB-05 (the submission itself)
-- ☐ Full flow on the live URL with a fresh registered user and with `demo.jane`
+- ☑ Full flow on the live URL — checked by hand by the owner on 2026-10-02: sign-in, dashboard, reload, a transfer between own accounts, logout
 - ☑ Left open >10 min: refresh happens silently — e2e `token-refresh.spec.ts` (expired access token refreshed once, request retried) and the session inspector's "Expire access token now"
 - ☑ Refresh token removed by hand → next call lands on login with "session expired" — `token-refresh.integration.test.ts` ("ends the session cleanly when the refresh token has expired too") and the inspector's "Expire refresh token too"
 
@@ -178,6 +178,6 @@ Run top to bottom on the final build. Anything unticked goes into the README's "
 
 - ☑ README complete, deploy URL works — https://banking-app-challenge-beta.vercel.app answers 200
 - ☑ Commits follow conventional format; no "wip"/"fix2"
-- ☐ CHANGELOG + `v1.0.0` tag
+- ☑ CHANGELOG + `v1.0.0` tag
 - ☑ Third-party challenge material (brief, spec PDF, screens) not in git — only the design tokens JSON, which generates the theme
 - ☑ Every ADR in `docs/decisions/` still matches the code — ADR-0004 amended: forms use React state, not react-hook-form

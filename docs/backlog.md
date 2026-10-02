@@ -114,4 +114,4 @@ Reqs refer to [requirements.md](requirements.md). Size: S < 1 h · M 1–3 h · 
 | T-100 | — | Push to personal GitHub (public) | R-SUB-01 | S | done |
 | T-101 | [#52](https://github.com/MuhidinM/banking-app-challenge/issues/52) | Vercel deploy, env vars, verify CORS on the live URL | R-SUB-02 | S | done |
 | T-102 | [#53](https://github.com/MuhidinM/banking-app-challenge/issues/53) | README: setup, env, features, architecture + refresh sequence diagram, decisions, trade-offs, security, known limitations, AI usage | R-SUB-03/04 | M | done |
-| T-103 | [#54](https://github.com/MuhidinM/banking-app-challenge/issues/54) | Run the full release checklist, CHANGELOG, tag `v1.0.0`, submit link | R-SUB-05 | S | todo |
+| T-103 | [#54](https://github.com/MuhidinM/banking-app-challenge/issues/54) | Run the full release checklist, CHANGELOG, tag `v1.0.0`, submit link | R-SUB-05 | S | done |
