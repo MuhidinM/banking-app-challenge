@@ -4,7 +4,7 @@ import { ScrollText } from "lucide-react";
 
 import { ACCOUNT_TYPES } from "@/features/accounts/account-types";
 import { useAccounts } from "@/features/accounts/queries";
-import { flattenHistory, useTransactionHistory } from "@/features/transactions/queries";
+import { useLatestTransactions } from "@/features/transactions/queries";
 import { TransactionRow } from "@/features/transactions/transaction-row";
 import type { Account } from "@/shared/api/types";
 import { maskAccountNumber } from "@/shared/lib/account-number";
@@ -13,7 +13,7 @@ import { RowList } from "@/shared/ui/list-row";
 import { ListRowSkeleton, LoadingRegion } from "@/shared/ui/skeleton";
 import { EmptyState, ErrorState } from "@/shared/ui/states";
 
-/** How many transactions the dashboard shows; "View all" opens the account's history. */
+/** How many transactions the dashboard shows; "View all" opens Activity. */
 export const DASHBOARD_TRANSACTIONS = 3;
 
 const loading = (
@@ -24,56 +24,69 @@ const loading = (
   </LoadingRegion>
 );
 
-function AccountActivity({ account }: { account: Account }) {
-  const { data, isPending, isError, refetch, isRefetching } = useTransactionHistory(account.id);
+/** "•••• 8057" on the row, "Checking •••• 8057" for screen readers. */
+const accountTag = (account: Account) => ({
+  short: maskAccountNumber(account.accountNumber),
+  label: `${ACCOUNT_TYPES[account.accountType].label} ${maskAccountNumber(account.accountNumber)}`,
+});
 
-  if (isPending) return loading;
-  if (isError) {
+function LatestActivity({ accounts }: { accounts: readonly Account[] }) {
+  const latest = useLatestTransactions(
+    accounts.map((account) => account.id),
+    DASHBOARD_TRANSACTIONS,
+  );
+  // With one account the rows needn't say which; with several, each does.
+  const byId = new Map(accounts.map((account) => [account.id, account]));
+  const several = accounts.length > 1;
+
+  if (latest.isPending) return loading;
+  if (latest.isError) {
     return (
       <ErrorState
         title="We couldn't load your activity"
         description="Check your connection and try again."
-        onRetry={() => void refetch()}
-        retrying={isRefetching}
+        onRetry={latest.refetch}
+        retrying={latest.isRefetching}
       />
     );
   }
-
-  const latest = flattenHistory(data.pages).transactions.slice(0, DASHBOARD_TRANSACTIONS);
+  if (latest.transactions.length === 0) {
+    return (
+      <EmptyState
+        icon={ScrollText}
+        title="No activity yet"
+        description="Money in and out of your accounts will show here."
+      />
+    );
+  }
   return (
-    <>
-      <p className="px-row-x pt-3.5 type-label font-normal text-ink-muted">
-        {ACCOUNT_TYPES[account.accountType].label} {maskAccountNumber(account.accountNumber)}
-      </p>
-      {latest.length === 0 ? (
-        <EmptyState
-          icon={ScrollText}
-          title="No activity yet"
-          description="Money in and out of this account will show here."
-        />
-      ) : (
-        <RowList>
-          {latest.map((transaction) => (
-            <TransactionRow key={transaction.id} transaction={transaction} />
-          ))}
-        </RowList>
-      )}
-    </>
+    <RowList>
+      {latest.transactions.map((transaction) => {
+        const account = byId.get(transaction.accountId);
+        return (
+          <TransactionRow
+            key={transaction.id}
+            transaction={transaction}
+            account={several && account ? accountTag(account) : undefined}
+          />
+        );
+      })}
+    </RowList>
   );
 }
 
 /**
- * "Recent activity" (UI spec): the latest transactions of the first account,
- * named above the rows ("Checking •••• 8057"), as the brief asks (R-FLOW-04).
+ * "Recent activity" (UI spec): the newest transactions across all the
+ * user's accounts, each row naming its account when there are several
+ * (R-FLOW-04, N-027).
  */
 export function RecentActivity() {
   const { data: accounts, isPending, isError } = useAccounts();
-  const account = accounts?.[0];
 
   let content;
   if (isPending) content = loading;
   else if (isError) content = null;
-  else if (!account) {
+  else if (accounts.length === 0) {
     content = (
       <EmptyState
         icon={ScrollText}
@@ -81,16 +94,14 @@ export function RecentActivity() {
         description="Open an account to see its money in and out here."
       />
     );
-  } else content = <AccountActivity account={account} />;
+  } else content = <LatestActivity accounts={accounts} />;
 
   return (
     <section aria-labelledby="recent-activity" className="flex flex-col gap-3">
       <SectionHeader
         id="recent-activity"
         title="Recent activity"
-        action={
-          account ? { label: "View all", href: `/activity?account=${account.id}` } : undefined
-        }
+        action={accounts?.length ? { label: "View all", href: "/activity" } : undefined}
       />
       {/* When accounts fail to load, "My accounts" shows the error and the retry. */}
       {content ? <Card className="overflow-hidden">{content}</Card> : null}
