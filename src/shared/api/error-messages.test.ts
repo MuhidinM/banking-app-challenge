@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ZodError } from "zod";
+import * as z from "zod/mini";
 
 import { toCents } from "@/shared/lib/money";
 
@@ -114,7 +114,9 @@ describe("describeError: responses without a usable code", () => {
 describe("describeError: anything else", () => {
   it("gives the generic message for bugs and malformed responses", () => {
     expect(describeError(new TypeError("x is undefined"), "load").message).toBe(MESSAGES.unknown);
-    expect(describeError(new ZodError([]), "login").message).toBe(MESSAGES.unknown);
+    // What a feature API's schema throws for a response of the wrong shape.
+    const malformed = z.object({ accessToken: z.string() }).safeParse({}).error;
+    expect(describeError(malformed, "login").message).toBe(MESSAGES.unknown);
     expect(describeError("a string", "load").message).toBe(MESSAGES.unknown);
   });
 });

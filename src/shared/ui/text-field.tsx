@@ -19,7 +19,7 @@ interface TextFieldProps extends InputProps {
 
 /**
  * A labelled single-line input with an optional icon, hint and error.
- * Spreads extra props onto the <input>, so react-hook-form's `register()` works directly.
+ * Spreads extra props (name, inputMode, autoComplete, handlers) onto the <input>.
  */
 export function TextField({
   label,

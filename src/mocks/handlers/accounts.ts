@@ -1,5 +1,5 @@
 import { http, HttpResponse, delay } from "msw";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import {
   type Account,
@@ -43,19 +43,19 @@ const amount = z.number({ error: "amount must be a number" });
 
 const createAccountSchema = z.object({
   accountType: z.enum(accountTypes),
-  initialBalance: z.number().min(0),
+  initialBalance: z.number().check(z.minimum(0)),
 });
 
 const transferSchema = z.object({
-  fromAccountNumber: z.string().min(1),
-  toAccountNumber: z.string().min(1),
-  amount: amount.max(1_000_000_000),
-  note: z.string().max(140).nullish(),
+  fromAccountNumber: z.string().check(z.minLength(1)),
+  toAccountNumber: z.string().check(z.minLength(1)),
+  amount: amount.check(z.maximum(1_000_000_000)),
+  note: z.nullish(z.string().check(z.maxLength(140))),
 });
 
 const billPaymentSchema = z.object({
-  accountNumber: z.string().min(1),
-  biller: z.string().trim().min(1),
+  accountNumber: z.string().check(z.minLength(1)),
+  biller: z.string().check(z.trim(), z.minLength(1)),
   amount,
 });
 

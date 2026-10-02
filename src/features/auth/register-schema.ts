@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import type { RegisterRequest } from "@/shared/api/types";
 
@@ -11,31 +11,37 @@ const PHONE_PATTERN = /^\+?[0-9. ()-]{7,25}$/;
  * password is too short. Messages are written for the form.
  */
 const registerFieldsSchema = z.object({
-  firstName: z.string().trim().min(1, "Enter your first name."),
-  lastName: z.string().trim().min(1, "Enter your last name."),
+  firstName: z.string().check(z.trim(), z.minLength(1, "Enter your first name.")),
+  lastName: z.string().check(z.trim(), z.minLength(1, "Enter your last name.")),
   username: z
     .string()
-    .trim()
-    .min(1, "Choose a username.")
-    .min(3, "Username must be 3 to 50 characters.")
-    .max(50, "Username must be 3 to 50 characters."),
+    .check(
+      z.trim(),
+      z.minLength(1, "Choose a username."),
+      z.minLength(3, "Username must be 3 to 50 characters."),
+      z.maxLength(50, "Username must be 3 to 50 characters."),
+    ),
   phoneNumber: z
     .string()
-    .trim()
-    .min(1, "Enter your phone number.")
-    .regex(PHONE_PATTERN, "Enter a phone number like +251 911 234 567."),
-  email: z
-    .string()
-    .trim()
-    .refine((value) => value === "" || z.email().safeParse(value).success, {
+    .check(
+      z.trim(),
+      z.minLength(1, "Enter your phone number."),
+      z.regex(PHONE_PATTERN, "Enter a phone number like +251 911 234 567."),
+    ),
+  email: z.string().check(
+    z.trim(),
+    z.refine((value) => value === "" || z.email().safeParse(value).success, {
       message: "Enter an email address like you@example.com.",
     }),
+  ),
   // Not trimmed: spaces can be part of a password.
   password: z
     .string()
-    .min(1, "Choose a password.")
-    .min(6, "Password must be at least 6 characters."),
-  confirmPassword: z.string().min(1, "Repeat your password."),
+    .check(
+      z.minLength(1, "Choose a password."),
+      z.minLength(6, "Password must be at least 6 characters."),
+    ),
+  confirmPassword: z.string().check(z.minLength(1, "Repeat your password.")),
 });
 
 export type RegisterField = keyof z.input<typeof registerFieldsSchema>;
