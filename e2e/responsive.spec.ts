@@ -43,7 +43,14 @@ async function plantLongValues(page: Page) {
  * 44 x 44 px (UI spec: min hit 44, N-019).
  */
 async function layoutProblems(page: Page) {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
+    // Measure the settled layout: a dialog that is still zooming in is
+    // scaled to 97 %, so a 44 px button would measure 43. Endless ones
+    // (skeleton pulse, spinners) never finish and are skipped.
+    const finite = document
+      .getAnimations()
+      .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity);
+    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
     const problems = new Set<string>();
     const viewport = document.documentElement.clientWidth;
     const describe = (element: Element) =>
