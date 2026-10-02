@@ -53,7 +53,7 @@ Run the whole list before submitting. Status: ☐ todo · ◐ in progress · ☑
 | R-FLOW-06 | Create account: type + optional initial balance → `POST /api/accounts` | T-042 | `/accounts/new`: six types (three plus "More account types"), optional deposit sent as 0 when empty, `POST /api/accounts`; amount errors on the field; tested (#31) | ☑ |
 | R-FLOW-07 | New account appears without full reload | T-042 | The created account is added to the cached list, then the list is refetched; test: "2 accounts" becomes "3 accounts · ETB 11,000.00 total" on the same screen (#31) | ☑ |
 | R-FLOW-08 | Transfer: from (own accounts), recipient number, amount, optional note | T-060 | `/transfer`: from one of the user's accounts (with available balance), recipient formatted `2899 0108 46`, amount with +100 / +500 / +1,000 / Max, optional note; `?from=<id>` preselects; tested (#37) | ☑ |
-| R-FLOW-09 | Review step showing details + "cannot be reversed" warning before calling API | T-061 |  | ☐ |
+| R-FLOW-09 | Review step showing details + "cannot be reversed" warning before calling API | T-061 | Review dialog (web) / sheet (mobile): amount, from, to, fee, note and "Transfers are instant and cannot be reversed. Check the account number."; the API is called only from Confirm and once per transfer even on a double click; tested and checked in a browser (#38) | ☑ |
 | R-FLOW-10 | Confirmation screen with receipt: amount, recipient, new balance, reference (not just a toast) | T-062 |  | ☐ |
 | R-FLOW-11 | Specific errors: "Insufficient funds", "Cannot transfer to the same account", "Account not found" | T-063 |  | ☐ |
 | R-FLOW-12 | Bill payment: from account, biller, amount → `POST /api/accounts/pay-bill` | T-070 |  | ☐ |
