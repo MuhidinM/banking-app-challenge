@@ -11,6 +11,7 @@ import { formatMoney } from "@/shared/lib/money";
 import { ThemeToggle } from "@/shared/theme/theme-toggle";
 import { Card } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/feedback";
+import { fitAmountStyle } from "@/shared/ui/fit-amount";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ErrorState } from "@/shared/ui/states";
 
@@ -156,16 +157,20 @@ function TotalCard() {
   } else if (accounts.isError) {
     content = <p className="type-body text-ink-muted">We couldn&apos;t load your balance.</p>;
   } else {
+    const total = formatMoney(totalBalance(accounts.data));
     content = (
-      <div className="flex items-center justify-between gap-3">
-        <p className="type-title amount text-ink">
+      <div className="@container flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <p
+          className="type-title amount-fit amount text-ink [--amount-size:1.5rem]"
+          style={fitAmountStyle(total)}
+        >
           {hidden ? (
             <>
               <span aria-hidden="true">ETB ••••••</span>
               <span className="sr-only">Hidden</span>
             </>
           ) : (
-            formatMoney(totalBalance(accounts.data))
+            total
           )}
         </p>
         <Badge tone="primary">{accountsLabel(accounts.data.length)}</Badge>

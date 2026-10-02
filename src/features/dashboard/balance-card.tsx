@@ -4,6 +4,7 @@ import { Eye, EyeOff, RotateCw } from "lucide-react";
 
 import { totalBalance, useAccounts } from "@/features/accounts/queries";
 import { formatMoney } from "@/shared/lib/money";
+import { fitAmountStyle } from "@/shared/ui/fit-amount";
 import { Skeleton } from "@/shared/ui/skeleton";
 
 import { useHiddenBalance } from "./use-hidden-balance";
@@ -25,15 +26,19 @@ export function BalanceCard() {
   } else if (isError) {
     amount = <p className="type-heading">We couldn&apos;t load your balance.</p>;
   } else {
+    const total = formatMoney(totalBalance(accounts));
     amount = (
-      <p className="type-display text-[2.25rem] amount md:text-[2.5rem]">
+      <p
+        className="type-display amount-fit amount [--amount-size:2.25rem] md:[--amount-size:2.5rem]"
+        style={fitAmountStyle(total)}
+      >
         {hidden ? (
           <>
             <span aria-hidden="true">ETB ••••••</span>
             <span className="sr-only">Hidden</span>
           </>
         ) : (
-          formatMoney(totalBalance(accounts))
+          total
         )}
       </p>
     );
@@ -54,7 +59,7 @@ export function BalanceCard() {
       <p className="mb-1 type-body opacity-80">Available balance</p>
 
       <div className="flex items-center justify-between gap-4">
-        <div className="min-w-0">{amount}</div>
+        <div className="@container min-w-0 flex-1">{amount}</div>
         {isError ? (
           <button
             type="button"
