@@ -49,6 +49,7 @@ for (const colorScheme of ["light", "dark"] as const) {
         "/activity",
         "/profile",
         "/pay-bill",
+        "/pay-bill/receipt/9",
       ]) {
         await page.goto(path);
         await expect(page).toHaveURL(path);

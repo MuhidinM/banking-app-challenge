@@ -98,8 +98,8 @@ interface BillFormProps {
   accounts: readonly Account[];
   /** From `?from=<id>` (the account page's Pay bill shortcut), if it is one of the user's. */
   initialFromId?: number | undefined;
-  /** Called once the API has taken the payment. */
-  onPaid: (bill: CheckedBill) => void;
+  /** Called once the API has taken the payment; Pay stays busy until it settles. */
+  onPaid: (bill: CheckedBill) => Promise<void>;
 }
 
 /**
@@ -119,6 +119,8 @@ export function BillForm({ accounts, initialFromId, onPaid }: BillFormProps) {
   const [apiErrors, setApiErrors] = useState<BillErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const pay = usePayBill();
+  // Paid, and now finding the receipt: Pay stays busy.
+  const [settling, setSettling] = useState(false);
   // A ref, not state: two clicks in the same tick both see the old state.
   const inFlight = useRef(false);
   const reasonId = useId();
@@ -145,7 +147,10 @@ export function BillForm({ accounts, initialFromId, onPaid }: BillFormProps) {
     inFlight.current = true;
     const bill = result.bill;
     pay.mutate(bill, {
-      onSuccess: () => onPaid(bill),
+      onSuccess: async () => {
+        setSettling(true);
+        await onPaid(bill);
+      },
       onError: (failure) => {
         inFlight.current = false;
         const { message, field } = describeError(failure, "bill", {
@@ -158,7 +163,7 @@ export function BillForm({ accounts, initialFromId, onPaid }: BillFormProps) {
     });
   }
 
-  const sending = pay.isPending;
+  const sending = pay.isPending || settling;
   const submitLabel =
     amountCents !== null && amountCents > 0 ? `Pay ${formatMoney(amountCents)}` : "Pay bill";
   const reason = firstProblem
