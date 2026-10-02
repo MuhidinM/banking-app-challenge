@@ -42,13 +42,22 @@ async function stopsWithoutFocusIndicator(page: Page, maxStops = 60) {
 }
 
 test("every tab stop shows where focus is", async ({ page }) => {
+  // Up to 60 Tab presses on each of seven pages.
+  test.slow();
   await page.goto("/login");
   const login = await stopsWithoutFocusIndicator(page);
   expect(login.missing, "/login").toEqual([]);
 
   await signIn(page);
   await expectSignedIn(page);
-  for (const path of ["/", "/accounts", "/accounts/new", "/activity?account=1", "/profile"]) {
+  for (const path of [
+    "/",
+    "/accounts",
+    "/accounts/new",
+    "/activity?account=1",
+    "/profile",
+    "/pay-bill",
+  ]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expectSignedIn(page);
