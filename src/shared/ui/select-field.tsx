@@ -69,6 +69,7 @@ export function SelectField({
   id,
   className,
 }: SelectFieldProps) {
+  const twoLine = options.some((option) => option.description);
   const selected = options.find((option) => option.value === value);
 
   return (
@@ -85,6 +86,9 @@ export function SelectField({
             data-invalid={error ? true : undefined}
             className={cn(
               "flex min-h-control w-full items-center gap-3 rounded-control border border-border bg-surface px-3.5 py-2",
+              // Two-line options (an account with its balance) are 60 px high, as in
+              // the Transfer redline; one-line ones keep the 52 px control height.
+              twoLine && "min-h-15",
               "focus-control transition-[border-color,box-shadow] duration-150",
               "data-[state=open]:border-accent data-[state=open]:shadow-[0_0_0_3px_var(--color-accent-soft)]",
               "disabled:cursor-not-allowed disabled:bg-surface-muted",
