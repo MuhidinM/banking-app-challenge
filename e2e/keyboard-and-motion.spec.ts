@@ -48,7 +48,14 @@ test("every tab stop shows where focus is", async ({ page }) => {
 
   await signIn(page);
   await expectSignedIn(page);
-  for (const path of ["/", "/accounts", "/accounts/new", "/activity?account=1", "/profile"]) {
+  for (const path of [
+    "/",
+    "/accounts",
+    "/accounts/new",
+    "/activity?account=1",
+    "/profile",
+    "/pay-bill",
+  ]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expectSignedIn(page);

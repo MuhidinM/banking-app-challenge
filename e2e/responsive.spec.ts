@@ -108,6 +108,7 @@ for (const width of WIDTHS) {
       "/activity?account=1",
       "/profile",
       "/transfer",
+      "/pay-bill",
     ];
     for (const path of pages) {
       await page.goto(path);

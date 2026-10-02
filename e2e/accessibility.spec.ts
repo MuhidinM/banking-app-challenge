@@ -40,7 +40,14 @@ for (const colorScheme of ["light", "dark"] as const) {
       // Wait for the sign-in to finish: navigating earlier would land back on
       // /login and check that page instead.
       await expect(page).toHaveURL("/");
-      for (const path of ["/", "/accounts", "/accounts/new", "/activity", "/profile"]) {
+      for (const path of [
+        "/",
+        "/accounts",
+        "/accounts/new",
+        "/activity",
+        "/profile",
+        "/pay-bill",
+      ]) {
         await page.goto(path);
         await expect(page).toHaveURL(path);
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
