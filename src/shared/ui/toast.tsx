@@ -96,8 +96,8 @@ export function Toaster() {
             type={tone === "error" ? "foreground" : "background"}
             className={cn(
               "pointer-events-auto flex w-full items-start gap-3 rounded-button border border-border bg-surface px-4 py-3.5 text-ink shadow-float",
-              "data-[state=closed]:animate-toast-out data-[state=open]:animate-toast-in motion-reduce:animate-none",
-              "data-[swipe=end]:animate-toast-out data-[swipe=move]:translate-y-(--radix-toast-swipe-move-y)",
+              "motion-safe:data-[state=closed]:animate-toast-out motion-safe:data-[state=open]:animate-toast-in",
+              "data-[swipe=move]:translate-y-(--radix-toast-swipe-move-y) motion-safe:data-[swipe=end]:animate-toast-out",
             )}
           >
             <Icon
